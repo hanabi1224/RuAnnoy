@@ -1,4 +1,4 @@
 pub struct AnnoyIndexSearchResult {
-    id: i64,
-    distance: f32,
+    pub id: i64,
+    pub distance: f32,
 }
