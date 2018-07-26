@@ -1,6 +1,5 @@
-mod IndexType;
-mod AnnoyIndexSearchResult;
-mod PQEntry;
+mod annoy_index_search_result;
+mod pqentry;
 
 extern crate memmap;
 
@@ -11,18 +10,32 @@ use std::vec::Vec;
 use std::mem;
 use memmap::{Mmap, MmapOptions};
 
+use pqentry::PriorityQueueEntry;
+use annoy_index_search_result::AnnoyIndexSearchResult;
+
 const INT32_SIZE:i32 = 4;
 const FLOAT32_SIZE:i32 = 4;
 
+#[derive(PartialEq)]
+pub enum IndexType {
+    Angular,
+    Euclidean,
+}
+
 pub struct AnnoyIndex {
     pub dimension: i32,
-    pub index_type: IndexType::IndexType,
+    pub index_type: IndexType,
     index_type_offset: i32,
     k_node_header_style: i32,
     min_leaf_size: i32,
     node_size: i64,
     mmap: Mmap,
     roots: Vec<i64>,
+}
+
+pub trait AnnoyIndexSearchApi {
+    fn get_item_vector(&self, item_index: i64) ->Vec<f32> ;
+    fn get_nearest(&self, query_vector: &[f32], n_results: usize, search_k: i32, should_include_distance: bool) -> Vec<AnnoyIndexSearchResult>;
 }
 
 trait MmapExtensions{
@@ -43,9 +56,9 @@ impl MmapExtensions for Mmap{
 }
 
 impl AnnoyIndex {
-    pub fn new(dimension: i32, index_file_path: &str, index_type: IndexType::IndexType) -> AnnoyIndex {
-        let index_type_offset:i32 = if index_type == IndexType::IndexType::Angular {4} else {8};
-        let k_node_header_style:i32 = if index_type == IndexType::IndexType::Angular {12} else {16};
+    pub fn new(dimension: i32, index_file_path: &str, index_type: IndexType) -> AnnoyIndex {
+        let index_type_offset:i32 = if index_type == IndexType::Angular {4} else {8};
+        let k_node_header_style:i32 = if index_type == IndexType::Angular {12} else {16};
         let min_leaf_size = dimension + 2;
         let node_size = k_node_header_style as i64 + FLOAT32_SIZE as i64 * dimension as i64;
         let file = File::open(index_file_path).expect("fail to open file");
@@ -116,26 +129,21 @@ fn get_node_vector(index: &AnnoyIndex, node_offset:i64)-> Vec<f32>{
     return vec;
 }
 
-pub trait AnnoyIndexSearchApi {
-    fn get_item_vector(&self, item_index: i64) ->Vec<f32> ;
-    fn getNearest(&self, query_vector: &[f32], n_results: usize, search_k: i32, should_include_distance: bool) -> Vec<AnnoyIndexSearchResult::AnnoyIndexSearchResult>;
-}
-
 impl AnnoyIndexSearchApi for AnnoyIndex {
     fn get_item_vector(&self, item_index: i64) -> Vec<f32> {
         let node_offset = item_index * self.node_size;
         return get_node_vector(self, node_offset);
     }
 
-    fn getNearest(&self, query_vector: &[f32], n_results: usize, search_k: i32, should_include_distance: bool) -> Vec<AnnoyIndexSearchResult::AnnoyIndexSearchResult> {
+    fn get_nearest(&self, query_vector: &[f32], n_results: usize, search_k: i32, should_include_distance: bool) -> Vec<AnnoyIndexSearchResult> {
         let mut search_k_mut = search_k;
         if search_k <=0{
             search_k_mut = n_results as i32 * (self.roots.len() as i32);
         }
 
-        let mut pq = Vec::<PQEntry::PQEntry>::with_capacity(self.roots.len() * (FLOAT32_SIZE as usize));
+        let mut pq = Vec::<PriorityQueueEntry>::with_capacity(self.roots.len() * (FLOAT32_SIZE as usize));
         for r in &self.roots {
-            pq.push(PQEntry::PQEntry::new(std::f32::MAX, *r));
+            pq.push(PriorityQueueEntry::new(std::f32::MAX, *r));
         }
 
         let mut nearest_neighbors = std::collections::HashSet::<i64>::new();
@@ -163,28 +171,28 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 }
             }
             else{
-                let margin = if self.index_type == IndexType::IndexType::Angular {cosine_margin_no_norm(v.as_slice(), query_vector)} else {euclidean_margin(v.as_slice(), query_vector, get_node_bias(self, top_node_offset))};
+                let margin = if self.index_type == IndexType::Angular {cosine_margin_no_norm(v.as_slice(), query_vector)} else {euclidean_margin(v.as_slice(), query_vector, get_node_bias(self, top_node_offset))};
                 let l_child = get_l_child_offset(&self.mmap, top_node_offset, self.node_size, self.index_type_offset);
                 let r_child = get_r_child_offset(&self.mmap, top_node_offset, self.node_size, self.index_type_offset);
-                pq.push(PQEntry::PQEntry{
+                pq.push(PriorityQueueEntry {
                     margin: top.margin.min(-margin),
                     node_offset: l_child,
                 });
-                pq.push(PQEntry::PQEntry{
+                pq.push(PriorityQueueEntry {
                     margin: top.margin.min(margin),
                     node_offset: r_child,
                 });
             }
         }
 
-        let mut sorted_nns:Vec<PQEntry::PQEntry> = Vec::new();
+        let mut sorted_nns:Vec<PriorityQueueEntry> = Vec::new();
         for nn in nearest_neighbors{
             let mut v = self.get_item_vector(nn);
             if !is_zero_vec(&v){
                 let param1 = v.as_slice();
                 let param2 = query_vector;
-                sorted_nns.push(PQEntry::PQEntry{
-                    margin: if self.index_type == IndexType::IndexType::Angular {cosine_distance(param1, param2)} else {euclidean_distance(param1, param2)},
+                sorted_nns.push(PriorityQueueEntry {
+                    margin: if self.index_type == IndexType::Angular {cosine_distance(param1, param2)} else {euclidean_distance(param1, param2)},
                     node_offset: nn,
                 });
             }
@@ -192,10 +200,10 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
         sorted_nns.sort_by(|a,b|a.margin.partial_cmp(&b.margin).unwrap());
 
-        let mut results: Vec<AnnoyIndexSearchResult::AnnoyIndexSearchResult> = Vec::with_capacity(n_results);
+        let mut results: Vec<AnnoyIndexSearchResult> = Vec::with_capacity(n_results);
         for i in 0..n_results{
             let nn = &sorted_nns[i];
-            results.push(AnnoyIndexSearchResult::AnnoyIndexSearchResult{
+            results.push(AnnoyIndexSearchResult{
                 id: nn.node_offset,
                 distance: if should_include_distance {nn.margin.sqrt()} else {0.0},
             });
