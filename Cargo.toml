@@ -1,0 +1,16 @@
+[package]
+name = "ru_annoy"
+version = "0.1.0"
+authors = ["hanabi1224"]
+license = "MIT"
+repository = "https://github.com/hanabi1224/RuAnnoy"
+description = """
+A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). Providing C api as well
+"""
+
+[dependencies]
+memmap = "0.6.2"
+
+
+[lib]
+crate-type = ["lib", "cdylib"]
