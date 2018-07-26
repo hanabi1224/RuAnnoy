@@ -147,7 +147,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         }
 
         let mut nearest_neighbors = std::collections::HashSet::<i64>::new();
-        while nearest_neighbors.len() < search_k as usize && !pq.is_empty(){
+        while nearest_neighbors.len() < search_k_mut as usize && !pq.is_empty(){
             pq.sort_by(|a, b| b.margin.partial_cmp(&a.margin).unwrap());
             let top = pq.remove(0);
             let top_node_offset = top.node_offset;
