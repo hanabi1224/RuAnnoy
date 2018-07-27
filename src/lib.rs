@@ -56,7 +56,7 @@ impl MmapExtensions for Mmap{
 }
 
 impl AnnoyIndex {
-    pub fn new(dimension: i32, index_file_path: &str, index_type: IndexType) -> AnnoyIndex {
+    pub fn load(dimension: i32, index_file_path: &str, index_type: IndexType) -> AnnoyIndex {
         let index_type_offset:i32 = if index_type == IndexType::Angular {4} else {8};
         let k_node_header_style:i32 = if index_type == IndexType::Angular {12} else {16};
         let min_leaf_size = dimension + 2;
