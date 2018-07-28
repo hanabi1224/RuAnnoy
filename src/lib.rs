@@ -1,3 +1,5 @@
+#![deny(warnings)]
+
 #[macro_use]
 mod macros;
 mod lib_impl;
