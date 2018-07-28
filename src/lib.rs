@@ -1,13 +1,23 @@
+#![deny(warnings)]
+
+#[macro_use]
+mod macros;
+mod lib_impl;
 mod annoy_index_search_result;
 mod pqentry;
+mod c_ffi;
 
+extern crate libc;
 extern crate memmap;
+
+pub use c_ffi::*;
+
+use lib_impl::MmapExtensions;
 
 use std::f32;
 use std::fs;
 use std::fs::{File};
 use std::vec::Vec;
-use std::mem;
 use memmap::{Mmap, MmapOptions};
 
 use pqentry::PriorityQueueEntry;
@@ -36,23 +46,6 @@ pub struct AnnoyIndex {
 pub trait AnnoyIndexSearchApi {
     fn get_item_vector(&self, item_index: i64) ->Vec<f32> ;
     fn get_nearest(&self, query_vector: &[f32], n_results: usize, search_k: i32, should_include_distance: bool) -> Vec<AnnoyIndexSearchResult>;
-}
-
-trait MmapExtensions{
-    fn read_i32(&self, idx: usize)->i32;
-    fn read_f32(&self, idx: usize)->f32;
-}
-
-impl MmapExtensions for Mmap{
-    fn read_i32(&self, idx: usize)->i32{
-        let array = [*&self[idx], *&self[idx+1],*&self[idx+2],*&self[idx+3]];
-        return unsafe { mem::transmute::<[u8;4],i32>(array) };
-    }
-
-    fn read_f32(&self, idx: usize)->f32{
-        let array = [*&self[idx], *&self[idx+1],*&self[idx+2],*&self[idx+3]];
-        return unsafe { mem::transmute::<[u8;4],f32>(array) };
-    }
 }
 
 impl AnnoyIndex {
