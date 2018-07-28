@@ -9,6 +9,7 @@ A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving 
 """
 
 [dependencies]
+libc = "0.2"
 memmap = "0.6.2"
 
 
