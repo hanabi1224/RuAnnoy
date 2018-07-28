@@ -28,8 +28,8 @@ const FLOAT32_SIZE:i32 = 4;
 
 #[derive(PartialEq)]
 pub enum IndexType {
-    Angular,
-    Euclidean,
+    Angular=0,
+    Euclidean=1,
 }
 
 pub struct AnnoyIndex {

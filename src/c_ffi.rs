@@ -1,25 +1,20 @@
 use super::AnnoyIndex;
+use super::IndexType;
 
-/*
-use libc::{c_char, size_t};
+use std::mem;
+use libc::c_char;
+use std::ffi::CStr;
 
 ffi_fn! {
-    fn load_annoy_index(path: *const u8, dimension: *const dim) -> *const AnnoyIndex {
-        let len = unsafe { CStr::from_ptr(pattern).to_bytes().len() };
-        let pat = pattern as *const u8;
-        let mut err = Error::new(ErrorKind::None);
-        let re = rure_compile(
-            pat, len, RURE_DEFAULT_FLAGS, ptr::null(), &mut err);
-        if err.is_err() {
-            let _ = writeln!(&mut io::stderr(), "{}", err);
-            let _ = writeln!(
-                &mut io::stderr(), "aborting from rure_compile_must");
-            unsafe { abort() }
-        }
-        re
+    fn load_annoy_index(path: *const c_char, dimension: *const i32, index_type: *const u8) -> *const AnnoyIndex {
+        let ru_dimension = unsafe {*dimension} ;
+        let c_str_path =  unsafe { CStr::from_ptr(path) };
+        let ru_path = c_str_path.to_str().unwrap();
+        let ru_index_type:IndexType = unsafe { mem::transmute(*index_type) };
+        let index = AnnoyIndex::load(ru_dimension, ru_path, ru_index_type);
+        return Box::into_raw(Box::new(index));
     }
 }
-*/
 
 ffi_fn! {
     fn free_annoy_index(index: *const AnnoyIndex){
