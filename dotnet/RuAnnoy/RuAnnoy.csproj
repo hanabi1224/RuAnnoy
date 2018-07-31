@@ -7,22 +7,6 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>RuAnnoy</PackageId>
-    <PackageVersion>0.0.1-gcs1</PackageVersion>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <BattaryFileDir>$(MSBuildProjectDirectory)\</BattaryFileDir>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="build.props">
-      <PackagePath>build\net45\$(PackageId).props</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Include="..\..\target\release\ru_annoy.dll">
-      <PackagePath>runtimes\win-x64\native\ru_annoy.dll</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
 
 </Project>
