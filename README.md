@@ -6,3 +6,18 @@
 ========
 
 This library is a rust port of https://github.com/spotify/annoy , currently only index serving part is implemented
+
+| Runtimes         | Nuget package |
+| ---------------  | ------------- |
+| RuAnnoy  | [![NuGet version](https://buildstats.info/nuget/RuAnnoy)](https://www.nuget.org/packages/RuAnnoy)  |
+| RuAnnoy-Batteries-Windows-x64  | [![NuGet version](https://buildstats.info/nuget/RuAnnoy-Batteries-Windows-x64)](https://www.nuget.org/packages/RuAnnoy-Batteries-Windows-x64)  |
+| RuAnnoy-Batteries-Linux-x64        | TODO  |
+| RuAnnoy-Batteries-Darwin-x64        | TODO  |
+
+# Installation
+```xml
+  <ItemGroup>
+    <PackageReference Include="RuAnnoy" />
+    <PackageReference Include="RuAnnoy-Batteries-Windows-x64" />
+  </ItemGroup>
+```
