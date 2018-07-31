@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace RuAnnoy
 {
     public class AnnoyIndex : IAnnoyIndex, IDisposable
     {
-        private readonly IntPtr _indexPtr;
+        private IntPtr _indexPtr;
 
         public AnnoyIndex(
             string path,
@@ -26,8 +28,13 @@ namespace RuAnnoy
             return new AnnoyIndex(path, dimension, type);
         }
 
-        public ReadOnlyMemory<float> GetItemVector(long itemIndex)
+        public IReadOnlyList<float> GetItemVector(long itemIndex)
         {
+            if (_indexPtr == IntPtr.Zero)
+            {
+                throw new ObjectDisposedException("index");
+            }
+
             var itemVectorPtr = NativeMethods.GetItemVector(_indexPtr, itemIndex);
             var itemVector = new float[Dimension];
             Marshal.Copy(itemVectorPtr, itemVector, 0, Dimension);
@@ -35,11 +42,16 @@ namespace RuAnnoy
         }
 
         public AnnoyIndexSearchResult GetNearest(
-            ReadOnlyMemory<float> queryVector,
+            IReadOnlyList<float> queryVector,
             ulong nResult,
             int searchK,
             bool shouldIncludeDistance)
         {
+            if (_indexPtr == IntPtr.Zero)
+            {
+                throw new ObjectDisposedException("index");
+            }
+
             var searchResultPtr = NativeMethods.GetNearest(
                   _indexPtr,
                   queryVector.ToArray(),
@@ -59,6 +71,7 @@ namespace RuAnnoy
         public void Dispose()
         {
             NativeMethods.FreeAnnoyIndex(_indexPtr);
+            _indexPtr = IntPtr.Zero;
         }
     }
 }
