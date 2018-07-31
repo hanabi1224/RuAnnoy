@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard2.0;</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>RuAnnoy-Batteries-Windows-x64</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="build.props">
+      <PackagePath>build\net45\$(PackageId).props</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="..\..\target\release\ru_annoy.dll">
+      <PackagePath>runtimes\win-x64\native\ru_annoy.dll</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+</Project>

@@ -42,8 +42,8 @@ ffi_fn! {
 #[repr(C)]
 pub struct AnnoyIndexSearchResult_FFI {
     pub count: size_t,
-    pub id_list: *const i64,
-    pub distance_list: *const f32,
+    pub id_list: Box<[i64]>,
+    pub distance_list: Box<[f32]>,
 }
 
 ffi_fn! {
@@ -58,7 +58,7 @@ ffi_fn! {
         let query_vector = unsafe { slice::from_raw_parts(query_vector_ptr, index.dimension as usize) };
         let results = index.get_nearest(query_vector, n_results, search_k, should_include_distance);
         let results_len = results.len();
-        let mut id_list:Vec<i64> = Vec::with_capacity(results_len);
+        let mut id_list = Vec::<i64>::with_capacity(results_len);
         let mut distance_list:Vec<f32> = Vec::with_capacity(results_len);
         for result in results{
             id_list.push(result.id);
@@ -67,8 +67,8 @@ ffi_fn! {
 
         let result_ffi = AnnoyIndexSearchResult_FFI{
             count: results_len,
-            id_list: id_list.as_ptr(),
-            distance_list: distance_list.as_ptr(),
+            id_list: id_list.into_boxed_slice(),
+            distance_list: distance_list.into_boxed_slice(),
         };
 
         return Box::into_raw(Box::new(result_ffi));;
@@ -78,5 +78,26 @@ ffi_fn! {
 ffi_fn! {
     fn free_search_result(search_result_ptr: *const AnnoyIndexSearchResult_FFI){
         unsafe { Box::from_raw(search_result_ptr as *mut AnnoyIndexSearchResult_FFI); }
+    }
+}
+
+ffi_fn! {
+    fn get_result_count(search_result_ptr: *const AnnoyIndexSearchResult_FFI) -> usize{
+        let search_result = unsafe{&*search_result_ptr};
+        return search_result.count;
+    }
+}
+
+ffi_fn! {
+    fn get_id_list(search_result_ptr: *const AnnoyIndexSearchResult_FFI)->*const i64{
+        let search_result = unsafe{&*search_result_ptr};
+        return search_result.id_list.as_ptr();
+    }
+}
+
+ffi_fn! {
+    fn get_distance_list(search_result_ptr: *const AnnoyIndexSearchResult_FFI)->*const f32{
+        let search_result = unsafe{&*search_result_ptr};
+        return search_result.distance_list.as_ptr();
     }
 }
