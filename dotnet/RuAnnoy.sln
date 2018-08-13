@@ -15,9 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Miscs", "Miscs", "{0AB1D95D
 		..\appveyor.yml = ..\appveyor.yml
 		Directory.Build.props = Directory.Build.props
 		..\README.md = ..\README.md
+		upload_nuget.sh = upload_nuget.sh
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuAnnoy-Batteries-Darwin.x64", "RuAnnoy-Batteries-Darwin-x64\RuAnnoy-Batteries-Darwin.x64.csproj", "{98D979A2-46DC-43D4-82F3-82AC0B689A99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuAnnoy-Batteries-Darwin-x64", "RuAnnoy-Batteries-Darwin-x64\RuAnnoy-Batteries-Darwin-x64.csproj", "{98D979A2-46DC-43D4-82F3-82AC0B689A99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
