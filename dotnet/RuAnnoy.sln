@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Miscs", "Miscs", "{0AB1D95D
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuAnnoy-Batteries-Darwin.x64", "RuAnnoy-Batteries-Darwin-x64\RuAnnoy-Batteries-Darwin.x64.csproj", "{98D979A2-46DC-43D4-82F3-82AC0B689A99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98D979A2-46DC-43D4-82F3-82AC0B689A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98D979A2-46DC-43D4-82F3-82AC0B689A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98D979A2-46DC-43D4-82F3-82AC0B689A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98D979A2-46DC-43D4-82F3-82AC0B689A99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
