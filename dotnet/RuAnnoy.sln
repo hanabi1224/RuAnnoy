@@ -7,6 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuAnnoy", "RuAnnoy\RuAnnoy.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuAnnoy-Batteries-Windows-x64", "RuAnnoy-Batteries-Windows-x64\RuAnnoy-Batteries-Windows-x64.csproj", "{4413AB46-50EC-467B-BEB7-7D7F1D816B62}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuAnnoy-Batteries-Linux-x64", "RuAnnoy-Batteries-Linux-x64\RuAnnoy-Batteries-Linux-x64.csproj", "{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Miscs", "Miscs", "{0AB1D95D-9CF2-4A1A-94C5-8B2D95CB87D6}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +28,10 @@ Global
 		{4413AB46-50EC-467B-BEB7-7D7F1D816B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4413AB46-50EC-467B-BEB7-7D7F1D816B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4413AB46-50EC-467B-BEB7-7D7F1D816B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB57E259-DFDA-42E3-B0D3-EEE00FC6A5F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

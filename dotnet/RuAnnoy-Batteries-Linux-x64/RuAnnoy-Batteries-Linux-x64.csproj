@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>RuAnnoy-Batteries-Linux-x64</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\target\release\libru_annoy.so">
+      <PackagePath>runtimes\linux\native\libru_annoy.so</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+</Project>

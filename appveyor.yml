@@ -1,22 +1,13 @@
-image: 
+image:
+  - ubuntu
   - Visual Studio 2017
 environment:
   matrix:
   - TARGET: x86_64-pc-windows-msvc
   #- TARGET: i686-pc-windows-msvc
   #- TARGET: i686-pc-windows-gnu
-install:
-  - ps: Start-FileDownload "https://static.rust-lang.org/dist/rust-nightly-${env:TARGET}.exe"
-  - rust-nightly-%TARGET%.exe /VERYSILENT /NORESTART /DIR="C:\Program Files (x86)\Rust"
-  - SET PATH=C:\Program Files (x86)\Rust\bin;C:\MinGW\bin;%PATH%
-  - rustc -V
-  - cargo -V
-build_script:
-  - cargo build --release
-  - dotnet build -c Release dotnet/RuAnnoy.sln
 test_script:
   - cargo test --release
-  #- dotnet test -c Release dotnet/RuAnnoy.sln
 branches:
   only:
     - master
@@ -28,3 +19,30 @@ deploy:
   provider: NuGet
   api_key:
     secure: nNWiXk+ZiOOh5sHV/C9Z9pqZ8GFpaQFqAR/P0/t09h81Ppx3xed6VsWd4w7FMn2R
+matrix:
+  fast_finish: true
+for:
+  -
+    matrix:
+      only:
+        - image: Ubuntu
+    install:
+      - curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - source $HOME/.cargo/env
+    build_script:
+      - cargo build --release
+      - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2017
+    install:
+      - ps: Start-FileDownload "https://static.rust-lang.org/dist/rust-nightly-${env:TARGET}.exe"
+      - rust-nightly-%TARGET%.exe /VERYSILENT /NORESTART /DIR="C:\Program Files (x86)\Rust"
+      - SET PATH=C:\Program Files (x86)\Rust\bin;C:\MinGW\bin;%PATH%
+      - rustc -V
+      - cargo -V
+    build_script:
+      - cargo build --release
+      - dotnet build -c Release dotnet/RuAnnoy/RuAnnoy.csproj
+      - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64/RuAnnoy-Batteries-Windows-x64.csproj
