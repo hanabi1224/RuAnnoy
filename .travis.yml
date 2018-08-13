@@ -7,6 +7,8 @@ os:
 env:
   - OSTAG=Darwin
   - OSTAG=Linux
+  #- NUGET_API_KEY:
+  #  - secure: 
 branches:
   only:
   - master
@@ -17,7 +19,7 @@ install:
 script:
   - cargo build --release
   - cargo test --release
-  - echo ${OSTAG}
+  - echo dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj
   - dotnet build -c Release dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj
 deploy:
   provider: script
