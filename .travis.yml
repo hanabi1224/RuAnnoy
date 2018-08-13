@@ -1,28 +1,24 @@
 language: csharp
 rust:
 - stable
-install:
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - source $HOME/.cargo/env
 branches:
   only:
   - master
+
+matrix:
+  include:
+    - os: osx
+      env: OSTAG=Darwin
+  include:
+    - os: linux
+      env: OSTAG=Linux
+
+install:
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - source $HOME/.cargo/env
 script:
   - cargo test --release
+  - dotnet build -c Release dotnet//RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj
+
 mono: none
 dotnet: "2.1.300"
-os:
- - osx
- - linux
-matrix:
-  fast_finish: true
-  include:
-  - os: osx
-  script:
-  - cargo test --release
-  - dotnet build -c Release dotnet//RuAnnoy-Batteries-Darwin-x64/RuAnnoy-Batteries-Darwin-x64.csproj
-  include:
-  - os: linux
-  script:
-  - cargo test --release
-  - dotnet build -c Release dotnet//RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
