@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>RuAnnoy-Batteries-Darwin-x64</PackageId>
+    <Version>0.1.0-pre1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\target\release\libru_annoy.dylib">
+      <PackagePath>runtimes\linux\native\libru_annoy.dylib</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+</Project>
