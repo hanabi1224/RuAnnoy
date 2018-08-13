@@ -22,6 +22,5 @@ matrix:
   exclude:
     - os: osx
       env: OSTAG=Linux
-  exclude:
     - os: linux
       env: OSTAG=Darwin
