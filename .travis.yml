@@ -19,9 +19,9 @@ script:
   - dotnet build -c Release dotnet//RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj
 
 matrix:
-  include:
+  exclude:
     - os: osx
-      env: OSTAG=Darwin
-  include:
-    - os: linux
       env: OSTAG=Linux
+  exclude:
+    - os: linux
+      env: OSTAG=Darwin
