@@ -15,6 +15,7 @@ install:
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
   - source $HOME/.cargo/env
 script:
+  - cargo build --release
   - cargo test --release
   - dotnet build -c Release dotnet//RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj
 
