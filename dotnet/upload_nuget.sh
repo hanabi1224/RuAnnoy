@@ -1,2 +1,2 @@
 dotnet --info
-nuget push ./dotnet/**/*.nupkg -Verbosity detailed -ApiKey ${NUGET_API_KEY}
+nuget push ${TRAVIS_BUILD_DIR}/dotnet/**/*.nupkg -Verbosity detailed -ApiKey ${NUGET_API_KEY}
