@@ -7,8 +7,13 @@ install:
 branches:
   only:
   - master
+script:
+  - cargo test --release
 mono: none
 dotnet: "2.1.300"
+os:
+ - osx
+ - linux
 matrix:
   fast_finish: true
   include:
