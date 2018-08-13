@@ -20,7 +20,7 @@ script:
 - cargo build --release
 - cargo test --release
 - echo dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj
-- dotnet build dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
+- dotnet build ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
 deploy:
   provider: script
   script: bash dotnet/upload_nuget.sh
