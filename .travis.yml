@@ -4,13 +4,9 @@ rust:
 install:
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
   - source $HOME/.cargo/env
-script:
-  - cargo test --release
 branches:
   only:
   - master
-os:
-  - linux
 mono: none
 dotnet: "2.1.300"
 matrix:
@@ -20,6 +16,8 @@ matrix:
   script:
   - cargo test --release
   - dotnet build -c Release dotnet//RuAnnoy-Batteries-Darwin-x64/RuAnnoy-Batteries-Darwin-x64.csproj
-  branches:
-  only:
-  - master
+  include:
+  - os: linux
+  script:
+  - cargo test --release
+  - dotnet build -c Release dotnet//RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
