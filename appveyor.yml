@@ -1,6 +1,6 @@
 image: 
-  - ubuntu
   - Visual Studio 2017
+  - ubuntu
 environment:
   matrix:
   - TARGET: x86_64-pc-windows-msvc
