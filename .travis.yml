@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 2.1.300
+dotnet: 2.1.302
 os:
 - osx
 - linux
@@ -23,10 +23,10 @@ script:
 deploy:
   skip_cleanup: true
   provider: script
-  script: bash ${TRAVIS_BUILD_DIR}/dotnet/upload_nuget.sh
-  on:
-    branch: master
-    os: osx
+  script: dotnet nuget push ${TRAVIS_BUILD_DIR}/dotnet/**/*.nupkg -k ${NUGET_API_KEY}
+  #on:
+  #  branch: master
+  #  os: osx
 matrix:
   exclude:
   - os: osx
