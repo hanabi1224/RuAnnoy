@@ -20,13 +20,14 @@ script:
 - cargo build --release
 - cargo test --release
 - dotnet build ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
+- cp ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/bin/Release/*.nupkg ${TRAVIS_BUILD_DIR}/artifacts/
 deploy:
   skip_cleanup: true
   provider: script
-  script: dotnet nuget push ${TRAVIS_BUILD_DIR}/dotnet/**/*.nupkg -k ${NUGET_API_KEY}
-  #on:
-  #  branch: master
-  #  os: osx
+  script: dotnet nuget push ${TRAVIS_BUILD_DIR}/artifacts/*.nupkg -k ${NUGET_API_KEY}
+  on:
+    branch: master
+    os: osx
 matrix:
   exclude:
   - os: osx
