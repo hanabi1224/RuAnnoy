@@ -21,10 +21,12 @@ script:
 - cargo test --release
 - dotnet build ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
 deploy:
+  skip_cleanup: true
   provider: script
   script: bash ${TRAVIS_BUILD_DIR}/dotnet/upload_nuget.sh
   on:
     branch: master
+    os: osx
 matrix:
   exclude:
   - os: osx
