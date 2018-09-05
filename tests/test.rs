@@ -26,4 +26,14 @@ mod tests {
 
         assert_eq!(2 + 3, 5);
     }
+
+    #[test]
+        fn hole_tests() {
+            let filepath = "tests/hole.10d.ann";
+            let index = AnnoyIndex::load(10,  filepath, IndexType::Angular);
+            let v1 = vec![ 0.10471842,  0.55223828,  0.44094049,  0.98384884,  0.22485616,  -0.79840456, -1.78999692, -1.11747558,  0.05733591,  1.35356555];
+            let nearest = index.get_nearest(v1.as_ref(), 100, -1, true);
+            assert_eq!(nearest.len(), 1);
+            assert_eq!(nearest[0].id, 1000);
+        }
 }

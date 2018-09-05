@@ -194,7 +194,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         sorted_nns.sort_by(|a,b|a.margin.partial_cmp(&b.margin).unwrap());
 
         let mut results: Vec<AnnoyIndexSearchResult> = Vec::with_capacity(n_results);
-        for i in 0..n_results{
+        for i in 0..n_results.min(sorted_nns.len()){
             let nn = &sorted_nns[i];
             results.push(AnnoyIndexSearchResult{
                 id: nn.node_offset,
