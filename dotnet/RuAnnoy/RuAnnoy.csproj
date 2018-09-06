@@ -7,6 +7,7 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>RuAnnoy</PackageId>
+    <Description>A dotnet binding of rust implementation of Annoy https://github.com/spotify/annoy (Only index serving part)</Description>
   </PropertyGroup>
 
 </Project>
