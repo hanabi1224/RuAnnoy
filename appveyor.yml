@@ -40,7 +40,7 @@ for:
     install:
       - ps: Start-FileDownload "https://win.rustup.rs/x86_64" -FileName "rustup-init.exe"
       - rustup-init.exe -y --default-toolchain %RUST_TOOL_CHAIN%
-      - SET PATH=C:\Program Files (x86)\Rust\bin;C:\MinGW\bin;%PATH%
+      - SET PATH=%USERPROFILE%\.cargo\bin;C:\MinGW\bin;%PATH%
       - rustc -V
       - cargo -V
     build_script:
