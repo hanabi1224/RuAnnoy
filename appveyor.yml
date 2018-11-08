@@ -38,9 +38,12 @@ for:
       only:
         - image: Visual Studio 2017
     install:
-      - ps: Start-FileDownload "https://win.rustup.rs/x86_64" -FileName "rustup-init.exe"
-      - rustup-init.exe -y --default-toolchain %RUST_TOOL_CHAIN%
-      - SET PATH=%USERPROFILE%\.cargo\bin;C:\MinGW\bin;%PATH%
+      - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+      - scoop install rustup
+      - refreshenv
+      #- SET PATH=%USERPROFILE%\scoop\apps\rustup\current\.cargo\bin;%PATH%
+      - rustup default %RUST_TOOL_CHAIN%
+      #- SET PATH=%USERPROFILE%\.cargo\bin;C:\MinGW\bin;%PATH%
       - rustc -V
       - cargo -V
     build_script:
