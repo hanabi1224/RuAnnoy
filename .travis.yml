@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 2.1.400
+dotnet: 2.1.500
 os:
 - osx
 - linux
@@ -16,6 +16,7 @@ branches:
 install:
 - curl https://sh.rustup.rs -sSf | sh -s -- -y
 - source $HOME/.cargo/env
+- rustup default stable
 script:
 - cargo build --release
 - cargo test --release
