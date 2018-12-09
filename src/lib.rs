@@ -2,17 +2,15 @@
 
 #[macro_use]
 mod macros;
+
 mod lib_impl;
 mod annoy_index_search_result;
 mod pqentry;
 mod c_ffi;
 
-extern crate libc;
-extern crate memmap;
+pub use crate::c_ffi::*;
 
-pub use c_ffi::*;
-
-use lib_impl::MmapExtensions;
+use crate::lib_impl::MmapExtensions;
 
 use std::f32;
 use std::fs;
@@ -20,8 +18,8 @@ use std::fs::{File};
 use std::vec::Vec;
 use memmap::{Mmap, MmapOptions};
 
-use pqentry::PriorityQueueEntry;
-use annoy_index_search_result::AnnoyIndexSearchResult;
+use crate::pqentry::PriorityQueueEntry;
+use crate::annoy_index_search_result::AnnoyIndexSearchResult;
 
 const INT32_SIZE:i32 = 4;
 const FLOAT32_SIZE:i32 = 4;
@@ -180,7 +178,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
         let mut sorted_nns:Vec<PriorityQueueEntry> = Vec::new();
         for nn in nearest_neighbors{
-            let mut v = self.get_item_vector(nn);
+            let v = self.get_item_vector(nn);
             if !is_zero_vec(&v){
                 let param1 = v.as_slice();
                 let param2 = query_vector;

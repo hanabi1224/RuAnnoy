@@ -1,5 +1,6 @@
 [package]
 name = "ru_annoy"
+edition = "2018"
 version = "0.1.0"
 authors = ["hanabi1224"]
 license = "MIT"

@@ -30,8 +30,10 @@ for:
     install:
       - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_TOOL_CHAIN}
       - source $HOME/.cargo/env
+      - rustup component add rustfmt-preview
     build_script:
       - cargo build --release
+      - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
   -
     matrix:
@@ -39,14 +41,16 @@ for:
         - image: Visual Studio 2017
     install:
       - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
-      - scoop install rustup
+      - scoop install rustup@1.14.0
       - refreshenv
       #- SET PATH=%USERPROFILE%\scoop\apps\rustup\current\.cargo\bin;%PATH%
       - rustup default %RUST_TOOL_CHAIN%
+      - rustup component add rustfmt-preview
       #- SET PATH=%USERPROFILE%\.cargo\bin;C:\MinGW\bin;%PATH%
       - rustc -V
       - cargo -V
     build_script:
       - cargo build --release
+      - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy/RuAnnoy.csproj
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64/RuAnnoy-Batteries-Windows-x64.csproj
