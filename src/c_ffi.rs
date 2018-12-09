@@ -1,10 +1,10 @@
-use super::IndexType;
 use super::AnnoyIndex;
 use super::AnnoyIndexSearchApi;
+use super::IndexType;
 
-use libc::{c_char,size_t};
-use std::mem;
+use libc::{c_char, size_t};
 use std::ffi::CStr;
+use std::mem;
 use std::slice;
 
 ffi_fn! {
