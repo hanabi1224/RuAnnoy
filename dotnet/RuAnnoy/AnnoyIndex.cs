@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace RuAnnoy
 {
-    public class AnnoyIndex : IAnnoyIndex, IDisposable
+    public class AnnoyIndex : DisposeBase, IAnnoyIndex
     {
         private IntPtr _indexPtr;
 
@@ -68,7 +68,7 @@ namespace RuAnnoy
             }
         }
 
-        public void Dispose()
+        protected override void DisposeResources()
         {
             NativeMethods.FreeAnnoyIndex(_indexPtr);
             _indexPtr = IntPtr.Zero;

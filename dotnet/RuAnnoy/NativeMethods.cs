@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace RuAnnoy
 {
-    internal class NativeMethods
+    internal static class NativeMethods
     {
         const string DLLPATH = @"ru_annoy";
 
