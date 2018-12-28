@@ -9,10 +9,12 @@ description = """
 A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). Providing C api as well
 """
 
-[dependencies]
-libc = "0.2"
-memmap = "0.7"
+[features]
+cffi = ["libc"]
 
+[dependencies]
+memmap = "0.7"
+libc = { version = "0.2", optional = true }
 
 [lib]
 crate-type = ["lib", "cdylib"]

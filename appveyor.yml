@@ -7,6 +7,7 @@ environment:
   #- RUST_TOOL_CHAIN: nightly
 test_script:
   - cargo test --release
+  - cargo test --release --features cffi
 branches:
   only:
     - master
@@ -30,9 +31,9 @@ for:
     install:
       - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_TOOL_CHAIN}
       - source $HOME/.cargo/env
-      - rustup component add rustfmt-preview
+      - rustup component add rustfmt
     build_script:
-      - cargo build --release
+      - cargo build --release --features cffi
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
   -
@@ -41,16 +42,16 @@ for:
         - image: Visual Studio 2017
     install:
       - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
-      - scoop install rustup@1.14.0
+      - scoop install rustup
       - refreshenv
       #- SET PATH=%USERPROFILE%\scoop\apps\rustup\current\.cargo\bin;%PATH%
       - rustup default %RUST_TOOL_CHAIN%
-      - rustup component add rustfmt-preview
+      - rustup component add rustfmt
       #- SET PATH=%USERPROFILE%\.cargo\bin;C:\MinGW\bin;%PATH%
       - rustc -V
       - cargo -V
     build_script:
-      - cargo build --release
+      - cargo build --release --features cffi
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy/RuAnnoy.csproj
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64/RuAnnoy-Batteries-Windows-x64.csproj

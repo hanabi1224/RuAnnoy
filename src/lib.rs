@@ -1,13 +1,18 @@
 #![deny(warnings)]
 
+#[cfg(feature = "cffi")]
 #[macro_use]
 mod macros;
 
-mod annoy_index_search_result;
+#[cfg(feature = "cffi")]
 mod c_ffi;
+
+mod annoy_index_search_result;
+
 mod lib_impl;
 mod pqentry;
 
+#[cfg(feature = "cffi")]
 pub use crate::c_ffi::*;
 
 use crate::lib_impl::MmapExtensions;

@@ -17,12 +17,14 @@ install:
 - curl https://sh.rustup.rs -sSf | sh -s -- -y
 - source $HOME/.cargo/env
 - rustup default stable
-- rustup component add rustfmt-preview
+- rustup component add rustfmt
 - cargo -V
 - rustc -V
 script:
 - cargo build --release
 - cargo test --release
+- cargo build --release --features cffi
+- cargo test --release --features cffi
 - cargo fmt --all -- --check
 - dotnet build ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
 - mkdir ${TRAVIS_BUILD_DIR}/artifacts/
