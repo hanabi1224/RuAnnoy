@@ -42,7 +42,7 @@ for:
         - image: Visual Studio 2017
     install:
       - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
-      - scoop install rustup@1.14.0
+      - scoop install rustup
       - refreshenv
       #- SET PATH=%USERPROFILE%\scoop\apps\rustup\current\.cargo\bin;%PATH%
       - rustup default %RUST_TOOL_CHAIN%
