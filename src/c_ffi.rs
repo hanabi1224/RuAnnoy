@@ -1,6 +1,6 @@
-use super::AnnoyIndex;
-use super::AnnoyIndexSearchApi;
-use super::IndexType;
+use crate::AnnoyIndex;
+use crate::AnnoyIndexSearchApi;
+use crate::IndexType;
 
 use libc::{c_char, size_t};
 use std::ffi::CStr;
