@@ -3,7 +3,7 @@ image:
   - Visual Studio 2017
 environment:
   matrix:
-  - RUST_TOOL_CHAIN: stable
+    - RUST_TOOL_CHAIN: stable
   #- RUST_TOOL_CHAIN: nightly
 test_script:
   - cargo test --release
@@ -17,15 +17,10 @@ artifacts:
   - path: '**\*.nupkg'
 nuget:
   disable_publish_on_pr: true
-deploy:
-  provider: NuGet
-  api_key:
-    secure: nNWiXk+ZiOOh5sHV/C9Z9pqZ8GFpaQFqAR/P0/t09h81Ppx3xed6VsWd4w7FMn2R
 matrix:
   fast_finish: true
 for:
-  -
-    matrix:
+  - matrix:
       only:
         - image: Ubuntu
     install:
@@ -36,8 +31,7 @@ for:
       - cargo build --release --features cffi
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
-  -
-    matrix:
+  - matrix:
       only:
         - image: Visual Studio 2017
     install:
@@ -55,3 +49,7 @@ for:
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy/RuAnnoy.csproj
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64/RuAnnoy-Batteries-Windows-x64.csproj
+    deploy:
+      provider: NuGet
+      api_key:
+        secure: nNWiXk+ZiOOh5sHV/C9Z9pqZ8GFpaQFqAR/P0/t09h81Ppx3xed6VsWd4w7FMn2R
