@@ -2,7 +2,8 @@
 
 [![Build Status](https://img.shields.io/travis/hanabi1224/RuAnnoy/master.svg)](https://travis-ci.org/hanabi1224/RuAnnoy)
 [![Build status](https://img.shields.io/appveyor/ci/hanabi1224/RuAnnoy/master.svg)](https://ci.appveyor.com/project/hanabi1224/RuAnnoy)
-![Crates.io](https://img.shields.io/crates/v/ru_annoy.svg)
+[![Crates.io](https://img.shields.io/crates/v/ru_annoy.svg)](https://crates.io/crates/ru_annoy)
+[![Coverage Status](https://coveralls.io/repos/github/hanabi1224/RuAnnoy/badge.svg?branch=master)](https://coveralls.io/github/hanabi1224/RuAnnoy?branch=master)
 [![MIT License](https://img.shields.io/github/license/hanabi1224/RuAnnoy.svg)](https://github.com/hanabi1224/RuAnnoy/blob/master/LICENSE)
 ========
 
