@@ -15,7 +15,11 @@ env:
 branches:
   only:
     - master
-cache: cargo
+cache:
+  directories:
+    - $HOME/.rustup/
+    - $HOME/.cargo/
+    - $HOME/.nuget/
 addons:
   apt:
     packages:
@@ -31,9 +35,6 @@ install:
   - source $HOME/.cargo/env
   - rustup default stable
   - rustup component add rustfmt
-  - cargo install cargo-update || echo "cargo-update already installed"
-  - cargo install cargo-travis || echo "cargo-travis already installed"
-  - cargo install-update -a # update outdated cached binaries
   - cargo -V
   - rustc -V
 script:
@@ -45,6 +46,9 @@ script:
   - dotnet build ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
   - mkdir ${TRAVIS_BUILD_DIR}/artifacts/
   - cp ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/bin/Release/*.nupkg ${TRAVIS_BUILD_DIR}/artifacts/
+  - cargo install cargo-update || echo "cargo-update already installed"
+  - cargo install cargo-travis || echo "cargo-travis already installed"
+  - cargo install-update -a # update outdated cached binaries
 after_success:
   # measure code coverage and upload to coveralls.io
   - cargo coveralls
