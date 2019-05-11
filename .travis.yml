@@ -15,7 +15,10 @@ env:
 branches:
   only:
     - master
-cache: cargo
+cache:
+  directories:
+    - $HOME/.cargo/
+    - $HOME/.nuget/
 addons:
   apt:
     packages:
