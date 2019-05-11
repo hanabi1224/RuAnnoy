@@ -34,9 +34,9 @@ install:
   - source $HOME/.cargo/env
   - rustup default stable
   - rustup component add rustfmt
-  - cargo install cargo-update || echo "cargo-update already installed"
+  #- cargo install cargo-update || echo "cargo-update already installed"
   - cargo install cargo-travis || echo "cargo-travis already installed"
-  - cargo install-update -a # update outdated cached binaries
+  #- cargo install-update -a # update outdated cached binaries
   - cargo -V
   - rustc -V
 script:
