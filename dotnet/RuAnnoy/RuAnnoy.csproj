@@ -10,4 +10,10 @@
     <Description>A dotnet binding of rust implementation of Annoy https://github.com/spotify/annoy (Only index serving part)</Description>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
 </Project>
