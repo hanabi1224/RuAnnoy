@@ -31,12 +31,16 @@ addons:
     sources:
       - kalakris-cmake
 install:
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - source $HOME/.cargo/env
-  - rustup default stable
-  - rustup component add rustfmt
-  - cargo -V
-  - rustc -V
+  curl https://raw.githubusercontent.com/indigo-dc/udocker/master/udocker.py > udocker
+  chmod u+rx ./udocker
+  ./udocker install
+  ./udocker pull rust
+  #- curl https://sh.rustup.rs -sSf | sh -s -- -y
+  #- source $HOME/.cargo/env
+  #- rustup default stable
+  #- rustup component add rustfmt
+  #- cargo -V
+  #- rustc -V
 script:
   - cargo build --release
   - cargo test --release
