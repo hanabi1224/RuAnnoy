@@ -42,7 +42,7 @@ install:
   #- cargo -V
   #- rustc -V
 script:
-  - ./udocker run --rm rust
+  - ./udocker run --rm -v $(pwd):/tmp/proj/ rust cargo build --release --manifest-path /tmp/proj/Cargo.toml
   - cargo build --release
   - cargo test --release
   - cargo build --release --features cffi
