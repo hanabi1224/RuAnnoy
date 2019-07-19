@@ -1,8 +1,8 @@
-language: csharp
+language: python
 sudo: required
 mono: none
 dist: xenial
-dotnet: 2.2.300
+#dotnet: 2.2.300
 os:
   - osx
   - linux
@@ -35,6 +35,7 @@ install:
   - chmod u+rx ./udocker
   - ./udocker install
   - ./udocker pull rust
+  - ./udocker pull mcr.microsoft.com/dotnet/core/sdk
   #- curl https://sh.rustup.rs -sSf | sh -s -- -y
   #- source $HOME/.cargo/env
   #- rustup default stable
@@ -42,7 +43,8 @@ install:
   #- cargo -V
   #- rustc -V
 script:
-  - ./udocker run --rm -v $(pwd):/tmp/proj/ rust cargo build --release --manifest-path /tmp/proj/Cargo.toml
+  - ./udocker run --rm -v $(pwd):/tmp/build/ rust cargo build --release --manifest-path /tmp/build/Cargo.toml
+  - ./udocker run --rm -v $(pwd):/tmp/build/ mcr.microsoft.com/dotnet/core/sdk dotnet build -c Release /tmp/build/dotnet/RuAnnoy
   - cargo build --release
   - cargo test --release
   - cargo build --release --features cffi
