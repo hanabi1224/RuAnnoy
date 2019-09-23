@@ -1,6 +1,6 @@
 image:
-  - ubuntu
-  - Visual Studio 2017
+  - Ubuntu
+  - Visual Studio 2019
 environment:
   matrix:
     - RUST_TOOL_CHAIN: stable
