@@ -5,6 +5,7 @@ environment:
   matrix:
     - RUST_TOOL_CHAIN: stable
   #- RUST_TOOL_CHAIN: nightly
+build: off
 test_script:
   - cargo test --release
   - cargo test --release --features cffi
