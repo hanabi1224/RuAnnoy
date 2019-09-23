@@ -1,6 +1,6 @@
 image:
-  - ubuntu
-  - Visual Studio 2017
+  - Ubuntu
+  - Visual Studio 2019
 environment:
   matrix:
     - RUST_TOOL_CHAIN: stable
@@ -36,7 +36,7 @@ for:
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
   - matrix:
       only:
-        - image: Visual Studio 2017
+        - image: Visual Studio 2019
     install:
       - ps: iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
       - scoop install rustup
