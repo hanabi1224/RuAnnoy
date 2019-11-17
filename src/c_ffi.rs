@@ -71,7 +71,7 @@ ffi_fn! {
             distance_list: distance_list.into_boxed_slice(),
         };
 
-        return Box::into_raw(Box::new(result_ffi));;
+        return Box::into_raw(Box::new(result_ffi));
     }
 }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace RuAnnoy
@@ -12,9 +11,9 @@ namespace RuAnnoy
 
         public int Count { get; private set; }
 
-        public IReadOnlyList<long> IdList { get; private set; }
+        public ReadOnlyMemory<long> IdList { get; private set; }
 
-        public IReadOnlyList<float> DistanceList { get; private set; }
+        public ReadOnlyMemory<float> DistanceList { get; private set; }
 
         internal static AnnoyIndexSearchResult LoadFromPtr(IntPtr searchResult)
         {

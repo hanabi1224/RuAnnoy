@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RuAnnoy
 {
-    public interface IAnnoyIndex
+    public interface IAnnoyIndex : IDisposable
     {
+        int Dimension { get; }
+
+        IReadOnlyList<float> GetItemVector(long itemIndex);
+
+        AnnoyIndexSearchResult GetNearest(
+            IReadOnlyList<float> queryVector,
+            ulong nResult,
+            int searchK,
+            bool shouldIncludeDistance);
     }
 }

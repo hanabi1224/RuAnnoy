@@ -55,4 +55,4 @@ for:
     deploy:
       provider: NuGet
       api_key:
-        secure: nNWiXk+ZiOOh5sHV/C9Z9pqZ8GFpaQFqAR/P0/t09h81Ppx3xed6VsWd4w7FMn2R
+        secure: rE/5DvmyqGe9RdSRHDF7HF0MZoQzhb84P9cipIK8uY4TPf1Fix+67biwICQ4qHDB
