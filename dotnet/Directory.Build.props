@@ -30,7 +30,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers" Version="3.*" Condition=" '$(OS)' == 'Windows_NT' ">
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.*">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.*">
