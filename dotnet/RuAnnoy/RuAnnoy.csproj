@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;</TargetFrameworks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,5 +16,9 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.*" />
+  </ItemGroup>
 
 </Project>
