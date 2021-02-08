@@ -4,7 +4,6 @@ image:
 environment:
   matrix:
     - RUST_TOOL_CHAIN: stable
-  #- RUST_TOOL_CHAIN: nightly
 test_script:
   - cargo test --release
   - cargo test --release --features cffi
@@ -55,4 +54,4 @@ for:
     deploy:
       provider: NuGet
       api_key:
-        secure: rE/5DvmyqGe9RdSRHDF7HF0MZoQzhb84P9cipIK8uY4TPf1Fix+67biwICQ4qHDB
+        secure: oAHIyS9ywws1FkW2wadKEGo3WLcNo41ERWTJFxkmKz4nZrE3KH28eJjkrRSQmWbN
