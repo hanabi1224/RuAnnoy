@@ -1,4 +1,4 @@
-use memmap::Mmap;
+use memmap2::Mmap;
 use std::mem;
 
 pub trait MmapExtensions {
