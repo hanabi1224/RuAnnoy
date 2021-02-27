@@ -17,7 +17,7 @@ pub use crate::c_ffi::*;
 
 use crate::lib_impl::MmapExtensions;
 
-use memmap::{Mmap, MmapOptions};
+use memmap2::{Mmap, MmapOptions};
 use std::f32;
 use std::fs;
 use std::fs::File;
