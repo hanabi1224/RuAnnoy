@@ -1,0 +1,46 @@
+name: main
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  setup:
+    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2
+  build-rust:
+    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Cargo Build
+        run: |
+          cargo build --release
+          cargo build --release --all-features
+      - name: Cargo Test
+        run: |
+          cargo test --release
+          cargo test --release --all-features
+  artifacts-dotnet:
+    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/upload-artifact@v2
+        with: 
+          path: dotnet/**/*.nupkg
+      - uses: actions/upload-artifact@v2
+        with: 
+          path: dotnet/**/*.snupkg
+  build-dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: dotnet Build & Test
+        run: | 
+          dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
+          dotnet test -c Release dotnet/RuAnnoy.Tests
+
+        
