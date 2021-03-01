@@ -79,26 +79,15 @@ pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
     return sum;
 }
 
-pub fn get_l_child_offset(
+pub fn get_nth_descendant_id(
     mmap: &Mmap,
     node_offset: i64,
-    node_size: i32,
     index_type_offset: i32,
+    n: usize,
 ) -> i64 {
-    let child_offset = node_offset as usize + index_type_offset as usize;
-    let child = mmap.read_i32(child_offset) as i64;
-    return node_size as i64 * child;
-}
-
-pub fn get_r_child_offset(
-    mmap: &Mmap,
-    node_offset: i64,
-    node_size: i32,
-    index_type_offset: i32,
-) -> i64 {
-    let child_offset = node_offset as usize + index_type_offset as usize + 4;
-    let child = mmap.read_i32(child_offset) as i64;
-    return node_size as i64 * child;
+    let child_offset = node_offset as usize + index_type_offset as usize + n * INT32_SIZE;
+    let child_id = mmap.read_i32(child_offset) as i64;
+    return child_id;
 }
 
 #[cfg(test)]

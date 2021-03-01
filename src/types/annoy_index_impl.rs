@@ -46,8 +46,8 @@ impl AnnoyIndex {
 
         // hacky fix: since the last root precedes the copy of all roots, delete it
         if roots.len() > 1
-            && get_l_child_offset(&mmap, *roots.first().unwrap(), node_size, index_type_offset)
-                == get_l_child_offset(&mmap, *roots.last().unwrap(), node_size, index_type_offset)
+            && get_nth_descendant_id(&mmap, *roots.first().unwrap(), index_type_offset, 0)
+                == get_nth_descendant_id(&mmap, *roots.last().unwrap(), index_type_offset, 0)
         {
             roots.pop();
         }
@@ -69,22 +69,24 @@ impl AnnoyIndex {
         return index;
     }
 
+    pub fn get_nth_descendant_id(&self, node_offset: i64, n: usize) -> i64 {
+        get_nth_descendant_id(&self.mmap, node_offset, self.index_type_offset, n)
+    }
+
+    pub fn get_l_child_id(&self, node_offset: i64) -> i64 {
+        self.get_nth_descendant_id(node_offset, 0)
+    }
+
     pub fn get_l_child_offset(&self, node_offset: i64) -> i64 {
-        get_l_child_offset(
-            &self.mmap,
-            node_offset,
-            self.node_size,
-            self.index_type_offset,
-        )
+        self.get_l_child_id(node_offset) * self.node_size as i64
+    }
+
+    pub fn get_r_child_id(&self, node_offset: i64) -> i64 {
+        self.get_nth_descendant_id(node_offset, 1)
     }
 
     pub fn get_r_child_offset(&self, node_offset: i64) -> i64 {
-        get_r_child_offset(
-            &self.mmap,
-            node_offset,
-            self.node_size,
-            self.index_type_offset,
-        )
+        self.get_r_child_id(node_offset) * self.node_size as i64
     }
 
     pub fn get_margin(&self, v1: &[f32], v2: &[f32], node_offset: usize) -> f32 {

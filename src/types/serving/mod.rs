@@ -116,8 +116,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                     nearest_neighbors.insert(top_node_id);
                 } else if n_descendants <= self.min_leaf_size {
                     for i in 0..n_descendants as usize {
-                        let j = self.mmap.read_i32(top_node_offset + i * INT32_SIZE) as usize;
-                        nearest_neighbors.insert(j);
+                        let child_id = self.get_nth_descendant_id(top_node_offset as i64, i);
+                        nearest_neighbors.insert(child_id as usize);
                     }
                 } else {
                     let v = get_node_vector(self, top_node_offset);
@@ -137,11 +137,6 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                     });
                     pq.sort_by(|a, b| a.margin.partial_cmp(&b.margin).unwrap());
                 }
-                eprintln!(
-                    "pq.len()={},nearest_neighbors.len()={}",
-                    pq.len(),
-                    nearest_neighbors.len()
-                );
             }
         }
 
