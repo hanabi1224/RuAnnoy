@@ -13,7 +13,7 @@ This library is a rust port of https://github.com/spotify/annoy , currently only
 ```rust
 use ru_annoy::*;
 
-let index = AnnoyIndex::load(10, "index.ann", IndexType::Angular);
+let index = AnnoyIndex::load(10, "index.ann", IndexType::Angular).unwrap();
 let v0 = index.get_item_vector(0);
 let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
 ```

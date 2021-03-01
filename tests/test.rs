@@ -3,8 +3,13 @@ mod tests {
     #[cfg(feature = "cffi")]
     use libc::c_char;
     use ru_annoy::*;
+    #[cfg(feature = "cffi")]
     use std::alloc::{alloc, Layout};
+    #[cfg(feature = "cffi")]
     use std::ffi::CString;
+    #[cfg(feature = "cffi")]
+    use std::ptr;
+    #[cfg(feature = "cffi")]
     use std::slice;
     use std::vec::Vec;
 
@@ -100,7 +105,7 @@ mod tests {
         expected_distance_list: &[f32],
     ) {
         let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
-        let index = AnnoyIndex::load(TEST_INDEX_DIM, &filepath, index_type);
+        let index = AnnoyIndex::load(TEST_INDEX_DIM, &filepath, index_type).unwrap();
         assert_eq!(index.get_item_vector(3), expected_item3_vec);
 
         let v0 = index.get_item_vector(0);
@@ -187,9 +192,20 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "cffi")]
+    fn invalid_index_cffi() {
+        let index_ptr = load_annoy_index(
+            CString::new("invalid_index.ann").unwrap().into_raw() as *const c_char,
+            TEST_INDEX_DIM,
+            IndexType::Angular as u8,
+        );
+        assert_eq!(index_ptr, ptr::null());
+    }
+
+    #[test]
     fn hole_tests() {
         let filepath = "tests/hole.10d.ann";
-        let index = AnnoyIndex::load(10, filepath, IndexType::Angular);
+        let index = AnnoyIndex::load(10, filepath, IndexType::Angular).unwrap();
         let v1 = vec![
             0.10471842,
             0.55223828,

@@ -1,13 +1,18 @@
 use super::utils::*;
+use super::{AnnoyIndex, IndexType};
 use crate::internals::mmap_ext::*;
-use crate::types::*;
 use memmap2::MmapOptions;
+use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::vec::Vec;
 
 impl AnnoyIndex {
-    pub fn load(dimension: i32, index_file_path: &str, index_type: IndexType) -> AnnoyIndex {
+    pub fn load(
+        dimension: i32,
+        index_file_path: &str,
+        index_type: IndexType,
+    ) -> Result<AnnoyIndex, Box<dyn Error>> {
         let (index_type_offset, k_node_header_style, max_descendants): (i32, i32, i32) =
             match index_type {
                 IndexType::Angular => (4, 12, 2),
@@ -15,21 +20,16 @@ impl AnnoyIndex {
                 IndexType::Manhattan => (8, 16, 2),
                 // IndexType::Hamming => (4, 12),
                 IndexType::Dot => (4, 16, 3),
-                _ => panic!("Not supported"),
+                _ => unimplemented!("Index type not supported"),
             };
 
         let min_leaf_size = dimension + max_descendants;
         let node_size = k_node_header_style + FLOAT32_SIZE as i32 * dimension;
-        let file = File::open(index_file_path)
-            .expect(format!("fail to open {}", index_file_path).as_str());
-        let file_metadata = fs::metadata(index_file_path).expect("failed to load file");
+        let file = File::open(index_file_path)?; // .expect(format!("fail to open {}", index_file_path).as_str());
+        let file_metadata = fs::metadata(index_file_path)?;
         let file_size = file_metadata.len() as i64;
         let node_count = file_size / node_size as i64;
-        let mmap = unsafe {
-            MmapOptions::new()
-                .map(&file)
-                .expect("failed to map the file")
-        };
+        let mmap = unsafe { MmapOptions::new().map(&file)? };
 
         let mut roots: Vec<i64> = Vec::new();
         let mut m: i32 = -1;
@@ -67,7 +67,7 @@ impl AnnoyIndex {
             degree: m,
         };
 
-        return index;
+        return Ok(index);
     }
 
     pub fn get_nth_descendant_id(&self, node_offset: i64, n: usize) -> i64 {
@@ -97,7 +97,7 @@ impl AnnoyIndex {
                 minkowski_margin(v1, v2, self.mmap.read_f32(node_offset + 4))
             }
             IndexType::Dot => dot_product(v1, v2) + self.mmap.read_f32(node_offset + 12).powi(2),
-            _ => panic!("Not supported"),
+            _ => unimplemented!("Index type not supported"),
         }
     }
 
@@ -107,7 +107,7 @@ impl AnnoyIndex {
             IndexType::Euclidean => euclidean_distance(v1, v2),
             IndexType::Manhattan => manhattan_distance(v1, v2),
             IndexType::Dot => -dot_product(v1, v2),
-            _ => panic!("Not supported"),
+            _ => unimplemented!("Index type not supported"),
         }
     }
 
