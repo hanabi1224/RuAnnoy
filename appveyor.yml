@@ -36,7 +36,9 @@ for:
     build_script:
       - cargo build --release --all-features
       - cargo fmt --all -- --check
-      - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
+      - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
+    test_script:
+      - dotnet test -c Release dotnet/RuAnnoy.Tests
   - matrix:
       only:
         - image: Visual Studio 2019
@@ -53,5 +55,7 @@ for:
     build_script:
       - cargo build --release --all-features
       - cargo fmt --all -- --check
-      - dotnet build -c Release dotnet/RuAnnoy/RuAnnoy.csproj
-      - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64/RuAnnoy-Batteries-Windows-x64.csproj
+      - dotnet build -c Release dotnet/RuAnnoy
+      - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64
+    test_script:
+      - dotnet test -c Release dotnet/RuAnnoy.Tests
