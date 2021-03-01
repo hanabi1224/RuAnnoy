@@ -10,7 +10,6 @@ use std::slice;
 
 ffi_fn! {
     fn load_annoy_index(path: *const c_char, dimension: i32, index_type: u8) -> *const AnnoyIndex {
-        //let ru_dimension = dimension;
         let c_str_path =  unsafe { CStr::from_ptr(path) };
         let ru_path = c_str_path.to_str().unwrap();
         let ru_index_type:IndexType = unsafe { mem::transmute(index_type) };
@@ -33,10 +32,11 @@ ffi_fn! {
 }
 
 ffi_fn! {
-    fn get_item_vector(index_ptr: *const AnnoyIndex, item_index: i64) -> *const f32{
+    fn get_item_vector(index_ptr: *const AnnoyIndex, item_index: i64, item_vector: *mut f32){
         let index = unsafe{&*index_ptr};
         let item_vec = index.get_item_vector(item_index);
-        return item_vec.as_ptr();
+        let ptr = item_vec.as_ptr();
+        unsafe { ptr.copy_to(item_vector, index.dimension as usize) };
     }
 }
 
@@ -58,6 +58,34 @@ ffi_fn! {
         let index = unsafe{&*index_ptr};
         let query_vector = unsafe { slice::from_raw_parts(query_vector_ptr, index.dimension as usize) };
         let results = index.get_nearest(query_vector, n_results, search_k, should_include_distance);
+        let results_len = results.len();
+        let mut id_list = Vec::<i64>::with_capacity(results_len);
+        let mut distance_list:Vec<f32> = Vec::with_capacity(results_len);
+        for result in results{
+            id_list.push(result.id);
+            distance_list.push(result.distance);
+        }
+
+        let result_ffi = AnnoyIndexSearchResult_FFI{
+            count: results_len,
+            id_list: id_list.into_boxed_slice(),
+            distance_list: distance_list.into_boxed_slice(),
+        };
+
+        return Box::into_raw(Box::new(result_ffi));
+    }
+}
+
+ffi_fn! {
+    fn get_nearest_to_item(
+        index_ptr: *const AnnoyIndex,
+        item_index: i64,
+        n_results: size_t,
+        search_k: i32,
+        should_include_distance: bool) -> *const AnnoyIndexSearchResult_FFI
+    {
+        let index = unsafe{&*index_ptr};
+        let results = index.get_nearest_to_item(item_index, n_results, search_k, should_include_distance);
         let results_len = results.len();
         let mut id_list = Vec::<i64>::with_capacity(results_len);
         let mut distance_list:Vec<f32> = Vec::with_capacity(results_len);

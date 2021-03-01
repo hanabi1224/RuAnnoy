@@ -7,6 +7,7 @@ environment:
 test_script:
   - cargo test --release
   - cargo test --release --all-features
+  - dotnet test -c Release dotnet/RuAnnoy.Tests
 branches:
   only:
     - master
@@ -37,8 +38,6 @@ for:
       - cargo build --release --all-features
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
-    test_script:
-      - dotnet test -c Release dotnet/RuAnnoy.Tests
   - matrix:
       only:
         - image: Visual Studio 2019
@@ -57,5 +56,3 @@ for:
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64
-    test_script:
-      - dotnet test -c Release dotnet/RuAnnoy.Tests

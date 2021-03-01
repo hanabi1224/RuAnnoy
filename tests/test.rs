@@ -1,6 +1,11 @@
 #[cfg(test)]
 mod tests {
-    use ru_annoy::{AnnoyIndex, AnnoyIndexSearchApi, IndexType};
+    #[cfg(feature = "cffi")]
+    use libc::c_char;
+    use ru_annoy::*;
+    use std::alloc::{alloc, Layout};
+    use std::ffi::CString;
+    use std::slice;
     use std::vec::Vec;
 
     const TEST_INDEX_DIM: i32 = 5;
@@ -115,6 +120,69 @@ mod tests {
             let a = distance_list[i];
             let b = expected_distance_list[i];
             assert!((a - b).abs() < 1e-5);
+        }
+
+        #[cfg(feature = "cffi")]
+        sanity_tests_inner_ffi(
+            index_type,
+            expected_item3_vec,
+            expected_id_list,
+            expected_distance_list,
+        );
+    }
+
+    #[cfg(feature = "cffi")]
+    fn sanity_tests_inner_ffi(
+        index_type: IndexType,
+        expected_item3_vec: &[f32],
+        expected_id_list: &[i64],
+        expected_distance_list: &[f32],
+    ) {
+        let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
+        let filepath_cstring = CString::new(filepath).unwrap();
+        unsafe {
+            let index = load_annoy_index(
+                filepath_cstring.into_raw() as *const c_char,
+                TEST_INDEX_DIM,
+                index_type as u8,
+            );
+            let dim = get_dimension(index);
+            assert_eq!(dim, TEST_INDEX_DIM);
+            let v3_raw = alloc(Layout::array::<f32>(dim as usize).unwrap()) as *mut f32;
+            get_item_vector(index, 3, v3_raw);
+            // let v3_raw = get_item_vector(index, 3);
+            let v3 = slice::from_raw_parts(v3_raw as *mut f32, dim as usize).to_vec();
+            assert_eq!(v3, expected_item3_vec);
+
+            let v0_raw = alloc(Layout::array::<f32>(dim as usize).unwrap()) as *mut f32;
+            get_item_vector(index, 0, v0_raw);
+            let _v0 = slice::from_raw_parts(v0_raw as *mut f32, dim as usize).to_vec();
+            // let v0_raw = get_item_vector(index, 0);
+            {
+                let nearest_raw = get_nearest(index, v0_raw, 5, -1, true);
+                let result_count = get_result_count(nearest_raw);
+                let id_list_raw = get_id_list(nearest_raw);
+                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                assert_eq!(id_list, expected_id_list);
+                let distance_list_raw = get_distance_list(nearest_raw);
+                let distance_list =
+                    slice::from_raw_parts(distance_list_raw as *mut f32, result_count).to_vec();
+                assert_eq!(distance_list, expected_distance_list);
+                free_search_result(nearest_raw);
+            }
+            {
+                let nearest_raw = get_nearest_to_item(index, 0, 5, -1, true);
+                let result_count = get_result_count(nearest_raw);
+                let id_list_raw = get_id_list(nearest_raw);
+                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                assert_eq!(id_list, expected_id_list);
+                let distance_list_raw = get_distance_list(nearest_raw);
+                let distance_list =
+                    slice::from_raw_parts(distance_list_raw as *mut f32, result_count).to_vec();
+                assert_eq!(distance_list, expected_distance_list);
+                free_search_result(nearest_raw);
+            }
+            free_annoy_index(index);
         }
     }
 

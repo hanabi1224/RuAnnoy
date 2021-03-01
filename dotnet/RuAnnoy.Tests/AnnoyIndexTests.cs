@@ -112,13 +112,22 @@ namespace RuAnnoy.Tests
             var path = $"index.{indexType.ToString().ToLowerInvariant()}.{TEST_INDEX_DIM}d.ann";
             var index = AnnoyIndex.Load(path, TEST_INDEX_DIM, indexType);
             index.Dimension.Should().Be(TEST_INDEX_DIM);
+
+            {
+                var nearest = index.GetNearestToItem(0, 5, -1, true);
+                nearest.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
+                nearest.DistanceList.ToArray().Should().BeEquivalentTo(expectedDistanceList.Select(_ => (float)_));
+            }
+
             var vector3 = index.GetItemVector(3);
             vector3.Should().BeEquivalentTo(expectedVector3.Select(_=>(float)_));
 
             var v0 = index.GetItemVector(0);
-            var nearest = index.GetNearest(v0, 5, -1, true);
-            nearest.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
-            nearest.DistanceList.ToArray().Should().BeEquivalentTo(expectedDistanceList.Select(_ => (float)_));
+            {
+                var nearest = index.GetNearest(v0, 5, -1, true);
+                nearest.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
+                nearest.DistanceList.ToArray().Should().BeEquivalentTo(expectedDistanceList.Select(_ => (float)_));
+            }
         }
     }
 }

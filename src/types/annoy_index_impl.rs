@@ -20,7 +20,8 @@ impl AnnoyIndex {
 
         let min_leaf_size = dimension + max_descendants;
         let node_size = k_node_header_style + FLOAT32_SIZE as i32 * dimension;
-        let file = File::open(index_file_path).expect("fail to open file");
+        let file = File::open(index_file_path)
+            .expect(format!("fail to open {}", index_file_path).as_str());
         let file_metadata = fs::metadata(index_file_path).expect("failed to load file");
         let file_size = file_metadata.len() as i64;
         let node_count = file_size / node_size as i64;

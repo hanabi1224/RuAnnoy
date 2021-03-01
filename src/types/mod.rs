@@ -14,7 +14,7 @@ pub struct AnnoyIndexSearchResult {
 }
 
 #[repr(u8)]
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum IndexType {
     Angular = 0,
     Euclidean = 1,

@@ -12,6 +12,13 @@ pub trait AnnoyIndexSearchApi {
         search_k: i32,
         should_include_distance: bool,
     ) -> Vec<AnnoyIndexSearchResult>;
+    fn get_nearest_to_item(
+        &self,
+        item_index: i64,
+        n_results: usize,
+        search_k: i32,
+        should_include_distance: bool,
+    ) -> Vec<AnnoyIndexSearchResult>;
 }
 
 impl AnnoyIndexSearchApi for AnnoyIndex {
@@ -19,68 +26,6 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         let node_offset = item_index as usize * self.node_size as usize;
         return get_node_vector(self, node_offset);
     }
-
-    /*
-    /// original code
-    void _get_all_nns(const T* v, size_t n, int search_k, vector<S>* result, vector<T>* distances) const {
-        Node* v_node = (Node *)alloca(_s);
-        D::template zero_value<Node>(v_node);
-        memcpy(v_node->v, v, sizeof(T) * _f);
-        D::init_node(v_node, _f);
-
-        std::priority_queue<pair<T, S> > q;
-
-        if (search_k == -1) {
-          search_k = n * _roots.size();
-        }
-
-        for (size_t i = 0; i < _roots.size(); i++) {
-          q.push(make_pair(Distance::template pq_initial_value<T>(), _roots[i]));
-        }
-
-        std::vector<S> nns;
-        while (nns.size() < (size_t)search_k && !q.empty()) {
-          const pair<T, S>& top = q.top();
-          T d = top.first;
-          S i = top.second;
-          Node* nd = _get(i);
-          q.pop();
-          if (nd->n_descendants == 1 && i < _n_items) {
-            nns.push_back(i);
-          } else if (nd->n_descendants <= _K) {
-            const S* dst = nd->children;
-            nns.insert(nns.end(), dst, &dst[nd->n_descendants]);
-          } else {
-            T margin = D::margin(nd, v, _f);
-            q.push(make_pair(D::pq_distance(d, margin, 1), static_cast<S>(nd->children[1])));
-            q.push(make_pair(D::pq_distance(d, margin, 0), static_cast<S>(nd->children[0])));
-          }
-        }
-
-        // Get distances for all items
-        // To avoid calculating distance multiple times for any items, sort by id
-        std::sort(nns.begin(), nns.end());
-        vector<pair<T, S> > nns_dist;
-        S last = -1;
-        for (size_t i = 0; i < nns.size(); i++) {
-          S j = nns[i];
-          if (j == last)
-            continue;
-          last = j;
-          if (_get(j)->n_descendants == 1)  // This is only to guard a really obscure case, #284
-            nns_dist.push_back(make_pair(D::distance(v_node, _get(j), _f), j));
-        }
-
-        size_t m = nns_dist.size();
-        size_t p = n < m ? n : m; // Return this many items
-        std::partial_sort(nns_dist.begin(), nns_dist.begin() + p, nns_dist.end());
-        for (size_t i = 0; i < p; i++) {
-          if (distances)
-            distances->push_back(D::normalized_distance(nns_dist[i].first));
-          result->push_back(nns_dist[i].second);
-        }
-      }
-    */
 
     fn get_nearest(
         &self,
@@ -169,6 +114,22 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             });
         }
         return results;
+    }
+
+    fn get_nearest_to_item(
+        &self,
+        item_index: i64,
+        n_results: usize,
+        search_k: i32,
+        should_include_distance: bool,
+    ) -> Vec<AnnoyIndexSearchResult> {
+        let item_vector = self.get_item_vector(item_index);
+        return self.get_nearest(
+            item_vector.as_slice(),
+            n_results,
+            search_k,
+            should_include_distance,
+        );
     }
 }
 
