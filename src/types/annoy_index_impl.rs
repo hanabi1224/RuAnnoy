@@ -8,20 +8,22 @@ use std::vec::Vec;
 
 impl AnnoyIndex {
     pub fn load(dimension: i32, index_file_path: &str, index_type: IndexType) -> AnnoyIndex {
-        let (index_type_offset, k_node_header_style): (i32, i32) = match index_type {
-            IndexType::Angular => (4, 12),
-            IndexType::Euclidean => (8, 16),
-            IndexType::Manhattan => (8, 16),
-            // IndexType::Hamming => (4, 12),
-            IndexType::Dot => (4, 16),
-            _ => panic!("Not supported"),
-        };
-        let min_leaf_size = dimension + 2;
-        let node_size = k_node_header_style as i64 + FLOAT32_SIZE as i64 * dimension as i64;
+        let (index_type_offset, k_node_header_style, max_descendants): (i32, i32, i32) =
+            match index_type {
+                IndexType::Angular => (4, 12, 2),
+                IndexType::Euclidean => (8, 16, 2),
+                IndexType::Manhattan => (8, 16, 2),
+                // IndexType::Hamming => (4, 12),
+                IndexType::Dot => (4, 16, 3),
+                _ => panic!("Not supported"),
+            };
+
+        let min_leaf_size = dimension + max_descendants;
+        let node_size = k_node_header_style + FLOAT32_SIZE as i32 * dimension;
         let file = File::open(index_file_path).expect("fail to open file");
         let file_metadata = fs::metadata(index_file_path).expect("failed to load file");
         let file_size = file_metadata.len() as i64;
-        let node_count = file_size / node_size;
+        let node_count = file_size / node_size as i64;
         let mmap = unsafe {
             MmapOptions::new()
                 .map(&file)
@@ -30,26 +32,24 @@ impl AnnoyIndex {
 
         let mut roots: Vec<i64> = Vec::new();
         let mut m: i32 = -1;
-        let mut i = file_size - node_size;
+        let mut i = file_size - node_size as i64;
         while i >= 0 {
-            let k = mmap.read_i32(i as usize);
-            if m == -1 || k == m {
+            let n_descendants = mmap.read_i32(i as usize);
+            if m == -1 || n_descendants == m {
                 roots.push(i);
-                m = k;
+                m = n_descendants;
             } else {
                 break;
             }
-
-            i -= node_size;
+            i -= node_size as i64;
         }
 
         // hacky fix: since the last root precedes the copy of all roots, delete it
         if roots.len() > 1
             && get_l_child_offset(&mmap, *roots.first().unwrap(), node_size, index_type_offset)
-                == get_r_child_offset(&mmap, *roots.last().unwrap(), node_size, index_type_offset)
+                == get_l_child_offset(&mmap, *roots.last().unwrap(), node_size, index_type_offset)
         {
-            let last_index = roots.len() - 1;
-            roots.remove(last_index);
+            roots.pop();
         }
 
         let index = AnnoyIndex {
@@ -60,10 +60,59 @@ impl AnnoyIndex {
             min_leaf_size: min_leaf_size,
             node_size: node_size,
             node_count: node_count as usize,
+            max_descendants: max_descendants,
             mmap: mmap,
             roots: roots,
+            degree: m,
         };
 
         return index;
+    }
+
+    pub fn get_l_child_offset(&self, node_offset: i64) -> i64 {
+        get_l_child_offset(
+            &self.mmap,
+            node_offset,
+            self.node_size,
+            self.index_type_offset,
+        )
+    }
+
+    pub fn get_r_child_offset(&self, node_offset: i64) -> i64 {
+        get_r_child_offset(
+            &self.mmap,
+            node_offset,
+            self.node_size,
+            self.index_type_offset,
+        )
+    }
+
+    pub fn get_margin(&self, v1: &[f32], v2: &[f32], node_offset: usize) -> f32 {
+        match self.index_type {
+            IndexType::Angular => dot_product(v1, v2),
+            IndexType::Euclidean | IndexType::Manhattan => {
+                minkowski_margin(v1, v2, self.mmap.read_f32(node_offset + 4))
+            }
+            IndexType::Dot => dot_product(v1, v2) + self.mmap.read_f32(node_offset + 12).powi(2),
+            _ => panic!("Not supported"),
+        }
+    }
+
+    pub fn get_distance_no_norm(&self, v1: &[f32], v2: &[f32]) -> f32 {
+        match self.index_type {
+            IndexType::Angular => cosine_distance(v1, v2),
+            IndexType::Euclidean => euclidean_distance(v1, v2),
+            IndexType::Manhattan => manhattan_distance(v1, v2),
+            IndexType::Dot => -dot_product(v1, v2),
+            _ => panic!("Not supported"),
+        }
+    }
+
+    pub fn normalized_distance(&self, d: f32) -> f32 {
+        match self.index_type {
+            IndexType::Angular | IndexType::Euclidean => d.sqrt(),
+            IndexType::Dot => -d,
+            _ => d,
+        }
     }
 }

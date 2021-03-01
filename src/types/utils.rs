@@ -4,15 +4,14 @@ use memmap2::Mmap;
 pub const INT32_SIZE: usize = 4;
 pub const FLOAT32_SIZE: usize = 4;
 
-pub fn is_zero_vec(v: &Vec<f32>) -> bool {
-    for item in v {
-        if *item != 0.0 {
-            return false;
-        }
-    }
-
-    return true;
-}
+// pub fn is_zero_vec(v: &Vec<f32>) -> bool {
+//     for item in v {
+//         if *item != 0.0 {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
 
 pub fn minkowski_margin(u: &[f32], v: &[f32], bias: f32) -> f32 {
     return bias + dot_product(u, v);
@@ -69,7 +68,7 @@ pub fn euclidean_distance(u: &[f32], v: &[f32]) -> f32 {
     for i in 0..u.len() {
         sum += (u[i] - v[i]).powi(2);
     }
-    return sum.sqrt();
+    return sum;
 }
 
 pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
@@ -82,24 +81,24 @@ pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
 
 pub fn get_l_child_offset(
     mmap: &Mmap,
-    top_node_offset: i64,
-    node_size: i64,
+    node_offset: i64,
+    node_size: i32,
     index_type_offset: i32,
 ) -> i64 {
-    let child_offset = top_node_offset as usize + index_type_offset as usize;
+    let child_offset = node_offset as usize + index_type_offset as usize;
     let child = mmap.read_i32(child_offset) as i64;
-    return node_size * child;
+    return node_size as i64 * child;
 }
 
 pub fn get_r_child_offset(
     mmap: &Mmap,
-    top_node_offset: i64,
-    node_size: i64,
+    node_offset: i64,
+    node_size: i32,
     index_type_offset: i32,
 ) -> i64 {
-    let child_offset = top_node_offset as usize + index_type_offset as usize + 4;
+    let child_offset = node_offset as usize + index_type_offset as usize + 4;
     let child = mmap.read_i32(child_offset) as i64;
-    return node_size * child;
+    return node_size as i64 * child;
 }
 
 #[cfg(test)]
@@ -166,7 +165,7 @@ mod tests {
                 0.3780410885810852,
             ],
         );
-        assert_eq!(r, 0.9348742961883545);
+        assert_eq!(r.sqrt(), 0.9348742961883545);
     }
 
     #[test]
