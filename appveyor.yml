@@ -6,7 +6,7 @@ environment:
     - RUST_TOOL_CHAIN: stable
 test_script:
   - cargo test --release
-  - cargo test --release --features cffi
+  - cargo test --release --all-features
 branches:
   only:
     - master
@@ -34,7 +34,7 @@ for:
       - source $HOME/.cargo/env
       - rustup component add rustfmt
     build_script:
-      - cargo build --release --features cffi
+      - cargo build --release --all-features
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64/RuAnnoy-Batteries-Linux-x64.csproj
   - matrix:
@@ -51,7 +51,7 @@ for:
       - rustc -V
       - cargo -V
     build_script:
-      - cargo build --release --features cffi
+      - cargo build --release --all-features
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy/RuAnnoy.csproj
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64/RuAnnoy-Batteries-Windows-x64.csproj

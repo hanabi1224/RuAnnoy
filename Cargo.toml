@@ -4,10 +4,11 @@ description = """
 A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). Providing C api as well
 """
 edition = "2018"
+exclude = ["dotnet", "test_gen", ".idea", ".vscode", "*.yml", "*.iml", ".gitignore"]
 license = "MIT"
 name = "ru_annoy"
 repository = "https://github.com/hanabi1224/RuAnnoy"
-version = "0.1.1"
+version = "0.1.2"
 
 [features]
 cffi = ["libc"]

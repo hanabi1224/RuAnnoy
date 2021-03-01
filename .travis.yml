@@ -40,8 +40,8 @@ install:
 script:
   - cargo build --release
   - cargo test --release
-  - cargo build --release --features cffi
-  - cargo test --release --features cffi
+  - cargo build --release --all-features
+  - cargo test --release --all-features
   - cargo fmt --all -- --check
   - dotnet build ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/RuAnnoy-Batteries-${OSTAG}-x64.csproj -c Release
   - mkdir ${TRAVIS_BUILD_DIR}/artifacts/
