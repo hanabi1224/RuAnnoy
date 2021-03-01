@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Content Include="..\..\target\release\libru_annoy.dylib">
-      <PackagePath>runtimes\linux\native\libru_annoy.dylib</PackagePath>
+      <PackagePath>runtimes\osx-x64\native\libru_annoy.dylib</PackagePath>
       <Pack>true</Pack>
     </Content>
   </ItemGroup>
