@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Content Include="..\..\target\release\libru_annoy.so">
-      <PackagePath>runtimes\linux\native\libru_annoy.so</PackagePath>
+      <PackagePath>runtimes\linux-x64\native\libru_annoy.so</PackagePath>
       <Pack>true</Pack>
     </Content>
   </ItemGroup>

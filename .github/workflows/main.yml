@@ -2,22 +2,27 @@ name: main
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  setup:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions-rs/toolchain@v1
+      - name: Install latest stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
       - uses: actions/checkout@v2
-  build-rust:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
       - name: Cargo Build
         run: |
           cargo build --release
@@ -26,21 +31,26 @@ jobs:
         run: |
           cargo test --release
           cargo test --release --all-features
-  artifacts-dotnet:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - uses: actions/upload-artifact@v2
-        with: 
-          path: dotnet/**/*.nupkg
-      - uses: actions/upload-artifact@v2
-        with: 
-          path: dotnet/**/*.snupkg
-  build-dotnet:
-    runs-on: ubuntu-latest
-    steps:
-      - name: dotnet Build & Test
-        run: | 
-          dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
+      - name: dotnet Test
+        run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
-
-        
+      - name: dotnet Build - Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
+      - name: dotnet Build - OSX
+        if: matrix.os == 'macos-latest'
+        run: |
+          dotnet build -c Release dotnet/RuAnnoy-Batteries-Darwin-x64
+      - name: dotnet Build - Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64
+          dotnet build -c Release dotnet/RuAnnoy
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dotnet/**/*.nupkg
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dotnet/**/*.snupkg

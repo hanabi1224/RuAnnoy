@@ -9,12 +9,11 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>RuAnnoy-Batteries-Darwin-x64</PackageId>
-    <Version>0.1.0-pre1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="..\..\target\release\libru_annoy.dylib">
-      <PackagePath>runtimes\linux\native\libru_annoy.dylib</PackagePath>
+      <PackagePath>runtimes\osx-x64\native\libru_annoy.dylib</PackagePath>
       <Pack>true</Pack>
     </Content>
   </ItemGroup>

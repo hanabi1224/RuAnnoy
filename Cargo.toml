@@ -4,7 +4,7 @@ description = """
 A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). Providing C api as well
 """
 edition = "2018"
-exclude = ["dotnet", "test_gen", ".idea", ".vscode", "*.yml", "*.iml", ".gitignore"]
+exclude = ["dotnet", "test_gen", ".idea", ".vscode", ".github", "*.yml", "*.iml", ".gitignore"]
 license = "MIT"
 name = "ru_annoy"
 repository = "https://github.com/hanabi1224/RuAnnoy"
