@@ -15,7 +15,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>true</Visible>
     </Content>
-    <Content Include="../../target/release/ru_annoy.*">
+    <Content Include="../../target/release/ru_annoy.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>true</Visible>
+    </Content>
+    <Content Include="../../target/release/libru_annoy.*" Condition=" '$(OS)' != 'Windows_NT' ">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>true</Visible>
