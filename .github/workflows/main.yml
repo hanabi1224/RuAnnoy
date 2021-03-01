@@ -39,7 +39,7 @@ jobs:
         run: |
           dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
       - name: dotnet Build - OSX
-        if: matrix.os == 'macox-latest'
+        if: matrix.os == 'macos-latest'
         run: |
           dotnet build -c Release dotnet/RuAnnoy-Batteries-Darwin-x64
       - name: dotnet Build - Windows
