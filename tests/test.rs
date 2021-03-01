@@ -1,67 +1,211 @@
 #[cfg(test)]
 mod tests {
-    extern crate ru_annoy;
-    use self::ru_annoy::{AnnoyIndex, AnnoyIndexSearchApi, IndexType};
-
+    #[cfg(feature = "cffi")]
+    use libc::c_char;
+    use ru_annoy::*;
+    #[cfg(feature = "cffi")]
+    use std::alloc::{alloc, Layout};
+    #[cfg(feature = "cffi")]
+    use std::ffi::CString;
+    #[cfg(feature = "cffi")]
+    use std::ptr;
+    #[cfg(feature = "cffi")]
+    use std::slice;
     use std::vec::Vec;
 
-    #[test]
-    fn sanity_tests() {
-        let filepath = "tests/test.10d.ann";
-        let index = AnnoyIndex::load(10, filepath, IndexType::Angular);
-        assert_eq!(
-            index.get_item_vector(0),
-            [
-                -0.49093127250671387,
-                0.11732950061559677,
-                -0.9871269464492798,
-                -0.7244759798049927,
-                0.38621339201927185,
-                0.17796599864959717,
-                1.3940260410308838,
-                -0.12950724363327026,
-                0.2716858386993408,
-                -0.5863288640975952
-            ]
-        );
-        assert_eq!(
-            index.get_item_vector(4),
-            [
-                -0.3540892004966736,
-                -0.6328534483909607,
-                0.08625798672437668,
-                0.7626655101776123,
-                0.6639019846916199,
-                -1.295175313949585,
-                1.5552952289581299,
-                1.4021003246307373,
-                0.41959965229034424,
-                -0.7930657863616943
-            ]
-        );
+    const TEST_INDEX_DIM: i32 = 5;
+    const TEST_NODE_COUNT: usize = 100;
 
-        let v1 = index.get_item_vector(1);
-        let nearest = index.get_nearest(v1.as_ref(), 5, -1, true);
+    #[test]
+    fn sanity_tests_angular() {
+        sanity_tests_inner(
+            IndexType::Angular,
+            &[
+                -0.38846132159233093,
+                0.8791206479072571,
+                0.05800916627049446,
+                0.8664266467094421,
+                0.40251824259757996,
+            ],
+            &[0, 4, 37, 61, 29],
+            &[0.0, 0.41608825, 0.5517523, 0.7342095, 0.7592962],
+        );
+    }
+
+    #[test]
+    fn sanity_tests_euclidean() {
+        sanity_tests_inner(
+            IndexType::Euclidean,
+            &[
+                1.5223065614700317,
+                -1.5206894874572754,
+                0.22699929773807526,
+                0.40814927220344543,
+                0.6402528285980225,
+            ],
+            &[0, 84, 16, 20, 49],
+            &[
+                0.0,
+                0.9348742961883545,
+                1.047611,
+                1.1051676273345947,
+                1.1057792901992798,
+            ],
+        );
+    }
+
+    #[test]
+    fn sanity_tests_manhattan() {
+        sanity_tests_inner(
+            IndexType::Manhattan,
+            &[
+                -0.794453501701355,
+                0.9076822996139526,
+                1.8164416551589966,
+                -0.7839958071708679,
+                -0.655002236366272,
+            ],
+            &[0, 34, 89, 83, 41],
+            &[
+                0.0,
+                1.6835994720458984,
+                1.7976360321044922,
+                2.139925003051758,
+                2.144656181335449,
+            ],
+        );
+    }
+
+    #[test]
+    fn sanity_tests_dot() {
+        sanity_tests_inner(
+            IndexType::Dot,
+            &[
+                -1.2958463430404663,
+                0.26883116364479065,
+                0.4247128665447235,
+                0.47918426990509033,
+                0.5626800656318665,
+            ],
+            &[42, 89, 0, 40, 67],
+            &[
+                3.553952693939209,
+                3.5382423400878906,
+                3.151576042175293,
+                3.045288324356079,
+                2.7035549,
+            ],
+        );
+    }
+
+    fn sanity_tests_inner(
+        index_type: IndexType,
+        expected_item3_vec: &[f32],
+        expected_id_list: &[i64],
+        expected_distance_list: &[f32],
+    ) {
+        let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
+        let index = AnnoyIndex::load(TEST_INDEX_DIM, &filepath, index_type).unwrap();
+        assert_eq!(index.get_item_vector(3), expected_item3_vec);
+
+        let v0 = index.get_item_vector(0);
+        let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
         let mut id_list: Vec<i64> = Vec::new();
         let mut distance_list: Vec<f32> = Vec::new();
-        for item in nearest {
+        for item in &nearest {
             id_list.push(item.id);
             distance_list.push(item.distance);
         }
 
-        assert_eq!(id_list, [1, 19, 3, 62, 77]);
-        assert_eq!(
-            distance_list,
-            [0.0, 0.7615587, 0.8742371, 1.0227013, 1.04167736]
-        );
+        assert_eq!(index.degree as usize, TEST_NODE_COUNT);
+        assert_eq!(id_list, expected_id_list);
+        assert_eq!(distance_list, expected_distance_list);
+        assert_eq!(distance_list.len(), expected_distance_list.len());
+        for i in 0..distance_list.len() {
+            let a = distance_list[i];
+            let b = expected_distance_list[i];
+            assert!((a - b).abs() < 1e-5);
+        }
 
-        assert_eq!(2 + 3, 5);
+        #[cfg(feature = "cffi")]
+        sanity_tests_inner_ffi(
+            index_type,
+            expected_item3_vec,
+            expected_id_list,
+            expected_distance_list,
+        );
+    }
+
+    #[cfg(feature = "cffi")]
+    fn sanity_tests_inner_ffi(
+        index_type: IndexType,
+        expected_item3_vec: &[f32],
+        expected_id_list: &[i64],
+        expected_distance_list: &[f32],
+    ) {
+        let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
+        let filepath_cstring = CString::new(filepath).unwrap();
+        unsafe {
+            let index = load_annoy_index(
+                filepath_cstring.into_raw() as *const c_char,
+                TEST_INDEX_DIM,
+                index_type as u8,
+            );
+            let dim = get_dimension(index);
+            assert_eq!(dim, TEST_INDEX_DIM);
+            let v3_raw = alloc(Layout::array::<f32>(dim as usize).unwrap()) as *mut f32;
+            get_item_vector(index, 3, v3_raw);
+            // let v3_raw = get_item_vector(index, 3);
+            let v3 = slice::from_raw_parts(v3_raw as *mut f32, dim as usize).to_vec();
+            assert_eq!(v3, expected_item3_vec);
+
+            let v0_raw = alloc(Layout::array::<f32>(dim as usize).unwrap()) as *mut f32;
+            get_item_vector(index, 0, v0_raw);
+            let _v0 = slice::from_raw_parts(v0_raw as *mut f32, dim as usize).to_vec();
+            // let v0_raw = get_item_vector(index, 0);
+            {
+                let nearest_raw = get_nearest(index, v0_raw, 5, -1, true);
+                let result_count = get_result_count(nearest_raw);
+                let id_list_raw = get_id_list(nearest_raw);
+                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                assert_eq!(id_list, expected_id_list);
+                let distance_list_raw = get_distance_list(nearest_raw);
+                let distance_list =
+                    slice::from_raw_parts(distance_list_raw as *mut f32, result_count).to_vec();
+                assert_eq!(distance_list, expected_distance_list);
+                free_search_result(nearest_raw);
+            }
+            {
+                let nearest_raw = get_nearest_to_item(index, 0, 5, -1, true);
+                let result_count = get_result_count(nearest_raw);
+                let id_list_raw = get_id_list(nearest_raw);
+                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                assert_eq!(id_list, expected_id_list);
+                let distance_list_raw = get_distance_list(nearest_raw);
+                let distance_list =
+                    slice::from_raw_parts(distance_list_raw as *mut f32, result_count).to_vec();
+                assert_eq!(distance_list, expected_distance_list);
+                free_search_result(nearest_raw);
+            }
+            free_annoy_index(index);
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "cffi")]
+    fn invalid_index_cffi() {
+        let index_ptr = load_annoy_index(
+            CString::new("invalid_index.ann").unwrap().into_raw() as *const c_char,
+            TEST_INDEX_DIM,
+            IndexType::Angular as u8,
+        );
+        assert_eq!(index_ptr, ptr::null());
     }
 
     #[test]
     fn hole_tests() {
         let filepath = "tests/hole.10d.ann";
-        let index = AnnoyIndex::load(10, filepath, IndexType::Angular);
+        let index = AnnoyIndex::load(10, filepath, IndexType::Angular).unwrap();
         let v1 = vec![
             0.10471842,
             0.55223828,

@@ -35,9 +35,8 @@ namespace RuAnnoy
                 throw new ObjectDisposedException("index");
             }
 
-            var itemVectorPtr = NativeMethods.GetItemVector(_indexPtr, itemIndex);
             var itemVector = new float[Dimension];
-            Marshal.Copy(itemVectorPtr, itemVector, 0, Dimension);
+            NativeMethods.GetItemVector(_indexPtr, itemIndex, itemVector);
             return itemVector;
         }
 
@@ -55,6 +54,33 @@ namespace RuAnnoy
             var searchResultPtr = NativeMethods.GetNearest(
                   _indexPtr,
                   queryVector.ToArray(),
+                  new UIntPtr(nResult),
+                  searchK,
+                  shouldIncludeDistance);
+            try
+            {
+                return AnnoyIndexSearchResult.LoadFromPtr(searchResultPtr);
+            }
+            finally
+            {
+                NativeMethods.FreeSearchResult(searchResultPtr);
+            }
+        }
+
+        public AnnoyIndexSearchResult GetNearestToItem(
+            long itemIndex,
+            ulong nResult,
+            int searchK,
+            bool shouldIncludeDistance)
+        {
+            if (_indexPtr == IntPtr.Zero)
+            {
+                throw new ObjectDisposedException("index");
+            }
+
+            var searchResultPtr = NativeMethods.GetNearestToItem(
+                  _indexPtr,
+                  itemIndex,
                   new UIntPtr(nResult),
                   searchK,
                   shouldIncludeDistance);
