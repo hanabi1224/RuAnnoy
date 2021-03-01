@@ -1,8 +1,6 @@
 #[cfg(test)]
 mod tests {
-    extern crate ru_annoy;
-    use self::ru_annoy::{AnnoyIndex, AnnoyIndexSearchApi, IndexType};
-
+    use ru_annoy::{AnnoyIndex, AnnoyIndexSearchApi, IndexType};
     use std::vec::Vec;
 
     #[test]

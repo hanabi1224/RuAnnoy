@@ -1,6 +1,7 @@
-use crate::AnnoyIndex;
-use crate::AnnoyIndexSearchApi;
-use crate::IndexType;
+#[macro_use]
+mod macros;
+
+use crate::types::*;
 
 use libc::{c_char, size_t};
 use std::ffi::CStr;
