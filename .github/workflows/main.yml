@@ -38,7 +38,7 @@ jobs:
         with:
           arguments: test
           build-root-directory: java
-          wrapper-directory: java/gradle/wrapper
+          wrapper-directory: java
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
