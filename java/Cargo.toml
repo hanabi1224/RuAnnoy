@@ -1,0 +1,18 @@
+[package]
+authors = ["hanabi1224"]
+description = """
+Java bindings to ru_annoy.
+"""
+edition = "2018"
+license = "MIT"
+name = "ru_annoy_jni"
+repository = "https://github.com/hanabi1224/RuAnnoy"
+version = "0.1.0"
+
+[dependencies]
+jni = "0"
+libc = "0"
+ru_annoy = {path = "../", version = "0"}
+
+[lib]
+crate-type = ["cdylib"]
