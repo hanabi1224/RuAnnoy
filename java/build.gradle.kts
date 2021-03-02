@@ -38,3 +38,12 @@ dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     // api("org.apache.commons:commons-math3:3.6.1")
 }
+
+tasks.register<Exec>("cargo-build") {
+    workingDir(".")
+    executable("cargo")
+    args("build", "--release", "--all-features")
+}
+
+tasks.named("build") { dependsOn("cargo-build") }
+tasks.named("test") { dependsOn("cargo-build") }
