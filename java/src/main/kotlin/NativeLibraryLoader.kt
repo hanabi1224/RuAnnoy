@@ -21,7 +21,7 @@ internal class NativeLibraryLoader {
 
         fun loadLibrary(prefix: String, libName: String): Boolean {
             val path = "$prefix${getLibraryFileName(libName)}"
-            val url = NativeLibraryLoader.javaClass.getResource(path)
+            val url = NativeLibraryLoader::class.java.getResource(path)
             if (url == null) {
                 return false
             }
