@@ -7,72 +7,72 @@ import java.util.Arrays
 import kotlin.test.*
 
 class AnnoyIndexTest {
-    init {
-        initialize()
-    }
-
-    @Test
-    fun testSomeLibraryMethod() {
-        val indexPath = "$pwd/src/test/resources/index.angular.5d.ann"
-        val index = AnnoyIndex.tryLoad(indexPath, 5, IndexType.Angular)
-        assertTrue(index != null, "indexPath: $indexPath")
-        index.use {
-            assertEquals(5, index.dimension)
-            val v3 = index.getItemVector(3)
-            assertTrue(
-                    v3.toTypedArray()
-                            .contentDeepEquals(
-                                    floatArrayOf(
-                                                    -0.38846132159233093f,
-                                                    0.8791206479072571f,
-                                                    0.05800916627049446f,
-                                                    0.8664266467094421f,
-                                                    0.40251824259757996f,
-                                            )
-                                            .toTypedArray()),
-                    Arrays.toString(v3))
-            val v0 = index.getItemVector(0)
-            var nearest = index.getNearest(v0, 5, -1, true)
-            assertTrue(
-                    nearest.idList
-                            .toTypedArray()
-                            .contentDeepEquals(longArrayOf(0, 4, 37, 61, 29).toTypedArray()),
-                    Arrays.toString(nearest.idList))
-            assertEquals(true, nearest.distanceIncluded)
-            assertTrue(
-                    nearest.distanceList
-                            .toTypedArray()
-                            .contentDeepEquals(
-                                    floatArrayOf(
-                                                    0.0f,
-                                                    0.41608825f,
-                                                    0.5517523f,
-                                                    0.7342095f,
-                                                    0.7592962f)
-                                            .toTypedArray()),
-                    Arrays.toString(nearest.distanceList))
-            nearest = index.getNearestToItem(0, 5, -1, false)
-            assertTrue(
-                    nearest.idList
-                            .toTypedArray()
-                            .contentDeepEquals(longArrayOf(0, 4, 37, 61, 29).toTypedArray()),
-                    Arrays.toString(nearest.idList))
-            assertEquals(false, nearest.distanceIncluded)
-            assertEquals(0, nearest.distanceList.size)
+        @Test
+        fun testAnnoyIndex() {
+                val indexPath = "$pwd/src/test/resources/index.angular.5d.ann"
+                val index = AnnoyIndex.tryLoad(indexPath, 5, IndexType.Angular)
+                assertTrue(index != null, "indexPath: $indexPath")
+                index.use {
+                        assertEquals(5, index.dimension)
+                        val v3 = index.getItemVector(3)
+                        assertTrue(
+                                        v3.toTypedArray()
+                                                        .contentDeepEquals(
+                                                                        floatArrayOf(
+                                                                                                        -0.38846132159233093f,
+                                                                                                        0.8791206479072571f,
+                                                                                                        0.05800916627049446f,
+                                                                                                        0.8664266467094421f,
+                                                                                                        0.40251824259757996f,
+                                                                                        )
+                                                                                        .toTypedArray()),
+                                        Arrays.toString(v3))
+                        val v0 = index.getItemVector(0)
+                        var nearest = index.getNearest(v0, 5, -1, true)
+                        assertTrue(
+                                        nearest.idList
+                                                        .toTypedArray()
+                                                        .contentDeepEquals(
+                                                                        longArrayOf(
+                                                                                                        0,
+                                                                                                        4,
+                                                                                                        37,
+                                                                                                        61,
+                                                                                                        29)
+                                                                                        .toTypedArray()),
+                                        Arrays.toString(nearest.idList))
+                        assertEquals(true, nearest.distanceIncluded)
+                        assertTrue(
+                                        nearest.distanceList
+                                                        .toTypedArray()
+                                                        .contentDeepEquals(
+                                                                        floatArrayOf(
+                                                                                                        0.0f,
+                                                                                                        0.41608825f,
+                                                                                                        0.5517523f,
+                                                                                                        0.7342095f,
+                                                                                                        0.7592962f)
+                                                                                        .toTypedArray()),
+                                        Arrays.toString(nearest.distanceList))
+                        nearest = index.getNearestToItem(0, 5, -1, false)
+                        assertTrue(
+                                        nearest.idList
+                                                        .toTypedArray()
+                                                        .contentDeepEquals(
+                                                                        longArrayOf(
+                                                                                                        0,
+                                                                                                        4,
+                                                                                                        37,
+                                                                                                        61,
+                                                                                                        29)
+                                                                                        .toTypedArray()),
+                                        Arrays.toString(nearest.idList))
+                        assertEquals(false, nearest.distanceIncluded)
+                        assertEquals(0, nearest.distanceList.size)
+                }
         }
-    }
 
-    companion object {
-        val os = System.getProperty("os.name")
-        val pwd = System.getProperty("user.dir")
-        val isWin = os.toLowerCase().contains("windows")
-        val isLinux = os.toLowerCase().contains("linux")
-        val libName =
-                if (isWin) "ru_annoy_jni.dll"
-                else if (isLinux) "libru_annoy_jni.so" else "libru_annoy_jni.dylib"
-        val libPath = "$pwd/target/release/$libName"
-        fun initialize() {
-            System.load(libPath)
+        companion object {
+                val pwd = System.getProperty("user.dir")
         }
-    }
 }
