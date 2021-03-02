@@ -61,3 +61,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/**/*.snupkg
+      - uses: actions/upload-artifact@v2
+        with:
+          path: java/build/libs/*.jar

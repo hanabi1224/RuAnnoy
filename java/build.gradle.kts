@@ -19,6 +19,11 @@ repositories {
     jcenter()
 }
 
+java {                                      
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
@@ -26,17 +31,11 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation("com.google.guava:guava:29.0-jre")
-
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    // api("org.apache.commons:commons-math3:3.6.1")
 }
 
 tasks.register<Exec>("cargo-build") {
@@ -45,5 +44,34 @@ tasks.register<Exec>("cargo-build") {
     args("build", "--release", "--all-features")
 }
 
-tasks.named("build") { dependsOn("cargo-build") }
-tasks.named("test") { dependsOn("cargo-build") }
+tasks.register<Copy>("copy-artifacts") {
+    dependsOn("cargo-build")
+    from("target/release/")
+    include("*.so", "*.dll", "*.dylib")
+    into("src/main/resources")
+}
+
+tasks.processResources { dependsOn("copy-artifacts") }
+tasks.test { dependsOn("copy-artifacts") }
+tasks.jar {
+    manifest {
+        attributes(mapOf("Implementation-Title" to project.name,
+                         "Implementation-Version" to project.version))
+    }
+    archiveAppendix.set(getJarAppendix())
+}
+
+fun getJarAppendix(): String {
+    val nativePlatform = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform("current")
+    val arch = "x64"
+    val os = nativePlatform.operatingSystem
+    if (os.isMacOsX()) {
+        return "darwin-$arch"
+    } else if (os.isLinux()) {
+        return "linux-$arch"
+    } else if (os.isWindows()) {
+        return "windows-$arch"
+    } else {
+        throw RuntimeException("Platform " + os.getName() + " is not supported.")
+    }
+}
