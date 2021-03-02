@@ -38,6 +38,8 @@ for:
       - cargo build --release --all-features
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
+      - pushd java
+      - ./gradlew test
   - matrix:
       only:
         - image: Visual Studio 2019
@@ -56,3 +58,5 @@ for:
       - cargo fmt --all -- --check
       - dotnet build -c Release dotnet/RuAnnoy
       - dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64
+      - pushd java
+      - gradlew test

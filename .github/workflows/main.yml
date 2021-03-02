@@ -31,6 +31,13 @@ jobs:
         run: |
           cargo test --release
           cargo test --release --all-features
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: java Test
+        run: |
+          pushd java
+          ./gradlew test
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
