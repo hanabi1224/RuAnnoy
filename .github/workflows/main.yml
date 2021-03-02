@@ -31,10 +31,13 @@ jobs:
         run: |
           cargo test --release
           cargo test --release --all-features
-      - name: java Test
-        run: |
-          pushd java
-          ./gradlew test
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: test
+          build-root-directory: java
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
