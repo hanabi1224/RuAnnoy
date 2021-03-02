@@ -38,6 +38,7 @@ jobs:
         run: |
           pushd java
           ./gradlew test
+          ./gradlew jar
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
@@ -64,3 +65,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: java/build/libs/*.jar
+          if-no-files-found: error
