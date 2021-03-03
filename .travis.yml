@@ -1,8 +1,9 @@
 language: rust
-matrix:
-  include:
-    - os: linux
-      rust: nightly
+rust:
+  - nightly
+os:
+  - linux
+dist: focal
 branches:
   only:
     - master
