@@ -62,14 +62,14 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                     nearest_neighbors.insert(top_node_id);
                 } else if n_descendants <= self.min_leaf_size {
                     for i in 0..n_descendants as usize {
-                        let child_id = self.get_nth_descendant_id(top_node_offset as i64, i);
+                        let child_id = self.get_nth_descendant_id(top_node_offset, i);
                         nearest_neighbors.insert(child_id as usize);
                     }
                 } else {
                     let v = get_node_slice(self, top_node_offset);
                     let margin = self.get_margin(v, query_vector, top_node_offset);
-                    let l_child_offset = self.get_l_child_offset(top_node_offset as i64);
-                    let r_child_offset = self.get_r_child_offset(top_node_offset as i64);
+                    let l_child_offset = self.get_l_child_offset(top_node_offset);
+                    let r_child_offset = self.get_r_child_offset(top_node_offset);
                     // NOTE: Hamming has different logic to calculate margin
                     pq.push(PriorityQueueEntry {
                         margin: top.margin.min(margin),

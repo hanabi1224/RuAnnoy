@@ -36,10 +36,10 @@ pub struct AnnoyIndex {
     pub node_size: usize,
     pub node_count: usize,
     pub max_descendants: i32,
-    index_type_offset: i32,
-    k_node_header_style: i32,
+    index_type_offset: usize,
+    k_node_header_style: usize,
     min_leaf_size: i32,
     mmap: Mmap,
-    pub roots: Vec<i64>,
+    pub roots: Vec<usize>,
     pub degree: usize,
 }

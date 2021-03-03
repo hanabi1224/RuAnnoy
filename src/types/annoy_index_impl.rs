@@ -13,7 +13,7 @@ impl AnnoyIndex {
         index_file_path: &str,
         index_type: IndexType,
     ) -> Result<AnnoyIndex, Box<dyn Error>> {
-        let (index_type_offset, k_node_header_style, max_descendants): (i32, i32, usize) =
+        let (index_type_offset, k_node_header_style, max_descendants): (usize, usize, usize) =
             match index_type {
                 IndexType::Angular => (4, 12, 2),
                 IndexType::Euclidean => (8, 16, 2),
@@ -31,13 +31,13 @@ impl AnnoyIndex {
         let node_count = file_size / node_size;
         let mmap = unsafe { MmapOptions::new().map(&file)? };
 
-        let mut roots: Vec<i64> = Vec::new();
+        let mut roots = Vec::new();
         let mut m: i32 = -1;
         let mut i = file_size - node_size;
         while i >= 0 {
             let n_descendants = mmap.read_i32(i as usize);
             if m == -1 || n_descendants == m {
-                roots.push(i);
+                roots.push(i as usize);
                 m = n_descendants;
             } else {
                 break;
@@ -70,24 +70,24 @@ impl AnnoyIndex {
         return Ok(index);
     }
 
-    pub fn get_nth_descendant_id(&self, node_offset: i64, n: usize) -> i64 {
+    pub fn get_nth_descendant_id(&self, node_offset: usize, n: usize) -> usize {
         get_nth_descendant_id(&self.mmap, node_offset, self.index_type_offset, n)
     }
 
-    pub fn get_l_child_id(&self, node_offset: i64) -> i64 {
+    pub fn get_l_child_id(&self, node_offset: usize) -> usize {
         self.get_nth_descendant_id(node_offset, 0)
     }
 
-    pub fn get_l_child_offset(&self, node_offset: i64) -> i64 {
-        self.get_l_child_id(node_offset) * self.node_size as i64
+    pub fn get_l_child_offset(&self, node_offset: usize) -> usize {
+        self.get_l_child_id(node_offset) * self.node_size
     }
 
-    pub fn get_r_child_id(&self, node_offset: i64) -> i64 {
+    pub fn get_r_child_id(&self, node_offset: usize) -> usize {
         self.get_nth_descendant_id(node_offset, 1)
     }
 
-    pub fn get_r_child_offset(&self, node_offset: i64) -> i64 {
-        self.get_r_child_id(node_offset) * self.node_size as i64
+    pub fn get_r_child_offset(&self, node_offset: usize) -> usize {
+        self.get_r_child_id(node_offset) * self.node_size
     }
 
     pub fn get_margin(&self, v1: &[f32], v2: &[f32], node_offset: usize) -> f32 {
