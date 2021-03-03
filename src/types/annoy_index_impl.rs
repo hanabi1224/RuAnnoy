@@ -13,7 +13,7 @@ impl AnnoyIndex {
         index_file_path: &str,
         index_type: IndexType,
     ) -> Result<AnnoyIndex, Box<dyn Error>> {
-        let (index_type_offset, k_node_header_style, max_descendants): (usize, usize, usize) =
+        let (offset_before_children, k_node_header_style, max_descendants): (usize, usize, usize) =
             match index_type {
                 IndexType::Angular => (4, 12, 2),
                 IndexType::Euclidean => (8, 16, 2),
@@ -47,8 +47,8 @@ impl AnnoyIndex {
 
         // hacky fix: since the last root precedes the copy of all roots, delete it
         if roots.len() > 1
-            && get_nth_descendant_id(&mmap, *roots.first().unwrap(), index_type_offset, 0)
-                == get_nth_descendant_id(&mmap, *roots.last().unwrap(), index_type_offset, 0)
+            && get_nth_descendant_id(&mmap, *roots.first().unwrap(), offset_before_children, 0)
+                == get_nth_descendant_id(&mmap, *roots.last().unwrap(), offset_before_children, 0)
         {
             roots.pop();
         }
@@ -56,7 +56,7 @@ impl AnnoyIndex {
         let index = AnnoyIndex {
             dimension: dimension,
             index_type: index_type,
-            index_type_offset: index_type_offset,
+            offset_before_children: offset_before_children,
             k_node_header_style: k_node_header_style,
             min_leaf_size: min_leaf_size as i32,
             node_size: node_size as usize,
@@ -70,8 +70,18 @@ impl AnnoyIndex {
         return Ok(index);
     }
 
+    pub fn get_descendant_id_slice(&self, node_offset: usize, n: usize) -> &[i32] {
+        self.mmap
+            .read_slice(node_offset + self.offset_before_children, n)
+    }
+
+    pub fn get_children_id_slice(&self, node_offset: usize) -> &[i32] {
+        self.mmap
+            .read_slice(node_offset + self.offset_before_children, 2)
+    }
+
     pub fn get_nth_descendant_id(&self, node_offset: usize, n: usize) -> usize {
-        get_nth_descendant_id(&self.mmap, node_offset, self.index_type_offset, n)
+        get_nth_descendant_id(&self.mmap, node_offset, self.offset_before_children, n)
     }
 
     pub fn get_l_child_id(&self, node_offset: usize) -> usize {

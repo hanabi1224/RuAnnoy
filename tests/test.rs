@@ -148,11 +148,11 @@ mod tests {
         unsafe {
             let index = load_annoy_index(
                 filepath_cstring.into_raw() as *const c_char,
-                TEST_INDEX_DIM,
+                TEST_INDEX_DIM as i32,
                 index_type as u8,
             );
             let dim = get_dimension(index);
-            assert_eq!(dim, TEST_INDEX_DIM);
+            assert_eq!(dim, TEST_INDEX_DIM as i32);
             let v3_raw = alloc(Layout::array::<f32>(dim as usize).unwrap()) as *mut f32;
             get_item_vector(index, 3, v3_raw);
             // let v3_raw = get_item_vector(index, 3);
@@ -222,7 +222,7 @@ mod tests {
     fn invalid_index_cffi() {
         let index_ptr = load_annoy_index(
             CString::new("invalid_index.ann").unwrap().into_raw() as *const c_char,
-            TEST_INDEX_DIM,
+            TEST_INDEX_DIM as i32,
             IndexType::Angular as u8,
         );
         assert_eq!(index_ptr, ptr::null());

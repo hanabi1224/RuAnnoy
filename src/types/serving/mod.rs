@@ -61,8 +61,9 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 if n_descendants == 1 && top_node_id < self.degree {
                     nearest_neighbors.insert(top_node_id);
                 } else if n_descendants <= self.min_leaf_size {
-                    for i in 0..n_descendants as usize {
-                        let child_id = self.get_nth_descendant_id(top_node_offset, i);
+                    let children_id_slice =
+                        self.get_descendant_id_slice(top_node_offset, n_descendants as usize);
+                    for &child_id in children_id_slice {
                         nearest_neighbors.insert(child_id as usize);
                     }
                 } else {
