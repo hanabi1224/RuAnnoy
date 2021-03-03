@@ -32,7 +32,7 @@ repositories {
 }
   
 dependencies {
-  implementation 'com.github.hanabi1224:RuAnnoy:0.1.2+1'
+  implementation 'com.github.hanabi1224:RuAnnoy:0.1.2'
 }
 ```
 #### Usage
