@@ -1,11 +1,8 @@
 language: rust
-sudo: required
-mono: none
-dist: xenial
-rust:
-  - stable
-os:
-  - linux
+matrix:
+  include:
+    - os: linux
+      rust: nightly
 branches:
   only:
     - master
@@ -13,21 +10,14 @@ cache:
   directories:
     - $HOME/.rustup/
     - $HOME/.cargo/
-addons:
-  apt:
-    packages:
-      - libcurl4-openssl-dev
-      - libelf-dev
-      - libdw-dev
-      - binutils-dev
-      - cmake # also required for cargo-update
-    sources:
-      - kalakris-cmake
+before_install:
+  - curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-linux-x86_64.tar.bz2 | tar jxf -
 install:
   - cargo -V
+  - rustup component add llvm-tools-preview
+  - export RUSTFLAGS="-Zinstrument-coverage"
 script:
-  - cargo test --all-features
-  - cargo install cargo-update || echo "cargo-update already installed"
-  - cargo install cargo-travis-fork || echo "cargo-travis already installed"
-  - cargo install-update -a # update outdated cached binaries
-  - cargo coveralls
+  - cargo build --all-features
+  - LLVM_PROFILE_FILE="hanabi1224-%p-%m.profraw" cargo test --all-features
+  - ./grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
+  - bash <(curl -s https://codecov.io/bash) -f lcov.info
