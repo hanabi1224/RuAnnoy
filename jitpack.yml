@@ -1,7 +1,8 @@
 jdk:
   - openjdk11
 before_install:
-  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -- -s -- -y --default-toolchain stable
+  - source $HOME/.cargo/env
 install:
   - pushd java
   - ./gradlew clean install -xtest
