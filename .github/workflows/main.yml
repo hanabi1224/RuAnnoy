@@ -38,7 +38,9 @@ jobs:
         run: |
           pushd java
           ./gradlew test
-          ./gradlew jar
+          ./gradlew clean install -xtest
+          ./gradlew copy-artifacts
+          ./gradlew test
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
@@ -63,6 +65,17 @@ jobs:
         with:
           path: dotnet/**/*.snupkg
       - uses: actions/upload-artifact@v2
+        if: matrix.os == 'windows-latest'
         with:
-          path: java/build/libs/*.jar
+          path: java/target/release/*.dll
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v2
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          path: java/target/release/*.so
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v2
+        if: matrix.os == 'macos-latest'
+        with:
+          path: java/target/release/*.dylib
           if-no-files-found: error

@@ -1,0 +1,10 @@
+jdk:
+  - openjdk11
+before_install:
+  - uname -a
+  # - sudo apt-get install build-essential -y
+  # - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+  # - source $HOME/.cargo/env
+install:
+  - pushd java
+  - ./gradlew clean install -xtest
