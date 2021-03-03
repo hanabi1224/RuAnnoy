@@ -37,10 +37,10 @@ jobs:
       - name: java Test
         run: |
           pushd java
-          cargo build --release --all-features
           ./gradlew test
-          ./gradlew jar
           ./gradlew clean install -xtest
+          ./gradlew copy-artifacts
+          ./gradlew test
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests

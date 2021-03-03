@@ -45,21 +45,21 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
-// tasks.register<Exec>("cargo-build") {
-//     workingDir(".")
-//     executable("cargo")
-//     args("build", "--release", "--all-features")
-// }
+tasks.register<Exec>("cargo-build") {
+    workingDir(".")
+    executable("cargo")
+    args("build", "--release", "--all-features")
+}
 
 tasks.register<Copy>("copy-artifacts") {
-    // dependsOn("cargo-build")
+    dependsOn("cargo-build")
     from("target/release/")
     include("*.so", "*.dll", "*.dylib")
     into("src/main/resources")
 }
 
-tasks.processResources { dependsOn("copy-artifacts") }
-tasks.test { dependsOn("copy-artifacts") }
+// tasks.processResources { dependsOn("copy-artifacts") }
+// tasks.test { dependsOn("copy-artifacts") }
 
 tasks.register<Jar>("sourcesJar") {
     dependsOn("classes")
@@ -72,20 +72,20 @@ tasks.jar {
         attributes(mapOf("Implementation-Title" to project.name,
                          "Implementation-Version" to project.version))
     }
-    archiveAppendix.set(getJarAppendix())
+    // archiveAppendix.set(getJarAppendix())
 }
 
-fun getJarAppendix(): String {
-    val nativePlatform = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform("current")
-    val arch = "x64"
-    val os = nativePlatform.operatingSystem
-    if (os.isMacOsX()) {
-        return "darwin-$arch"
-    } else if (os.isLinux()) {
-        return "linux-$arch"
-    } else if (os.isWindows()) {
-        return "windows-$arch"
-    } else {
-        throw RuntimeException("Platform " + os.getName() + " is not supported.")
-    }
-}
+// fun getJarAppendix(): String {
+//     val nativePlatform = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform("current")
+//     val arch = "x64"
+//     val os = nativePlatform.operatingSystem
+//     if (os.isMacOsX()) {
+//         return "darwin-$arch"
+//     } else if (os.isLinux()) {
+//         return "linux-$arch"
+//     } else if (os.isWindows()) {
+//         return "windows-$arch"
+//     } else {
+//         throw RuntimeException("Platform " + os.getName() + " is not supported.")
+//     }
+// }
