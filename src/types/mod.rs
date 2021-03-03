@@ -9,7 +9,7 @@ use memmap2::Mmap;
 
 #[repr(C)]
 pub struct AnnoyIndexSearchResult {
-    pub id: i64,
+    pub id: u64,
     pub distance: f32,
 }
 
@@ -31,7 +31,7 @@ impl Display for IndexType {
 }
 
 pub struct AnnoyIndex {
-    pub dimension: i32,
+    pub dimension: usize,
     pub index_type: IndexType,
     pub node_size: i32,
     pub node_count: usize,
@@ -41,5 +41,5 @@ pub struct AnnoyIndex {
     min_leaf_size: i32,
     mmap: Mmap,
     pub roots: Vec<i64>,
-    pub degree: i32,
+    pub degree: usize,
 }

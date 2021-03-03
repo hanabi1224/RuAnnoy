@@ -9,11 +9,11 @@ use std::vec::Vec;
 
 impl AnnoyIndex {
     pub fn load(
-        dimension: i32,
+        dimension: usize,
         index_file_path: &str,
         index_type: IndexType,
     ) -> Result<AnnoyIndex, Box<dyn Error>> {
-        let (index_type_offset, k_node_header_style, max_descendants): (i32, i32, i32) =
+        let (index_type_offset, k_node_header_style, max_descendants): (i32, i32, usize) =
             match index_type {
                 IndexType::Angular => (4, 12, 2),
                 IndexType::Euclidean => (8, 16, 2),
@@ -24,7 +24,7 @@ impl AnnoyIndex {
             };
 
         let min_leaf_size = dimension + max_descendants;
-        let node_size = k_node_header_style + FLOAT32_SIZE as i32 * dimension;
+        let node_size = k_node_header_style + (FLOAT32_SIZE * dimension) as i32;
         let file = File::open(index_file_path)?; // .expect(format!("fail to open {}", index_file_path).as_str());
         let file_metadata = fs::metadata(index_file_path)?;
         let file_size = file_metadata.len() as i64;
@@ -58,13 +58,13 @@ impl AnnoyIndex {
             index_type: index_type,
             index_type_offset: index_type_offset,
             k_node_header_style: k_node_header_style,
-            min_leaf_size: min_leaf_size,
+            min_leaf_size: min_leaf_size as i32,
             node_size: node_size,
             node_count: node_count as usize,
-            max_descendants: max_descendants,
+            max_descendants: max_descendants as i32,
             mmap: mmap,
             roots: roots,
-            degree: m,
+            degree: m as usize,
         };
 
         return Ok(index);

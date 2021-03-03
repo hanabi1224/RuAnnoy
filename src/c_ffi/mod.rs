@@ -28,7 +28,7 @@ fn load_annoy_index_inner(
     let c_str_path = unsafe { CStr::from_ptr(path) };
     let ru_path = c_str_path.to_str()?;
     let ru_index_type: IndexType = unsafe { mem::transmute(index_type) };
-    let index = AnnoyIndex::load(dimension, ru_path, ru_index_type)?;
+    let index = AnnoyIndex::load(dimension as usize, ru_path, ru_index_type)?;
     return Ok(Box::into_raw(Box::new(index)));
 }
 
@@ -41,7 +41,7 @@ ffi_fn! {
 ffi_fn! {
     fn get_dimension(index_ptr: *const AnnoyIndex) -> i32{
         let index = unsafe { &*index_ptr };
-        return index.dimension;
+        return index.dimension as i32;
     }
 }
 
@@ -57,7 +57,7 @@ ffi_fn! {
 #[repr(C)]
 pub struct AnnoyIndexSearchResult_FFI {
     pub count: size_t,
-    pub id_list: Box<[i64]>,
+    pub id_list: Box<[u64]>,
     pub distance_list: Box<[f32]>,
 }
 
@@ -67,7 +67,7 @@ impl AnnoyIndexSearchResult_FFI {
         should_include_distance: bool,
     ) -> AnnoyIndexSearchResult_FFI {
         let results_len = results.len();
-        let mut id_list = Vec::<i64>::with_capacity(results_len);
+        let mut id_list = Vec::<u64>::with_capacity(results_len);
         let mut distance_list: Vec<f32> = Vec::with_capacity(match should_include_distance {
             true => results_len,
             false => 0,
@@ -133,7 +133,7 @@ ffi_fn! {
 }
 
 ffi_fn! {
-    fn get_id_list(search_result_ptr: *const AnnoyIndexSearchResult_FFI)->*const i64{
+    fn get_id_list(search_result_ptr: *const AnnoyIndexSearchResult_FFI)->*const u64{
         let search_result = unsafe{&*search_result_ptr};
         return search_result.id_list.as_ptr();
     }

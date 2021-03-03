@@ -35,7 +35,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         search_k: i32,
         should_include_distance: bool,
     ) -> Vec<AnnoyIndexSearchResult> {
-        let result_capcity = n_results.min(self.degree as usize).max(1);
+        let result_capcity = n_results.min(self.degree).max(1);
         let search_k_fixed = if search_k > 0 {
             search_k as usize
         } else {
@@ -58,7 +58,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 let top_node_offset = top.node_offset as usize;
                 let top_node_id = top_node_offset / self.node_size as usize;
                 let n_descendants = self.mmap.read_i32(top_node_offset);
-                if n_descendants == 1 && top_node_id < self.degree as usize {
+                if n_descendants == 1 && top_node_id < self.degree {
                     nearest_neighbors.insert(top_node_id);
                 } else if n_descendants <= self.min_leaf_size {
                     for i in 0..n_descendants as usize {
@@ -95,7 +95,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             let v = self.get_item_vector(nn_id as i64);
             sorted_nns.push(PriorityQueueEntry {
                 margin: self.get_distance_no_norm(v.as_slice(), query_vector),
-                node_id: nn_id as i64,
+                node_id: nn_id as u64,
                 node_offset: 0,
             });
         }
