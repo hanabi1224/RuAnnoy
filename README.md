@@ -20,7 +20,27 @@ let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
 ```
 
 ## FFI support
-### dotnet nuget packages
+
+### kotlin/java
+
+#### Install via [jitpack.io](https://jitpack.io/#hanabi1224/RuAnnoy)
+[![Release](https://jitpack.io/v/hanabi1224/RuAnnoy.svg)](https://jitpack.io/#hanabi1224/RuAnnoy)
+```gradle
+repositories {
+  mavenCentral()
+  maven { url 'https://jitpack.io' }
+}
+  
+dependencies {
+  implementation 'com.github.hanabi1224:RuAnnoy:0.1.2+1'
+}
+```
+#### Usage
+```kotlin
+val index = AnnoyIndex.tryLoad("index.5d.ann", 5, IndexType.Angular)
+```
+
+### dotnet
 
 | Runtimes                      | Nuget package                                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -29,10 +49,14 @@ let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
 | RuAnnoy-Batteries-Linux-x64   | [![NuGet version](https://buildstats.info/nuget/RuAnnoy-Batteries-Linux-x64)](https://www.nuget.org/packages/RuAnnoy-Batteries-Linux-x64)     |
 | RuAnnoy-Batteries-Darwin-x64  | [![NuGet version](https://buildstats.info/nuget/RuAnnoy-Batteries-Darwin-x64)](https://www.nuget.org/packages/RuAnnoy-Batteries-Darwin-x64)   |
 
-### Installation
+#### Install via nuget
 ```xml
   <ItemGroup>
     <PackageReference Include="RuAnnoy" />
     <PackageReference Include="RuAnnoy-Batteries-Windows-x64" />
   </ItemGroup>
+```
+#### Usage
+```csharp
+var index = AnnoyIndex.Load("index.5d.ann", 5, IndexType.Angular);
 ```
