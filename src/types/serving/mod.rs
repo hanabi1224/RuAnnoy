@@ -23,7 +23,7 @@ pub trait AnnoyIndexSearchApi {
 
 impl AnnoyIndexSearchApi for AnnoyIndex {
     fn get_item_vector(&self, item_index: i64) -> Vec<f32> {
-        let node_offset = item_index as usize * self.node_size as usize;
+        let node_offset = item_index as usize * self.node_size;
         let slice = get_node_slice(self, node_offset);
         slice.iter().map(|&a| a).collect()
     }
@@ -56,7 +56,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         while !pq.is_empty() && nearest_neighbors.len() < search_k_fixed {
             if let Some(top) = pq.pop() {
                 let top_node_offset = top.node_offset as usize;
-                let top_node_id = top_node_offset / self.node_size as usize;
+                let top_node_id = top_node_offset / self.node_size;
                 let n_descendants = self.mmap.read_i32(top_node_offset);
                 if n_descendants == 1 && top_node_id < self.degree {
                     nearest_neighbors.insert(top_node_id);
@@ -88,7 +88,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
         let mut sorted_nns: Vec<PriorityQueueEntry> = Vec::with_capacity(nearest_neighbors.len());
         for nn_id in nearest_neighbors {
-            let n_descendants = self.mmap.read_i32(nn_id * self.node_size as usize);
+            let n_descendants = self.mmap.read_i32(nn_id * self.node_size);
             if n_descendants != 1 {
                 continue;
             }

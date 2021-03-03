@@ -33,7 +33,7 @@ impl Display for IndexType {
 pub struct AnnoyIndex {
     pub dimension: usize,
     pub index_type: IndexType,
-    pub node_size: i32,
+    pub node_size: usize,
     pub node_count: usize,
     pub max_descendants: i32,
     index_type_offset: i32,

@@ -24,16 +24,16 @@ impl AnnoyIndex {
             };
 
         let min_leaf_size = dimension + max_descendants;
-        let node_size = k_node_header_style + (FLOAT32_SIZE * dimension) as i32;
+        let node_size = k_node_header_style as i64 + (FLOAT32_SIZE * dimension) as i64;
         let file = File::open(index_file_path)?; // .expect(format!("fail to open {}", index_file_path).as_str());
         let file_metadata = fs::metadata(index_file_path)?;
         let file_size = file_metadata.len() as i64;
-        let node_count = file_size / node_size as i64;
+        let node_count = file_size / node_size;
         let mmap = unsafe { MmapOptions::new().map(&file)? };
 
         let mut roots: Vec<i64> = Vec::new();
         let mut m: i32 = -1;
-        let mut i = file_size - node_size as i64;
+        let mut i = file_size - node_size;
         while i >= 0 {
             let n_descendants = mmap.read_i32(i as usize);
             if m == -1 || n_descendants == m {
@@ -42,7 +42,7 @@ impl AnnoyIndex {
             } else {
                 break;
             }
-            i -= node_size as i64;
+            i -= node_size;
         }
 
         // hacky fix: since the last root precedes the copy of all roots, delete it
@@ -59,7 +59,7 @@ impl AnnoyIndex {
             index_type_offset: index_type_offset,
             k_node_header_style: k_node_header_style,
             min_leaf_size: min_leaf_size as i32,
-            node_size: node_size,
+            node_size: node_size as usize,
             node_count: node_count as usize,
             max_descendants: max_descendants as i32,
             mmap: mmap,
