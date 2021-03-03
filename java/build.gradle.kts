@@ -21,7 +21,7 @@ repositories {
 }
 
 group = "com.github.hanabi1224"
-version = "0.1.0"
+version = "0.1.2+1"
 
 java {                                      
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -45,14 +45,14 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
-tasks.register<Exec>("cargo-build") {
-    workingDir(".")
-    executable("cargo")
-    args("build", "--release", "--all-features")
-}
+// tasks.register<Exec>("cargo-build") {
+//     workingDir(".")
+//     executable("cargo")
+//     args("build", "--release", "--all-features")
+// }
 
 tasks.register<Copy>("copy-artifacts") {
-    dependsOn("cargo-build")
+    // dependsOn("cargo-build")
     from("target/release/")
     include("*.so", "*.dll", "*.dylib")
     into("src/main/resources")
