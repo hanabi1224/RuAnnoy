@@ -11,31 +11,38 @@ namespace RuAnnoy
 
         public int Count { get; private set; }
 
+        public bool IsDistanceIncluded { get; private set; }
+
         public ReadOnlyMemory<long> IdList { get; private set; }
 
         public ReadOnlyMemory<float> DistanceList { get; private set; }
 
-        internal static AnnoyIndexSearchResult LoadFromPtr(IntPtr searchResult)
+        internal static AnnoyIndexSearchResult LoadFromPtr(IntPtr searchResult, bool isDistanceIncluded)
         {
             var count = (int)NativeMethods.GetResultCount(searchResult);
-            var idList = new long[count];
-            var distanceList = new float[count];
+            var result = new AnnoyIndexSearchResult
+            {
+                Count = count,
+                IsDistanceIncluded = isDistanceIncluded,
+            };
 
             if (count > 0)
             {
+                var idList = new long[count];
                 var idListPtr = NativeMethods.GetIdList(searchResult);
                 Marshal.Copy(idListPtr, idList, 0, count);
+                result.IdList = idList;
 
-                var distanceListPtr = NativeMethods.GetDistanceList(searchResult);
-                Marshal.Copy(distanceListPtr, distanceList, 0, count);
+                if (isDistanceIncluded)
+                {
+                    var distanceList = new float[count];
+                    var distanceListPtr = NativeMethods.GetDistanceList(searchResult);
+                    Marshal.Copy(distanceListPtr, distanceList, 0, count);
+                    result.DistanceList = distanceList;
+                }
             }
 
-            return new AnnoyIndexSearchResult
-            {
-                Count = count,
-                IdList = idList,
-                DistanceList = distanceList,
-            };
+            return result;
         }
     }
 }

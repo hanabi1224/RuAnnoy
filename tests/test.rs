@@ -187,6 +187,32 @@ mod tests {
                 assert_eq!(distance_list, expected_distance_list);
                 free_search_result(nearest_raw);
             }
+            {
+                let nearest_raw = get_nearest(index, v0_raw, 5, -1, false);
+                let result_count = get_result_count(nearest_raw);
+                let id_list_raw = get_id_list(nearest_raw);
+                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                assert_eq!(id_list, expected_id_list);
+                let distance_list_raw = get_distance_list(nearest_raw);
+                let distance_list =
+                    slice::from_raw_parts(distance_list_raw as *mut f32, 0).to_vec();
+                assert_eq!(0, distance_list.len());
+                assert_eq!(0, distance_list.capacity());
+                free_search_result(nearest_raw);
+            }
+            {
+                let nearest_raw = get_nearest_to_item(index, 0, 5, -1, false);
+                let result_count = get_result_count(nearest_raw);
+                let id_list_raw = get_id_list(nearest_raw);
+                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                assert_eq!(id_list, expected_id_list);
+                let distance_list_raw = get_distance_list(nearest_raw);
+                let distance_list =
+                    slice::from_raw_parts(distance_list_raw as *mut f32, 0).to_vec();
+                assert_eq!(0, distance_list.len());
+                assert_eq!(0, distance_list.capacity());
+                free_search_result(nearest_raw);
+            }
             free_annoy_index(index);
         }
     }

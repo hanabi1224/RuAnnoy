@@ -61,6 +61,32 @@ pub struct AnnoyIndexSearchResult_FFI {
     pub distance_list: Box<[f32]>,
 }
 
+impl AnnoyIndexSearchResult_FFI {
+    pub fn from_vec(
+        results: &[AnnoyIndexSearchResult],
+        should_include_distance: bool,
+    ) -> AnnoyIndexSearchResult_FFI {
+        let results_len = results.len();
+        let mut id_list = Vec::<i64>::with_capacity(results_len);
+        let mut distance_list: Vec<f32> = Vec::with_capacity(match should_include_distance {
+            true => results_len,
+            false => 0,
+        });
+        for result in results {
+            id_list.push(result.id);
+            if should_include_distance {
+                distance_list.push(result.distance);
+            }
+        }
+
+        return AnnoyIndexSearchResult_FFI {
+            count: results_len,
+            id_list: id_list.into_boxed_slice(),
+            distance_list: distance_list.into_boxed_slice(),
+        };
+    }
+}
+
 ffi_fn! {
     fn get_nearest(
         index_ptr: *const AnnoyIndex,
@@ -72,20 +98,7 @@ ffi_fn! {
         let index = unsafe{&*index_ptr};
         let query_vector = unsafe { slice::from_raw_parts(query_vector_ptr, index.dimension as usize) };
         let results = index.get_nearest(query_vector, n_results, search_k, should_include_distance);
-        let results_len = results.len();
-        let mut id_list = Vec::<i64>::with_capacity(results_len);
-        let mut distance_list:Vec<f32> = Vec::with_capacity(results_len);
-        for result in results{
-            id_list.push(result.id);
-            distance_list.push(result.distance);
-        }
-
-        let result_ffi = AnnoyIndexSearchResult_FFI{
-            count: results_len,
-            id_list: id_list.into_boxed_slice(),
-            distance_list: distance_list.into_boxed_slice(),
-        };
-
+        let result_ffi = AnnoyIndexSearchResult_FFI::from_vec(&results.as_slice(), should_include_distance);
         return Box::into_raw(Box::new(result_ffi));
     }
 }
@@ -96,24 +109,12 @@ ffi_fn! {
         item_index: i64,
         n_results: size_t,
         search_k: i32,
-        should_include_distance: bool) -> *const AnnoyIndexSearchResult_FFI
-    {
-        let index = unsafe{&*index_ptr};
-        let results = index.get_nearest_to_item(item_index, n_results, search_k, should_include_distance);
-        let results_len = results.len();
-        let mut id_list = Vec::<i64>::with_capacity(results_len);
-        let mut distance_list:Vec<f32> = Vec::with_capacity(results_len);
-        for result in results{
-            id_list.push(result.id);
-            distance_list.push(result.distance);
-        }
-
-        let result_ffi = AnnoyIndexSearchResult_FFI{
-            count: results_len,
-            id_list: id_list.into_boxed_slice(),
-            distance_list: distance_list.into_boxed_slice(),
-        };
-
+        should_include_distance: bool,
+    ) -> *const AnnoyIndexSearchResult_FFI {
+        let index = unsafe { &*index_ptr };
+        let results =
+            index.get_nearest_to_item(item_index, n_results, search_k, should_include_distance);
+        let result_ffi = AnnoyIndexSearchResult_FFI::from_vec(&results.as_slice(), should_include_distance);
         return Box::into_raw(Box::new(result_ffi));
     }
 }

@@ -24,6 +24,13 @@ namespace RuAnnoy.Tests
         const int TEST_INDEX_DIM = 5;
 
         [Test]
+        public void TestInvalidIndex()
+        {
+            var index = AnnoyIndex.Load("invalid.ann", 5, IndexType.Euclidean);
+            index.Should().BeNull();
+        }
+
+        [Test]
         public void TestAngular()
         {
             TestInner(
@@ -33,7 +40,7 @@ namespace RuAnnoy.Tests
                     0.8791206479072571,
                     0.05800916627049446,
                     0.8664266467094421,
-                    0.40251824259757996, 
+                    0.40251824259757996,
                 },
                 new int[] { 0, 4, 37, 61, 29 },
                 new double[] {
@@ -51,7 +58,7 @@ namespace RuAnnoy.Tests
                     -1.5206894874572754,
                     0.22699929773807526,
                     0.40814927220344543,
-                    0.6402528285980225, 
+                    0.6402528285980225,
                 },
                 new int[] { 0, 84, 16, 20, 49 },
                 new double[] {
@@ -111,6 +118,7 @@ namespace RuAnnoy.Tests
         {
             var path = $"index.{indexType.ToString().ToLowerInvariant()}.{TEST_INDEX_DIM}d.ann";
             var index = AnnoyIndex.Load(path, TEST_INDEX_DIM, indexType);
+            index.Should().NotBeNull();
             index.Dimension.Should().Be(TEST_INDEX_DIM);
 
             {
@@ -120,13 +128,19 @@ namespace RuAnnoy.Tests
             }
 
             var vector3 = index.GetItemVector(3);
-            vector3.Should().BeEquivalentTo(expectedVector3.Select(_=>(float)_));
+            vector3.Should().BeEquivalentTo(expectedVector3.Select(_ => (float)_));
 
             var v0 = index.GetItemVector(0);
             {
                 var nearest = index.GetNearest(v0, 5, -1, true);
                 nearest.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
                 nearest.DistanceList.ToArray().Should().BeEquivalentTo(expectedDistanceList.Select(_ => (float)_));
+            }
+
+            { 
+                var neareast = index.GetNearest(v0, 5, -1, false);
+                neareast.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
+                neareast.DistanceList.Length.Should().Be(0);
             }
         }
     }

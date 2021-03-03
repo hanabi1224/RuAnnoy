@@ -9,23 +9,34 @@ namespace RuAnnoy
     {
         private IntPtr _indexPtr;
 
-        public AnnoyIndex(
-            string path,
+        private AnnoyIndex(
+            IntPtr indexPtr,
             int dimension,
             IndexType type)
         {
+            _indexPtr = indexPtr;
             Dimension = dimension;
-            _indexPtr = NativeMethods.LoadAnnoyIndex(path, dimension, type);
+            Type = type;
         }
 
         public int Dimension { get; }
 
-        public static IAnnoyIndex Load(
+        public IndexType Type { get; }
+
+        public static IAnnoyIndex? Load(
             string path,
             int dimension,
             IndexType type)
         {
-            return new AnnoyIndex(path, dimension, type);
+            var indexPtr = NativeMethods.LoadAnnoyIndex(path, dimension, type);
+            if (indexPtr != IntPtr.Zero)
+            {
+                return new AnnoyIndex(indexPtr, dimension, type);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public IReadOnlyList<float> GetItemVector(long itemIndex)
@@ -59,7 +70,7 @@ namespace RuAnnoy
                   shouldIncludeDistance);
             try
             {
-                return AnnoyIndexSearchResult.LoadFromPtr(searchResultPtr);
+                return AnnoyIndexSearchResult.LoadFromPtr(searchResultPtr, shouldIncludeDistance);
             }
             finally
             {
@@ -86,7 +97,7 @@ namespace RuAnnoy
                   shouldIncludeDistance);
             try
             {
-                return AnnoyIndexSearchResult.LoadFromPtr(searchResultPtr);
+                return AnnoyIndexSearchResult.LoadFromPtr(searchResultPtr, shouldIncludeDistance);
             }
             finally
             {
