@@ -1,17 +1,11 @@
-language: csharp
+language: rust
 sudo: required
 mono: none
 dist: xenial
-dotnet: 5.0.103
+rust:
+  - stable
 os:
-  - osx
   - linux
-env:
-  matrix:
-    - OSTAG=Darwin
-    - OSTAG=Linux
-  global:
-    secure: Z7SHzBfOxVUNegEAmCrSXd6RrAzlvFkKSb19wBuqQUDg9+Tnql/PvUGJk5ZUzB1mPL3AZraNDdY1OUqttkvZmfZ4qd7L2gte2skjF835OLvrATUB2jrGI3rAYG2f8c5X03Df+rcZpCf4MoXZMLNd00EDzeAFaK7mXBDaUA5aCdMlSvYCD0bAaQAtJxNP48SVZmY6KaP+htSczZIDi5XywTY471hZ/b8eFqhYlKjmMIQc4qZ+R3Bna4g16sQDndN3/gpa3Dk7E7uEwtoFhp/ujECX24OhzlXxKfpTSa3/VAb837Nv6jIJdEn719vduoS3/FvT6jcKd7UFOlYWGqrL8Z0autUCZ6iGkKDGHY46rY/7EXfr5gTh+veT/2Hw75dsa7zqxNsmZNhI6Ni1yXqsGvmwBzvxBPUgrNfKK/H9LUzeTJLHrQgwIhwH0EaYFMo3CbDViIT+6gL4GsjCK3pC/GaXl8u19oa5/1/QQrn1e0QiKF3fldh5xM2TGUiOx8KQAg7WvMBbx8O7S+VAS5spg9Tg4tD1h/jfGKPlTb10JFcXlZo4Ytn7XhdMEnorz+ONXiVKqm1csu0R4Qj118/7HDdo0lqxUDv1cYEpm5k8usULhx00j190aDTjwfdh1YQr3HyO4UGZeQIxfw2YxjAEDnn3oKxL1hTOku2hXzgOCfI=
 branches:
   only:
     - master
@@ -19,7 +13,6 @@ cache:
   directories:
     - $HOME/.rustup/
     - $HOME/.cargo/
-    - $HOME/.nuget/
 addons:
   apt:
     packages:
@@ -31,38 +24,10 @@ addons:
     sources:
       - kalakris-cmake
 install:
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - source $HOME/.cargo/env
-  - rustup default stable
-  - rustup component add rustfmt
   - cargo -V
-  - rustc -V
 script:
-  - cargo build --release
-  - cargo test --release
-  - cargo build --release --all-features
-  - cargo test --release --all-features
-  - cargo fmt --all -- --check
-  - dotnet build -c Release ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64
-  - dotnet test -c Release -f net5 dotnet/RuAnnoy.Tests
-  - mkdir ${TRAVIS_BUILD_DIR}/artifacts/
-  - cp ${TRAVIS_BUILD_DIR}/dotnet/RuAnnoy-Batteries-${OSTAG}-x64/bin/Release/*.nupkg ${TRAVIS_BUILD_DIR}/artifacts/
+  - cargo test --all-features
   - cargo install cargo-update || echo "cargo-update already installed"
-  - cargo install cargo-travis || echo "cargo-travis already installed"
+  - cargo install cargo-travis-fork || echo "cargo-travis already installed"
   - cargo install-update -a # update outdated cached binaries
-after_success:
-  # measure code coverage and upload to coveralls.io
   - cargo coveralls
-#deploy:
-#  skip_cleanup: true
-#  provider: script
-#  script: dotnet nuget push ${TRAVIS_BUILD_DIR}/artifacts/*.nupkg -k ${NUGET_API_KEY}
-#  on:
-#    branch: master
-#    os: osx
-matrix:
-  exclude:
-    - os: osx
-      env: OSTAG=Linux
-    - os: linux
-      env: OSTAG=Darwin
