@@ -24,7 +24,8 @@ pub trait AnnoyIndexSearchApi {
 impl AnnoyIndexSearchApi for AnnoyIndex {
     fn get_item_vector(&self, item_index: i64) -> Vec<f32> {
         let node_offset = item_index as usize * self.node_size as usize;
-        return get_node_vector(self, node_offset);
+        let slice = get_node_slice(self, node_offset);
+        slice.iter().map(|&a| a).collect()
     }
 
     fn get_nearest(
@@ -65,8 +66,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                         nearest_neighbors.insert(child_id as usize);
                     }
                 } else {
-                    let v = get_node_vector(self, top_node_offset);
-                    let margin = self.get_margin(v.as_slice(), query_vector, top_node_offset);
+                    let v = get_node_slice(self, top_node_offset);
+                    let margin = self.get_margin(v, query_vector, top_node_offset);
                     let l_child_offset = self.get_l_child_offset(top_node_offset as i64);
                     let r_child_offset = self.get_r_child_offset(top_node_offset as i64);
                     // NOTE: Hamming has different logic to calculate margin
@@ -133,27 +134,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
     }
 }
 
-fn get_node_vector(index: &AnnoyIndex, node_offset: usize) -> Vec<f32> {
+fn get_node_slice(index: &AnnoyIndex, node_offset: usize) -> &[f32] {
     let dimension = index.dimension as usize;
-    let mut vec: Vec<f32> = Vec::with_capacity(dimension);
-    let mut offset = node_offset + index.k_node_header_style as usize;
-    for _ in 0..dimension {
-        let value = index.mmap.read_f32(offset);
-        vec.push(value);
-        offset += FLOAT32_SIZE;
-    }
-    return vec;
+    let offset = node_offset + index.k_node_header_style as usize;
+    index.mmap.read_slice::<f32>(offset, dimension)
 }
-
-// fn is_zero_node_vector(index: &AnnoyIndex, node_offset: usize) -> bool {
-//     let dimension = index.dimension as usize;
-//     let mut offset = node_offset + index.k_node_header_style as usize;
-//     for _ in 0..dimension {
-//         let value = index.mmap.read_f32(offset);
-//         if value != 0.0 {
-//             return false;
-//         }
-//         offset += FLOAT32_SIZE;
-//     }
-//     return true;
-// }
