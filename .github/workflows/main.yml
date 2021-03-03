@@ -39,6 +39,7 @@ jobs:
           pushd java
           ./gradlew test
           ./gradlew jar
+          ./gradlew clean install -xtest
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests

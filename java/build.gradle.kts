@@ -12,6 +12,7 @@ plugins {
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
+    `maven`
 }
 
 repositories {
@@ -19,17 +20,23 @@ repositories {
     jcenter()
 }
 
+group = "com.github.hanabi1224"
+version = "0.1.0"
+
 java {                                      
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 dependencies {
-    // Align versions of all Kotlin components
+    // Align versions of all Kotlin components.
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    // Use Guava in your implementation only.
+    implementation("com.google.guava:guava:30.1-jre")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -53,6 +60,13 @@ tasks.register<Copy>("copy-artifacts") {
 
 tasks.processResources { dependsOn("copy-artifacts") }
 tasks.test { dependsOn("copy-artifacts") }
+
+tasks.register<Jar>("sourcesJar") {
+    dependsOn("classes")
+    archiveClassifier.set("sources")
+    from("src/main")
+}
+
 tasks.jar {
     manifest {
         attributes(mapOf("Implementation-Title" to project.name,
