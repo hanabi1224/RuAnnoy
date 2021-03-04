@@ -60,8 +60,8 @@ val index = AnnoyIndex.tryLoad("index.5d.ann", 5, IndexType.Angular)
 #### Install via nuget
 ```xml
   <ItemGroup>
-    <PackageReference Include="RuAnnoy" />
-    <PackageReference Include="RuAnnoy-Batteries-Windows-x64" />
+    <PackageReference Include="RuAnnoy" Version="*" />
+    <PackageReference Include="RuAnnoy-Batteries-Windows-x64" Version="*" />
   </ItemGroup>
 ```
 #### Usage
