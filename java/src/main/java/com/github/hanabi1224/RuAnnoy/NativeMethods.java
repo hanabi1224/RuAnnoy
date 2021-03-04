@@ -7,6 +7,8 @@ class NativeMethods
 
     native static void freeIndex(long pointer);
 
+    native static long getIndexSize(long pointer);
+
     native static float[] getItemVector(long indexPointer, long itemIndex);
 
     native static int getNearestToItem(

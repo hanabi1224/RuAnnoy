@@ -40,7 +40,7 @@ repositories {
 }
   
 dependencies {
-  implementation 'com.github.hanabi1224:RuAnnoy:0.1.2'
+  implementation 'com.github.hanabi1224:RuAnnoy:<tag>'
 }
 ```
 #### Usage
