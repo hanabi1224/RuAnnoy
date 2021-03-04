@@ -6,6 +6,7 @@ use memmap2::MmapOptions;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
+use std::mem;
 use std::rc::Rc;
 use std::vec::Vec;
 
@@ -15,17 +16,18 @@ impl AnnoyIndex {
         index_file_path: &str,
         index_type: IndexType,
     ) -> Result<AnnoyIndex, Box<dyn Error>> {
-        let (offset_before_children, k_node_header_style, max_descendants): (usize, usize, usize) =
+        let (offset_before_children, node_header_size, max_descendants): (usize, usize, usize) =
             match index_type {
-                IndexType::Angular => (4, 12, dimension + 2),
-                IndexType::Euclidean => (8, 16, dimension + 2),
-                IndexType::Manhattan => (8, 16, dimension + 2),
+                IndexType::Angular => (4, mem::size_of::<NodeHeaderAngular>(), dimension + 2),
+                IndexType::Euclidean | IndexType::Manhattan => {
+                    (8, mem::size_of::<NodeHeaderMinkowski>(), dimension + 2)
+                }
                 // IndexType::Hamming => (4, 12),
-                IndexType::Dot => (4, 16, dimension + 3),
+                IndexType::Dot => (4, mem::size_of::<NodeHeaderDot>(), dimension + 3),
                 _ => unimplemented!("Index type not supported"),
             };
 
-        let node_size = k_node_header_style as i64 + (FLOAT32_SIZE * dimension) as i64;
+        let node_size = node_header_size as i64 + (FLOAT32_SIZE * dimension) as i64;
         let file = File::open(index_file_path)?; // .expect(format!("fail to open {}", index_file_path).as_str());
         let file_metadata = fs::metadata(index_file_path)?;
         let file_size = file_metadata.len() as i64;
@@ -66,7 +68,7 @@ impl AnnoyIndex {
             dimension: dimension,
             index_type: index_type,
             offset_before_children: offset_before_children,
-            k_node_header_style: k_node_header_style,
+            node_header_size: node_header_size,
             max_descendants: max_descendants as i32,
             node_size: node_size as usize,
             mmap: Rc::new(mmap),
@@ -117,7 +119,7 @@ impl AnnoyIndex {
 
     pub(crate) fn get_node_slice_with_offset(&self, node_offset: usize) -> &[f32] {
         let dimension = self.dimension as usize;
-        let offset = node_offset + self.k_node_header_style as usize;
+        let offset = node_offset + self.node_header_size as usize;
         self.mmap.read_slice::<f32>(offset, dimension)
     }
 }

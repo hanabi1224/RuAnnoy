@@ -40,7 +40,7 @@ pub struct AnnoyIndex {
     pub size: usize,
     pub(crate) max_descendants: i32,
     pub(crate) offset_before_children: usize,
-    pub(crate) k_node_header_style: usize,
+    pub(crate) node_header_size: usize,
     pub(crate) mmap: Rc<Mmap>,
     pub(crate) roots: Vec<usize>,
 }
