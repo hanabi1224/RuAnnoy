@@ -1,5 +1,4 @@
 use super::*;
-use crate::internals::mmap_ext::*;
 use crate::internals::priority_queue::PriorityQueue;
 
 pub trait AnnoyIndexSearchApi {
@@ -50,8 +49,10 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         let mut nearest_neighbors = std::collections::HashSet::<usize>::new();
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
             if let Some((top_node_offset, top_node_margin)) = pq.pop() {
+                let top_node = self.get_node_from_offset(top_node_offset);
+                let top_node_header = top_node.header;
                 let top_node_id = top_node_offset / self.node_size;
-                let n_descendants = self.mmap.read_i32(top_node_offset);
+                let n_descendants = top_node_header.get_n_descendant();
                 if n_descendants == 1 && top_node_id < self.degree {
                     nearest_neighbors.insert(top_node_id);
                 } else if n_descendants <= self.min_leaf_size {
@@ -63,7 +64,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 } else {
                     let v = self.get_node_slice_with_offset(top_node_offset);
                     let margin = self.get_margin(v, query_vector, top_node_offset);
-                    let children_id = self.get_children_id_slice(top_node_offset);
+                    let children_id = top_node_header.get_children_id_slice();
                     // NOTE: Hamming has different logic to calculate margin
                     let r_child_offset = self.node_size * children_id[1] as usize;
                     pq.push(r_child_offset, top_node_margin.min(margin));
@@ -75,7 +76,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
         let mut sorted_nns = Vec::with_capacity(nearest_neighbors.len());
         for nn_id in nearest_neighbors {
-            let n_descendants = self.mmap.read_i32(nn_id * self.node_size);
+            let node = self.get_node_from_id(nn_id);
+            let n_descendants = node.header.get_n_descendant();
             if n_descendants != 1 {
                 continue;
             }

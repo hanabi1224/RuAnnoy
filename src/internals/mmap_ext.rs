@@ -1,19 +1,88 @@
+use crate::IndexType;
 use memmap2::Mmap;
 use std::mem;
 use std::slice;
 
-pub trait NodeHeader {
-    fn get_n_descendants(&self) -> i32;
-    fn get_children(&self) -> [i32; 2];
+pub struct Node<'a> {
+    pub mmap: &'a Mmap,
+    pub id: usize,
+    pub offset: usize,
+    pub header: NodeHeader,
+}
+
+impl<'a> Node<'a> {
+    pub fn new_with_id(id: usize, node_size: usize, index_type: IndexType, mmap: &Mmap) -> Node {
+        let offset = id * node_size;
+        let header = NodeHeader::new(offset, &index_type, mmap);
+        Node {
+            mmap: mmap,
+            id: id,
+            offset: offset,
+            header: header,
+        }
+    }
+
+    pub fn new_with_offset(
+        offset: usize,
+        node_size: usize,
+        index_type: IndexType,
+        mmap: &Mmap,
+    ) -> Node {
+        let header = NodeHeader::new(offset, &index_type, mmap);
+        Node {
+            mmap: mmap,
+            id: offset / node_size,
+            offset: offset,
+            header: header,
+        }
+    }
 }
 
 #[repr(C)]
+pub enum NodeHeader {
+    Angular(NodeHeaderAngular),
+    Minkowski(NodeHeaderMinkowski),
+    Dot(NodeHeaderDot),
+}
+
+impl NodeHeader {
+    pub fn new(offset: usize, index_type: &IndexType, mmap: &Mmap) -> NodeHeader {
+        match index_type {
+            IndexType::Angular => NodeHeader::Angular(unsafe { *mmap.read_angular_header(offset) }),
+            IndexType::Euclidean | IndexType::Manhattan => {
+                NodeHeader::Minkowski(unsafe { *mmap.read_minkowski_header(offset) })
+            }
+            IndexType::Dot => NodeHeader::Dot(unsafe { *mmap.read_dot_header(offset) }),
+            _ => unimplemented!("Index type not supported"),
+        }
+    }
+
+    pub fn get_n_descendant(&self) -> i32 {
+        match self {
+            NodeHeader::Angular(h) => h.n_descendants,
+            NodeHeader::Minkowski(h) => h.n_descendants,
+            NodeHeader::Dot(h) => h.n_descendants,
+        }
+    }
+
+    pub fn get_children_id_slice(&self) -> &[i32] {
+        match self {
+            NodeHeader::Angular(h) => &h.children,
+            NodeHeader::Minkowski(h) => &h.children,
+            NodeHeader::Dot(h) => &h.children,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct NodeHeaderAngular {
     n_descendants: i32,
     children: [i32; 2],
 }
 
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct NodeHeaderMinkowski {
     n_descendants: i32,
     bias: f32,
@@ -21,6 +90,7 @@ pub struct NodeHeaderMinkowski {
 }
 
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct NodeHeaderDot {
     n_descendants: i32,
     children: [i32; 2],
