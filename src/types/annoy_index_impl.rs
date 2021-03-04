@@ -90,29 +90,8 @@ impl AnnoyIndex {
             .read_slice(node_offset + self.offset_before_children, n)
     }
 
-    pub fn get_children_id_slice(&self, node_offset: usize) -> &[i32] {
-        self.mmap
-            .read_slice(node_offset + self.offset_before_children, 2)
-    }
-
     pub fn get_nth_descendant_id(&self, node_offset: usize, n: usize) -> usize {
         get_nth_descendant_id(&self.mmap, node_offset, self.offset_before_children, n)
-    }
-
-    pub fn get_l_child_id(&self, node_offset: usize) -> usize {
-        self.get_nth_descendant_id(node_offset, 0)
-    }
-
-    pub fn get_l_child_offset(&self, node_offset: usize) -> usize {
-        self.get_l_child_id(node_offset) * self.node_size
-    }
-
-    pub fn get_r_child_id(&self, node_offset: usize) -> usize {
-        self.get_nth_descendant_id(node_offset, 1)
-    }
-
-    pub fn get_r_child_offset(&self, node_offset: usize) -> usize {
-        self.get_r_child_id(node_offset) * self.node_size
     }
 
     pub fn get_margin(&self, v1: &[f32], v2: &[f32], node_offset: usize) -> f32 {
