@@ -48,22 +48,26 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           dotnet build -c Release dotnet/RuAnnoy-Batteries-Linux-x64
+          dotnet pack -c Release dotnet/RuAnnoy-Batteries-Linux-x64 -o dotnet/artifacts
       - name: dotnet Build - OSX
         if: matrix.os == 'macos-latest'
         run: |
           dotnet build -c Release dotnet/RuAnnoy-Batteries-Darwin-x64
+          dotnet pack -c Release dotnet/RuAnnoy-Batteries-Darwin-x64 -o dotnet/artifacts
       - name: dotnet Build - Windows
         if: matrix.os == 'windows-latest'
         run: |
           dotnet build -c Release dotnet/RuAnnoy-Batteries-Windows-x64
           dotnet build -c Release dotnet/RuAnnoy
+          dotnet pack -c Release dotnet/RuAnnoy -o dotnet/artifacts
+          dotnet pack -c Release dotnet/RuAnnoy-Batteries-Windows-x64 -o dotnet/artifacts
       - uses: actions/upload-artifact@v2
         with:
-          path: dotnet/**/*.nupkg
+          path: dotnet/artifacts/*.nupkg
           if-no-files-found: error
       - uses: actions/upload-artifact@v2
         with:
-          path: dotnet/**/*.snupkg
+          path: dotnet/artifacts/*.snupkg
       - uses: actions/upload-artifact@v2
         if: matrix.os == 'windows-latest'
         with:
@@ -79,3 +83,8 @@ jobs:
         with:
           path: java/target/release/*.dylib
           if-no-files-found: error
+      - name: Deploy nugets
+        if: env.NUGET_API_KEY != ''
+        run: |
+          pushd dotnet/artifacts
+          dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY || echo 'done'

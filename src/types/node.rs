@@ -84,9 +84,20 @@ pub struct NodeHeaderDot {
     dot_factor: f32,
 }
 
+// #[repr(C)]
+// #[derive(Debug, Clone, Copy)]
+// pub struct NodeHeaderHamming {
+//     n_descendants: i32,
+//     children: [i32; 2],
+// }
+
 impl NodeHeaderAngular {
     fn read(mmap: &Mmap, offset: usize) -> *const NodeHeaderAngular {
         unsafe { mem::transmute(&mmap[offset]) }
+    }
+
+    pub const fn header_size() -> usize {
+        mem::size_of::<NodeHeaderAngular>()
     }
 }
 
@@ -94,10 +105,24 @@ impl NodeHeaderMinkowski {
     fn read(mmap: &Mmap, offset: usize) -> *const NodeHeaderMinkowski {
         unsafe { mem::transmute(&mmap[offset]) }
     }
+
+    pub const fn header_size() -> usize {
+        mem::size_of::<NodeHeaderMinkowski>()
+    }
 }
 
 impl NodeHeaderDot {
     fn read(mmap: &Mmap, offset: usize) -> *const NodeHeaderDot {
         unsafe { mem::transmute(&mmap[offset]) }
     }
+
+    pub const fn header_size() -> usize {
+        mem::size_of::<NodeHeaderDot>()
+    }
 }
+
+// impl NodeHeaderHamming {
+//     fn read(mmap: &Mmap, offset: usize) -> *const NodeHeaderHamming {
+//         unsafe { mem::transmute(&mmap[offset]) }
+//     }
+// }

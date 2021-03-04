@@ -1,0 +1,13 @@
+[package]
+authors = ["hanabi1224 <harlowmoo@gmail.com>"]
+edition = "2018"
+name = "bencher"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ru_annoy = {path = "../../", version = "0.1.2"}
+
+[profile.release]
+debug = true

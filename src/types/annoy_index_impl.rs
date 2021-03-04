@@ -6,7 +6,6 @@ use memmap2::MmapOptions;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
-use std::mem;
 use std::rc::Rc;
 use std::vec::Vec;
 
@@ -18,17 +17,17 @@ impl AnnoyIndex {
     ) -> Result<AnnoyIndex, Box<dyn Error>> {
         let (offset_before_children, node_header_size, max_descendants): (usize, usize, usize) =
             match index_type {
-                IndexType::Angular => (4, mem::size_of::<NodeHeaderAngular>(), dimension + 2),
+                IndexType::Angular => (4, NodeHeaderAngular::header_size(), dimension + 2),
                 IndexType::Euclidean | IndexType::Manhattan => {
-                    (8, mem::size_of::<NodeHeaderMinkowski>(), dimension + 2)
+                    (8, NodeHeaderMinkowski::header_size(), dimension + 2)
                 }
                 // IndexType::Hamming => (4, 12),
-                IndexType::Dot => (4, mem::size_of::<NodeHeaderDot>(), dimension + 3),
+                IndexType::Dot => (4, NodeHeaderDot::header_size(), dimension + 3),
                 _ => unimplemented!("Index type not supported"),
             };
 
         let node_size = node_header_size as i64 + (FLOAT32_SIZE * dimension) as i64;
-        let file = File::open(index_file_path)?; // .expect(format!("fail to open {}", index_file_path).as_str());
+        let file = File::open(index_file_path)?;
         let file_metadata = fs::metadata(index_file_path)?;
         let file_size = file_metadata.len() as i64;
         let mmap = unsafe { MmapOptions::new().map(&file)? };
