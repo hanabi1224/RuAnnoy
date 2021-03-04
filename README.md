@@ -9,6 +9,14 @@
 
 This library is a rust port of [spotify/annoy](https://github.com/spotify/annoy) , currently only index serving is supported.
 
+Metric | Serve | Build
+| :--- | :---: | ---: |
+Angular | ✅ | ❌
+Euclidean | ✅ | ❌
+Manhattan | ✅ | ❌
+Dot | ✅ | ❌
+Hamming | ❌ | ❌
+
 ### Install via [crates.io](https://crates.io/crates/ru_annoy)
 [![Crates.io](https://img.shields.io/crates/v/ru_annoy.svg)](https://crates.io/crates/ru_annoy)
 [![codecov](https://codecov.io/gh/hanabi1224/RuAnnoy/branch/master/graph/badge.svg?token=jVO7N0AVTH)](https://codecov.io/gh/hanabi1224/RuAnnoy)
