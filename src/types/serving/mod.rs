@@ -41,13 +41,13 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             result_capacity * self.roots.len()
         };
 
-        let mut pq = PriorityQueue::with_capacity(result_capacity);
+        let mut pq = PriorityQueue::with_capacity(result_capacity, false);
         for i in 0..self.roots.len() {
             let id = self.roots[i];
             pq.push(id as i32, f32::MAX);
         }
 
-        let mut nearest_neighbors = HashSet::<i32>::new();
+        let mut nearest_neighbors = HashSet::new();
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
             if let Some((top_node_id_i32, top_node_margin)) = pq.pop() {
                 let top_node_id = top_node_id_i32 as usize;
@@ -74,7 +74,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             }
         }
 
-        let mut sorted_nns = Vec::with_capacity(nearest_neighbors.len());
+        let mut sorted_nns = PriorityQueue::with_capacity(nearest_neighbors.len(), true);
         for nn_id in nearest_neighbors {
             let node = self.get_node_from_id(nn_id as usize);
             let n_descendants = node.header.get_n_descendant();
@@ -83,10 +83,9 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             }
 
             let s = self.get_node_slice_with_offset(nn_id as usize * self.node_size);
-            sorted_nns.push((nn_id, self.get_distance_no_norm(s, query_vector)));
+            sorted_nns.push(nn_id, self.get_distance_no_norm(s, query_vector));
         }
 
-        sorted_nns.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         let final_result_capcity = n_results.min(sorted_nns.len());
         let mut id_list = Vec::with_capacity(final_result_capcity);
         let mut distance_list = Vec::with_capacity(if should_include_distance {
@@ -94,8 +93,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         } else {
             0
         });
-        for i in 0..final_result_capcity {
-            let nn = &sorted_nns[i];
+        for _i in 0..final_result_capcity {
+            let nn = &sorted_nns.pop().unwrap();
             id_list.push(nn.0 as u64);
             if should_include_distance {
                 distance_list.push(self.normalized_distance(nn.1));
