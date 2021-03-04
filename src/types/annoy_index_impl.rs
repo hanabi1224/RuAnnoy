@@ -81,20 +81,16 @@ impl AnnoyIndex {
         return Ok(index);
     }
 
-    pub fn get_node_from_id(&self, id: usize) -> Node {
+    pub(crate) fn get_node_from_id(&self, id: usize) -> Node {
         Node::new_with_id(id, self.node_size, self.index_type, self.mmap.clone())
     }
 
-    pub fn get_descendant_id_slice(&self, node_offset: usize, n: usize) -> &[i32] {
+    pub(crate) fn get_descendant_id_slice(&self, node_offset: usize, n: usize) -> &[i32] {
         self.mmap
             .read_slice(node_offset + self.offset_before_children, n)
     }
 
-    pub fn get_nth_descendant_id(&self, node_offset: usize, n: usize) -> usize {
-        get_nth_descendant_id(&self.mmap, node_offset, self.offset_before_children, n)
-    }
-
-    pub fn get_margin(&self, v1: &[f32], v2: &[f32], node_offset: usize) -> f32 {
+    pub(crate) fn get_margin(&self, v1: &[f32], v2: &[f32], node_offset: usize) -> f32 {
         match self.index_type {
             IndexType::Angular => dot_product(v1, v2),
             IndexType::Euclidean | IndexType::Manhattan => {
@@ -105,7 +101,7 @@ impl AnnoyIndex {
         }
     }
 
-    pub fn get_distance_no_norm(&self, v1: &[f32], v2: &[f32]) -> f32 {
+    pub(crate) fn get_distance_no_norm(&self, v1: &[f32], v2: &[f32]) -> f32 {
         match self.index_type {
             IndexType::Angular => cosine_distance(v1, v2),
             IndexType::Euclidean => euclidean_distance(v1, v2),
@@ -115,7 +111,7 @@ impl AnnoyIndex {
         }
     }
 
-    pub fn normalized_distance(&self, d: f32) -> f32 {
+    pub(crate) fn normalized_distance(&self, d: f32) -> f32 {
         match self.index_type {
             IndexType::Angular | IndexType::Euclidean => d.sqrt(),
             IndexType::Dot => -d,
@@ -123,7 +119,7 @@ impl AnnoyIndex {
         }
     }
 
-    pub fn get_node_slice_with_offset(&self, node_offset: usize) -> &[f32] {
+    pub(crate) fn get_node_slice_with_offset(&self, node_offset: usize) -> &[f32] {
         let dimension = self.dimension as usize;
         let offset = node_offset + self.k_node_header_style as usize;
         self.mmap.read_slice::<f32>(offset, dimension)

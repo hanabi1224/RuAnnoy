@@ -2,7 +2,7 @@ use memmap2::Mmap;
 use std::mem;
 use std::slice;
 
-pub trait MmapExtensions {
+pub(crate) trait MmapExtensions {
     fn read_i32(&self, idx: usize) -> i32;
     fn read_f32(&self, idx: usize) -> f32;
     fn read_slice<T: Sized>(&self, idx: usize, len: usize) -> &[T];
