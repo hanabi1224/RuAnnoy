@@ -1,4 +1,5 @@
 mod annoy_index_impl;
+mod node;
 mod utils;
 
 pub mod serving;

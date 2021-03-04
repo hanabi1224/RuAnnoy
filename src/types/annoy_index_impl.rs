@@ -1,6 +1,7 @@
 use super::utils::*;
 use super::{AnnoyIndex, IndexType};
 use crate::internals::mmap_ext::*;
+use crate::types::node::*;
 use memmap2::MmapOptions;
 use std::error::Error;
 use std::fs;
