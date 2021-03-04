@@ -87,6 +87,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        shell: pwsh
         run: |
           pushd dotnet/artifacts
-          dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY || echo 'done'
+          dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k $env:NUGET_API_KEY || echo 'done'
