@@ -1,2 +1,2 @@
 pub mod mmap_ext;
-pub mod pqentry;
+pub mod priority_queue;

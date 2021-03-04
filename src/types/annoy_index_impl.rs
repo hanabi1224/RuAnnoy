@@ -128,4 +128,10 @@ impl AnnoyIndex {
             _ => d,
         }
     }
+
+    pub fn get_node_slice_with_offset(&self, node_offset: usize) -> &[f32] {
+        let dimension = self.dimension as usize;
+        let offset = node_offset + self.k_node_header_style as usize;
+        self.mmap.read_slice::<f32>(offset, dimension)
+    }
 }

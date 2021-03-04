@@ -2,7 +2,10 @@ use memmap2::Mmap;
 use std::mem;
 use std::slice;
 
-pub trait NodeHeader {}
+pub trait NodeHeader {
+    fn get_n_descendants(&self) -> i32;
+    fn get_children(&self) -> [i32; 2];
+}
 
 #[repr(C)]
 pub struct NodeHeaderAngular {

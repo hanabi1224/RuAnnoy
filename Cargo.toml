@@ -8,7 +8,7 @@ exclude = ["dotnet", "java", "test_gen", ".idea", ".vscode", ".github", "*.yml",
 license = "MIT"
 name = "ru_annoy"
 repository = "https://github.com/hanabi1224/RuAnnoy"
-version = "0.1.2"
+version = "0.1.3"
 
 [features]
 cffi = ["libc"]

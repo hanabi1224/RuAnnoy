@@ -21,7 +21,7 @@ repositories {
 }
 
 group = "com.github.hanabi1224"
-version = "0.1.2"
+version = "0.1.3"
 
 java {                                      
     sourceCompatibility = JavaVersion.VERSION_1_8
