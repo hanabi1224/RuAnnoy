@@ -1,5 +1,6 @@
 use super::*;
 use crate::internals::priority_queue::PriorityQueue;
+use hashbrown::HashSet;
 
 pub trait AnnoyIndexSearchApi {
     fn get_item_vector(&self, item_index: i64) -> Vec<f32>;
@@ -46,7 +47,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             pq.push(id, f32::MAX);
         }
 
-        let mut nearest_neighbors = std::collections::HashSet::<usize>::new();
+        let mut nearest_neighbors = HashSet::<usize>::new();
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
             if let Some((top_node_id, top_node_margin)) = pq.pop() {
                 let top_node = self.get_node_from_id(top_node_id);
