@@ -1,2 +1,2 @@
-pub mod mmap_ext;
-pub mod priority_queue;
+pub(crate) mod mmap_ext;
+pub(crate) mod priority_queue;

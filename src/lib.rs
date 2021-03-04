@@ -1,6 +1,6 @@
 #![deny(warnings)]
 
-mod internals;
+pub(crate) mod internals;
 
 mod types;
 pub use types::*;
