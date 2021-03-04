@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0;netstandard2.1;</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>RuAnnoy</PackageId>
-    <Description>A dotnet binding of rust implementation of Annoy https://github.com/spotify/annoy (Only index serving part)</Description>
+    <Description>A dotnet binding of rust implementation of Annoy https://github.com/spotify/annoy (Only index serving is supported)</Description>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,7 +17,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" $(TargetFramework) != 'netstandard2.1' ">
     <PackageReference Include="System.Memory" Version="4.*" />
   </ItemGroup>
 
