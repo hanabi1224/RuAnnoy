@@ -11,7 +11,6 @@ mod tests {
     use std::ptr;
     #[cfg(feature = "cffi")]
     use std::slice;
-    use std::vec::Vec;
 
     const TEST_INDEX_DIM: usize = 5;
     const TEST_NODE_COUNT: usize = 100;
@@ -110,13 +109,8 @@ mod tests {
 
         let v0 = index.get_item_vector(0);
         let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
-        let mut id_list: Vec<u64> = Vec::new();
-        let mut distance_list: Vec<f32> = Vec::new();
-        for item in &nearest {
-            id_list.push(item.id);
-            distance_list.push(item.distance);
-        }
-
+        let id_list = nearest.id_list;
+        let distance_list = nearest.distance_list;
         assert_eq!(index.degree, TEST_NODE_COUNT);
         assert_eq!(id_list, expected_id_list);
         assert_eq!(distance_list, expected_distance_list);
@@ -245,7 +239,7 @@ mod tests {
             1.35356555,
         ];
         let nearest = index.get_nearest(v1.as_ref(), 100, -1, true);
-        assert_eq!(nearest.len(), 1);
-        assert_eq!(nearest[0].id, 1000);
+        assert_eq!(nearest.count, 1);
+        assert_eq!(nearest.id_list[0], 1000);
     }
 }

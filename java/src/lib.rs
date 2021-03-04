@@ -115,13 +115,12 @@ ffi_fn! {
             search_k,
             should_include_distance != 0,
         );
-        let r_id_list: Vec<i64> = r.iter().map(|i| i.id as i64).collect();
+        let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
         let _ = env.set_long_array_region(id_list, 0, &r_id_list.as_slice());
         if should_include_distance != 0 {
-            let r_distance_list: Vec<f32> = r.iter().map(|i| i.distance).collect();
-            let _ = env.set_float_array_region(distance_list, 0, &r_distance_list.as_slice());
+            let _ = env.set_float_array_region(distance_list, 0, &r.distance_list.as_slice());
         }
-        r.len() as jint
+        r.count as jint
     }
 }
 
@@ -159,13 +158,12 @@ ffi_fn! {
                     search_k,
                     should_include_distance != 0,
                 );
-                let r_id_list: Vec<i64> = r.iter().map(|i| i.id as i64).collect();
+                let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
                 let _ = env.set_long_array_region(id_list, 0, &r_id_list.as_slice());
                 if should_include_distance != 0 {
-                    let r_distance_list: Vec<f32> = r.iter().map(|i| i.distance).collect();
-                    let _ = env.set_float_array_region(distance_list, 0, &r_distance_list.as_slice());
+                    let _ = env.set_float_array_region(distance_list, 0, &r.distance_list.as_slice());
                 }
-                r.len() as jint
+                r.count as jint
             }
         }
     }

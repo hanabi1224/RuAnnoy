@@ -9,14 +9,14 @@ pub trait AnnoyIndexSearchApi {
         n_results: usize,
         search_k: i32,
         should_include_distance: bool,
-    ) -> Vec<AnnoyIndexSearchResult>;
+    ) -> AnnoyIndexSearchResult;
     fn get_nearest_to_item(
         &self,
         item_index: i64,
         n_results: usize,
         search_k: i32,
         should_include_distance: bool,
-    ) -> Vec<AnnoyIndexSearchResult>;
+    ) -> AnnoyIndexSearchResult;
 }
 
 impl AnnoyIndexSearchApi for AnnoyIndex {
@@ -32,7 +32,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         n_results: usize,
         search_k: i32,
         should_include_distance: bool,
-    ) -> Vec<AnnoyIndexSearchResult> {
+    ) -> AnnoyIndexSearchResult {
         let result_capacity = n_results.min(self.degree).max(1);
         let search_k_fixed = if search_k > 0 {
             search_k as usize
@@ -86,18 +86,25 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
         sorted_nns.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         let final_result_capcity = n_results.min(sorted_nns.len());
-        let mut results: Vec<AnnoyIndexSearchResult> = Vec::with_capacity(final_result_capcity);
+        let mut id_list = Vec::with_capacity(final_result_capcity);
+        let mut distance_list = Vec::with_capacity(if should_include_distance {
+            final_result_capcity
+        } else {
+            0
+        });
         for i in 0..final_result_capcity {
             let nn = &sorted_nns[i];
-            results.push(AnnoyIndexSearchResult {
-                id: nn.0 as u64,
-                distance: match should_include_distance {
-                    true => self.normalized_distance(nn.1),
-                    false => 0.0,
-                },
-            });
+            id_list.push(nn.0 as u64);
+            if should_include_distance {
+                distance_list.push(self.normalized_distance(nn.1));
+            }
         }
-        return results;
+        return AnnoyIndexSearchResult {
+            count: final_result_capcity,
+            is_distance_included: should_include_distance,
+            id_list: id_list,
+            distance_list: distance_list,
+        };
     }
 
     fn get_nearest_to_item(
@@ -106,13 +113,13 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         n_results: usize,
         search_k: i32,
         should_include_distance: bool,
-    ) -> Vec<AnnoyIndexSearchResult> {
+    ) -> AnnoyIndexSearchResult {
         let item_vector = self.get_item_vector(item_index);
-        return self.get_nearest(
+        self.get_nearest(
             item_vector.as_slice(),
             n_results,
             search_k,
             should_include_distance,
-        );
+        )
     }
 }

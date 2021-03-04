@@ -8,10 +8,11 @@ use std::rc::Rc;
 
 use memmap2::Mmap;
 
-#[repr(C)]
 pub struct AnnoyIndexSearchResult {
-    pub id: u64,
-    pub distance: f32,
+    pub count: usize,
+    pub is_distance_included: bool,
+    pub id_list: Vec<u64>,
+    pub distance_list: Vec<f32>,
 }
 
 #[repr(u8)]
