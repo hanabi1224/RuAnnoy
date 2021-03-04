@@ -90,4 +90,4 @@ jobs:
         shell: pwsh
         run: |
           pushd dotnet/artifacts
-          dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k $env:NUGET_API_KEY || echo 'done'
+          dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json -k $env:NUGET_API_KEY || echo 'done'
