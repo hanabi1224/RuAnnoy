@@ -4,6 +4,7 @@ mod utils;
 pub mod serving;
 pub use serving::AnnoyIndexSearchApi;
 use std::fmt::{Display, Formatter, Result};
+use std::rc::Rc;
 
 use memmap2::Mmap;
 
@@ -39,7 +40,7 @@ pub struct AnnoyIndex {
     offset_before_children: usize,
     k_node_header_style: usize,
     min_leaf_size: i32,
-    mmap: Mmap,
+    mmap: Rc<Mmap>,
     pub roots: Vec<usize>,
     pub degree: usize,
 }

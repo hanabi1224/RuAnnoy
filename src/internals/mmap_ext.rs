@@ -1,19 +1,20 @@
 use crate::IndexType;
 use memmap2::Mmap;
 use std::mem;
+use std::rc::Rc;
 use std::slice;
 
-pub struct Node<'a> {
-    pub mmap: &'a Mmap,
+pub struct Node {
+    pub mmap: Rc<Mmap>,
     pub id: usize,
     pub offset: usize,
     pub header: NodeHeader,
 }
 
-impl<'a> Node<'a> {
-    pub fn new_with_id(id: usize, node_size: usize, index_type: IndexType, mmap: &Mmap) -> Node {
+impl Node {
+    pub fn new_with_id(id: usize, node_size: usize, index_type: IndexType, mmap: Rc<Mmap>) -> Node {
         let offset = id * node_size;
-        let header = NodeHeader::new(offset, &index_type, mmap);
+        let header = NodeHeader::new(offset, &index_type, &mmap);
         Node {
             mmap: mmap,
             id: id,
@@ -26,9 +27,9 @@ impl<'a> Node<'a> {
         offset: usize,
         node_size: usize,
         index_type: IndexType,
-        mmap: &Mmap,
+        mmap: Rc<Mmap>,
     ) -> Node {
-        let header = NodeHeader::new(offset, &index_type, mmap);
+        let header = NodeHeader::new(offset, &index_type, &mmap);
         Node {
             mmap: mmap,
             id: offset / node_size,

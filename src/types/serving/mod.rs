@@ -42,16 +42,16 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
         let mut pq = PriorityQueue::with_capacity(result_capacity);
         for i in 0..self.roots.len() {
-            let offset = self.roots[i];
-            pq.push(offset, f32::MAX);
+            let id = self.roots[i];
+            pq.push(id, f32::MAX);
         }
 
         let mut nearest_neighbors = std::collections::HashSet::<usize>::new();
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
-            if let Some((top_node_offset, top_node_margin)) = pq.pop() {
-                let top_node = self.get_node_from_offset(top_node_offset);
+            if let Some((top_node_id, top_node_margin)) = pq.pop() {
+                let top_node = self.get_node_from_id(top_node_id);
                 let top_node_header = top_node.header;
-                let top_node_id = top_node_offset / self.node_size;
+                let top_node_offset = top_node.offset;
                 let n_descendants = top_node_header.get_n_descendant();
                 if n_descendants == 1 && top_node_id < self.degree {
                     nearest_neighbors.insert(top_node_id);
@@ -66,10 +66,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                     let margin = self.get_margin(v, query_vector, top_node_offset);
                     let children_id = top_node_header.get_children_id_slice();
                     // NOTE: Hamming has different logic to calculate margin
-                    let r_child_offset = self.node_size * children_id[1] as usize;
-                    pq.push(r_child_offset, top_node_margin.min(margin));
-                    let l_child_offset = self.node_size * children_id[0] as usize;
-                    pq.push(l_child_offset, top_node_margin.min(-margin));
+                    pq.push(children_id[1] as usize, top_node_margin.min(margin));
+                    pq.push(children_id[0] as usize, top_node_margin.min(-margin));
                 }
             }
         }

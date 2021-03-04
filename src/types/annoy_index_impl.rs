@@ -5,6 +5,7 @@ use memmap2::MmapOptions;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
+use std::rc::Rc;
 use std::vec::Vec;
 
 impl AnnoyIndex {
@@ -37,7 +38,7 @@ impl AnnoyIndex {
         while i >= 0 {
             let n_descendants = mmap.read_i32(i as usize);
             if m == -1 || n_descendants == m {
-                roots.push(i as usize);
+                roots.push((i / node_size) as usize);
                 m = n_descendants;
             } else {
                 break;
@@ -47,8 +48,17 @@ impl AnnoyIndex {
 
         // hacky fix: since the last root precedes the copy of all roots, delete it
         if roots.len() > 1
-            && get_nth_descendant_id(&mmap, *roots.first().unwrap(), offset_before_children, 0)
-                == get_nth_descendant_id(&mmap, *roots.last().unwrap(), offset_before_children, 0)
+            && get_nth_descendant_id(
+                &mmap,
+                *roots.first().unwrap() * node_size as usize,
+                offset_before_children,
+                0,
+            ) == get_nth_descendant_id(
+                &mmap,
+                *roots.last().unwrap() * node_size as usize,
+                offset_before_children,
+                0,
+            )
         {
             roots.pop();
         }
@@ -62,7 +72,7 @@ impl AnnoyIndex {
             node_size: node_size as usize,
             node_count: node_count as usize,
             max_descendants: max_descendants as i32,
-            mmap: mmap,
+            mmap: Rc::new(mmap),
             roots: roots,
             degree: m as usize,
         };
@@ -71,11 +81,16 @@ impl AnnoyIndex {
     }
 
     pub fn get_node_from_id(&self, id: usize) -> Node {
-        Node::new_with_id(id, self.node_size, self.index_type, &self.mmap)
+        Node::new_with_id(id, self.node_size, self.index_type, self.mmap.clone())
     }
 
     pub fn get_node_from_offset(&self, node_offset: usize) -> Node {
-        Node::new_with_offset(node_offset, self.node_size, self.index_type, &self.mmap)
+        Node::new_with_offset(
+            node_offset,
+            self.node_size,
+            self.index_type,
+            self.mmap.clone(),
+        )
     }
 
     pub fn get_node_header(&self, node_offset: usize) -> NodeHeader {
