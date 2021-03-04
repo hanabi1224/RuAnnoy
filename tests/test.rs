@@ -11,9 +11,8 @@ mod tests {
     use std::ptr;
     #[cfg(feature = "cffi")]
     use std::slice;
-    use std::vec::Vec;
 
-    const TEST_INDEX_DIM: i32 = 5;
+    const TEST_INDEX_DIM: usize = 5;
     const TEST_NODE_COUNT: usize = 100;
 
     #[test]
@@ -101,7 +100,7 @@ mod tests {
     fn sanity_tests_inner(
         index_type: IndexType,
         expected_item3_vec: &[f32],
-        expected_id_list: &[i64],
+        expected_id_list: &[u64],
         expected_distance_list: &[f32],
     ) {
         let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
@@ -110,14 +109,9 @@ mod tests {
 
         let v0 = index.get_item_vector(0);
         let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
-        let mut id_list: Vec<i64> = Vec::new();
-        let mut distance_list: Vec<f32> = Vec::new();
-        for item in &nearest {
-            id_list.push(item.id);
-            distance_list.push(item.distance);
-        }
-
-        assert_eq!(index.degree as usize, TEST_NODE_COUNT);
+        let id_list = nearest.id_list;
+        let distance_list = nearest.distance_list;
+        assert_eq!(index.size, TEST_NODE_COUNT);
         assert_eq!(id_list, expected_id_list);
         assert_eq!(distance_list, expected_distance_list);
         assert_eq!(distance_list.len(), expected_distance_list.len());
@@ -140,7 +134,7 @@ mod tests {
     fn sanity_tests_inner_ffi(
         index_type: IndexType,
         expected_item3_vec: &[f32],
-        expected_id_list: &[i64],
+        expected_id_list: &[u64],
         expected_distance_list: &[f32],
     ) {
         let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
@@ -148,11 +142,11 @@ mod tests {
         unsafe {
             let index = load_annoy_index(
                 filepath_cstring.into_raw() as *const c_char,
-                TEST_INDEX_DIM,
+                TEST_INDEX_DIM as i32,
                 index_type as u8,
             );
             let dim = get_dimension(index);
-            assert_eq!(dim, TEST_INDEX_DIM);
+            assert_eq!(dim, TEST_INDEX_DIM as i32);
             let v3_raw = alloc(Layout::array::<f32>(dim as usize).unwrap()) as *mut f32;
             get_item_vector(index, 3, v3_raw);
             // let v3_raw = get_item_vector(index, 3);
@@ -163,11 +157,12 @@ mod tests {
             get_item_vector(index, 0, v0_raw);
             let _v0 = slice::from_raw_parts(v0_raw as *mut f32, dim as usize).to_vec();
             // let v0_raw = get_item_vector(index, 0);
+            assert_eq!(TEST_NODE_COUNT, get_size(index) as usize);
             {
                 let nearest_raw = get_nearest(index, v0_raw, 5, -1, true);
                 let result_count = get_result_count(nearest_raw);
                 let id_list_raw = get_id_list(nearest_raw);
-                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
                 let distance_list_raw = get_distance_list(nearest_raw);
                 let distance_list =
@@ -179,7 +174,7 @@ mod tests {
                 let nearest_raw = get_nearest_to_item(index, 0, 5, -1, true);
                 let result_count = get_result_count(nearest_raw);
                 let id_list_raw = get_id_list(nearest_raw);
-                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
                 let distance_list_raw = get_distance_list(nearest_raw);
                 let distance_list =
@@ -191,7 +186,7 @@ mod tests {
                 let nearest_raw = get_nearest(index, v0_raw, 5, -1, false);
                 let result_count = get_result_count(nearest_raw);
                 let id_list_raw = get_id_list(nearest_raw);
-                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
                 let distance_list_raw = get_distance_list(nearest_raw);
                 let distance_list =
@@ -204,7 +199,7 @@ mod tests {
                 let nearest_raw = get_nearest_to_item(index, 0, 5, -1, false);
                 let result_count = get_result_count(nearest_raw);
                 let id_list_raw = get_id_list(nearest_raw);
-                let id_list = slice::from_raw_parts(id_list_raw as *mut i64, result_count).to_vec();
+                let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
                 let distance_list_raw = get_distance_list(nearest_raw);
                 let distance_list =
@@ -222,7 +217,7 @@ mod tests {
     fn invalid_index_cffi() {
         let index_ptr = load_annoy_index(
             CString::new("invalid_index.ann").unwrap().into_raw() as *const c_char,
-            TEST_INDEX_DIM,
+            TEST_INDEX_DIM as i32,
             IndexType::Angular as u8,
         );
         assert_eq!(index_ptr, ptr::null());
@@ -245,7 +240,7 @@ mod tests {
             1.35356555,
         ];
         let nearest = index.get_nearest(v1.as_ref(), 100, -1, true);
-        assert_eq!(nearest.len(), 1);
-        assert_eq!(nearest[0].id, 1000);
+        assert_eq!(nearest.count, 1);
+        assert_eq!(nearest.id_list[0], 1000);
     }
 }

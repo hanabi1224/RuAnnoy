@@ -32,11 +32,7 @@ template<typename S, typename T, typename Distance, typename Random, class Threa
 // }
 
 pub fn dot_product(u: &[f32], v: &[f32]) -> f32 {
-    let mut d: f32 = 0.0;
-    for i in 0..u.len() {
-        d += u[i] * v[i];
-    }
-    return d;
+    u.iter().zip(v.iter()).map(|(x, y)| x * y).sum()
 }
 
 pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
@@ -50,8 +46,8 @@ pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
     for i in 0..u.len() {
         let _u = u[i];
         let _v = v[i];
-        pp += _u.powi(2);
-        qq += _v.powi(2);
+        pp += _u * _u;
+        qq += _v * _v;
         pq += _u * _v;
     }
 
@@ -81,13 +77,12 @@ pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
 
 pub fn get_nth_descendant_id(
     mmap: &Mmap,
-    node_offset: i64,
-    index_type_offset: i32,
+    node_offset: usize,
+    offset_before_children: usize,
     n: usize,
-) -> i64 {
-    let child_offset = node_offset as usize + index_type_offset as usize + n * INT32_SIZE;
-    let child_id = mmap.read_i32(child_offset) as i64;
-    return child_id;
+) -> usize {
+    let child_offset = node_offset + offset_before_children + n * INT32_SIZE;
+    mmap.read_i32(child_offset) as usize
 }
 
 #[cfg(test)]

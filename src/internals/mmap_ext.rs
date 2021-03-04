@@ -1,29 +1,26 @@
 use memmap2::Mmap;
 use std::mem;
+use std::slice;
 
-pub trait MmapExtensions {
+pub(crate) trait MmapExtensions {
     fn read_i32(&self, idx: usize) -> i32;
     fn read_f32(&self, idx: usize) -> f32;
+    fn read_slice<T: Sized>(&self, idx: usize, len: usize) -> &[T];
 }
 
 impl MmapExtensions for Mmap {
     fn read_i32(&self, idx: usize) -> i32 {
-        let array = [
-            *&self[idx],
-            *&self[idx + 1],
-            *&self[idx + 2],
-            *&self[idx + 3],
-        ];
-        return unsafe { mem::transmute::<[u8; 4], i32>(array) };
+        let ptr: *const i32 = unsafe { mem::transmute(&self[idx]) };
+        return unsafe { *ptr };
     }
 
     fn read_f32(&self, idx: usize) -> f32 {
-        let array = [
-            *&self[idx],
-            *&self[idx + 1],
-            *&self[idx + 2],
-            *&self[idx + 3],
-        ];
-        return unsafe { mem::transmute::<[u8; 4], f32>(array) };
+        let ptr: *const f32 = unsafe { mem::transmute(&self[idx]) };
+        return unsafe { *ptr };
+    }
+
+    fn read_slice<T: Sized>(&self, idx: usize, len: usize) -> &[T] {
+        let ptr: *const T = unsafe { mem::transmute(&self[idx]) };
+        unsafe { slice::from_raw_parts(ptr, len) }
     }
 }

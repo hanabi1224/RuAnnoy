@@ -19,6 +19,9 @@ namespace RuAnnoy
         [DllImport(DLLPATH, EntryPoint = "get_dimension", CharSet = CharSet.Ansi)]
         internal static extern Int32 GetDimension(IntPtr index);
 
+        [DllImport(DLLPATH, EntryPoint = "get_size", CharSet = CharSet.Ansi)]
+        internal static extern UInt64 GetSize(IntPtr index);
+
         [DllImport(DLLPATH, EntryPoint = "get_item_vector", CharSet = CharSet.Ansi)]
         internal static extern void GetItemVector(IntPtr index, Int64 itemIndex, [Out] float[] itemVector);
 

@@ -22,6 +22,7 @@ namespace RuAnnoy.Tests
         }
 
         const int TEST_INDEX_DIM = 5;
+        const ulong TEST_NODE_COUNT = 100;
 
         [Test]
         public void TestInvalidIndex()
@@ -120,6 +121,7 @@ namespace RuAnnoy.Tests
             var index = AnnoyIndex.Load(path, TEST_INDEX_DIM, indexType);
             index.Should().NotBeNull();
             index.Dimension.Should().Be(TEST_INDEX_DIM);
+            index.Size.Should().Be(TEST_NODE_COUNT);
 
             {
                 var nearest = index.GetNearestToItem(0, 5, -1, true);

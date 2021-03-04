@@ -17,9 +17,13 @@ namespace RuAnnoy
             _indexPtr = indexPtr;
             Dimension = dimension;
             Type = type;
+
+            Size = NativeMethods.GetSize(_indexPtr);
         }
 
         public int Dimension { get; }
+
+        public ulong Size { get; }
 
         public IndexType Type { get; }
 

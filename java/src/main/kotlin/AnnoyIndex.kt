@@ -23,6 +23,7 @@ public class AnnoyIndexSearchResult(
 public interface IAnnoyIndex : Closeable {
     val dimension: Int
     val type: IndexType
+    val size: Long
     fun getItemVector(itemIndex: Long): FloatArray
     fun getNearest(
             queryVector: FloatArray,
@@ -41,7 +42,8 @@ public interface IAnnoyIndex : Closeable {
 public class AnnoyIndex(
         val pointer: Long,
         override val dimension: Int,
-        override val type: IndexType
+        override val type: IndexType,
+        override val size: Long
 ) : IAnnoyIndex {
     public override fun getItemVector(itemIndex: Long): FloatArray {
         return NativeMethods.getItemVector(this.pointer, itemIndex)
@@ -119,7 +121,8 @@ public class AnnoyIndex(
             if (pointer == 0L) {
                 return null
             }
-            return AnnoyIndex(pointer, dimension, type)
+            val size = NativeMethods.getIndexSize(pointer)
+            return AnnoyIndex(pointer, dimension, type, size)
         }
     }
 }

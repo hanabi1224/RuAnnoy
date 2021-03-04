@@ -43,7 +43,7 @@ fn Java_com_github_hanabi1224_RuAnnoy_NativeMethods_loadIndex_inner(
 ) -> Result<jlong, Box<dyn Error>> {
     let ru_path: String = env.get_string(path)?.into();
     let ru_index_type: IndexType = unsafe { mem::transmute(index_type) };
-    let index = AnnoyIndex::load(dimension, ru_path.as_str(), ru_index_type)?;
+    let index = AnnoyIndex::load(dimension as usize, ru_path.as_str(), ru_index_type)?;
     let ptr = Box::into_raw(Box::new(index));
     return Ok(ptr as jlong);
 }
@@ -69,6 +69,24 @@ ffi_fn! {
 
 /*
  * Class:     com_github_hanabi1224_RuAnnoy_NativeMethods
+ * Method:    getIndexSize
+ * Signature: (J)J
+ */
+// JNIEXPORT jlong JNICALL Java_com_github_hanabi1224_RuAnnoy_NativeMethods_getIndexSize
+//   (JNIEnv *, jclass, jlong);
+ffi_fn! {
+    fn Java_com_github_hanabi1224_RuAnnoy_NativeMethods_getIndexSize(
+        env: JNIEnv,
+        class: JClass,
+        pointer: jlong,
+    ) -> jlong {
+        let index = unsafe { &*(pointer as *const AnnoyIndex) };
+        index.size as jlong
+    }
+}
+
+/*
+ * Class:     com_github_hanabi1224_RuAnnoy_NativeMethods
  * Method:    getItemVector
  * Signature: (JJ)[F
  */
@@ -83,7 +101,7 @@ ffi_fn! {
     ) -> jfloatArray {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let vector = index.get_item_vector(item_index);
-        let result = env.new_float_array(index.dimension).unwrap();
+        let result = env.new_float_array(index.dimension as i32).unwrap();
         let _ = env.set_float_array_region(result, 0, &vector.as_slice());
         result
     }
@@ -115,13 +133,12 @@ ffi_fn! {
             search_k,
             should_include_distance != 0,
         );
-        let r_id_list: Vec<i64> = r.iter().map(|i| i.id).collect();
+        let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
         let _ = env.set_long_array_region(id_list, 0, &r_id_list.as_slice());
         if should_include_distance != 0 {
-            let r_distance_list: Vec<f32> = r.iter().map(|i| i.distance).collect();
-            let _ = env.set_float_array_region(distance_list, 0, &r_distance_list.as_slice());
+            let _ = env.set_float_array_region(distance_list, 0, &r.distance_list.as_slice());
         }
-        r.len() as jint
+        r.count as jint
     }
 }
 
@@ -159,13 +176,12 @@ ffi_fn! {
                     search_k,
                     should_include_distance != 0,
                 );
-                let r_id_list: Vec<i64> = r.iter().map(|i| i.id).collect();
+                let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
                 let _ = env.set_long_array_region(id_list, 0, &r_id_list.as_slice());
                 if should_include_distance != 0 {
-                    let r_distance_list: Vec<f32> = r.iter().map(|i| i.distance).collect();
-                    let _ = env.set_float_array_region(distance_list, 0, &r_distance_list.as_slice());
+                    let _ = env.set_float_array_region(distance_list, 0, &r.distance_list.as_slice());
                 }
-                r.len() as jint
+                r.count as jint
             }
         }
     }

@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <Version>0.1.8</Version>
+    <Version>0.1.9</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>hanabi1224</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
