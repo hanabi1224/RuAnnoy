@@ -22,21 +22,6 @@ impl Node {
             header: header,
         }
     }
-
-    pub fn new_with_offset(
-        offset: usize,
-        node_size: usize,
-        index_type: IndexType,
-        mmap: Rc<Mmap>,
-    ) -> Node {
-        let header = NodeHeader::new(offset, &index_type, &mmap);
-        Node {
-            mmap: mmap,
-            id: offset / node_size,
-            offset: offset,
-            header: header,
-        }
-    }
 }
 
 #[repr(C)]

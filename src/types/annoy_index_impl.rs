@@ -84,28 +84,6 @@ impl AnnoyIndex {
         Node::new_with_id(id, self.node_size, self.index_type, self.mmap.clone())
     }
 
-    pub fn get_node_from_offset(&self, node_offset: usize) -> Node {
-        Node::new_with_offset(
-            node_offset,
-            self.node_size,
-            self.index_type,
-            self.mmap.clone(),
-        )
-    }
-
-    pub fn get_node_header(&self, node_offset: usize) -> NodeHeader {
-        match self.index_type {
-            IndexType::Angular => {
-                NodeHeader::Angular(unsafe { *self.mmap.read_angular_header(node_offset) })
-            }
-            IndexType::Euclidean | IndexType::Manhattan => {
-                NodeHeader::Minkowski(unsafe { *self.mmap.read_minkowski_header(node_offset) })
-            }
-            IndexType::Dot => NodeHeader::Dot(unsafe { *self.mmap.read_dot_header(node_offset) }),
-            _ => unimplemented!("Index type not supported"),
-        }
-    }
-
     pub fn get_descendant_id_slice(&self, node_offset: usize, n: usize) -> &[i32] {
         self.mmap
             .read_slice(node_offset + self.offset_before_children, n)
