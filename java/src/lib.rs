@@ -69,6 +69,24 @@ ffi_fn! {
 
 /*
  * Class:     com_github_hanabi1224_RuAnnoy_NativeMethods
+ * Method:    getIndexSize
+ * Signature: (J)J
+ */
+// JNIEXPORT jlong JNICALL Java_com_github_hanabi1224_RuAnnoy_NativeMethods_getIndexSize
+//   (JNIEnv *, jclass, jlong);
+ffi_fn! {
+    fn Java_com_github_hanabi1224_RuAnnoy_NativeMethods_getIndexSize(
+        env: JNIEnv,
+        class: JClass,
+        pointer: jlong,
+    ) -> jlong {
+        let index = unsafe { &*(pointer as *const AnnoyIndex) };
+        index.size as jlong
+    }
+}
+
+/*
+ * Class:     com_github_hanabi1224_RuAnnoy_NativeMethods
  * Method:    getItemVector
  * Signature: (JJ)[F
  */

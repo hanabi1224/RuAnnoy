@@ -33,7 +33,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         search_k: i32,
         should_include_distance: bool,
     ) -> AnnoyIndexSearchResult {
-        let result_capacity = n_results.min(self.degree).max(1);
+        let result_capacity = n_results.min(self.size).max(1);
         let search_k_fixed = if search_k > 0 {
             search_k as usize
         } else {
@@ -53,7 +53,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 let top_node_header = top_node.header;
                 let top_node_offset = top_node.offset;
                 let n_descendants = top_node_header.get_n_descendant();
-                if n_descendants == 1 && top_node_id < self.degree {
+                if n_descendants == 1 && top_node_id < self.size {
                     nearest_neighbors.insert(top_node_id);
                 } else if n_descendants <= self.max_descendants {
                     let children_id_slice =

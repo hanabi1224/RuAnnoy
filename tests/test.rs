@@ -111,7 +111,7 @@ mod tests {
         let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
         let id_list = nearest.id_list;
         let distance_list = nearest.distance_list;
-        assert_eq!(index.degree, TEST_NODE_COUNT);
+        assert_eq!(index.size, TEST_NODE_COUNT);
         assert_eq!(id_list, expected_id_list);
         assert_eq!(distance_list, expected_distance_list);
         assert_eq!(distance_list.len(), expected_distance_list.len());
@@ -157,6 +157,7 @@ mod tests {
             get_item_vector(index, 0, v0_raw);
             let _v0 = slice::from_raw_parts(v0_raw as *mut f32, dim as usize).to_vec();
             // let v0_raw = get_item_vector(index, 0);
+            assert_eq!(TEST_NODE_COUNT, get_size(index) as usize);
             {
                 let nearest_raw = get_nearest(index, v0_raw, 5, -1, true);
                 let result_count = get_result_count(nearest_raw);

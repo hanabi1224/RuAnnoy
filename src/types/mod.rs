@@ -37,7 +37,7 @@ pub struct AnnoyIndex {
     pub dimension: usize,
     pub index_type: IndexType,
     pub node_size: usize,
-    pub degree: usize,
+    pub size: usize,
     pub(crate) max_descendants: i32,
     pub(crate) offset_before_children: usize,
     pub(crate) k_node_header_style: usize,

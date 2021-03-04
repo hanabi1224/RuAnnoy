@@ -71,7 +71,7 @@ impl AnnoyIndex {
             node_size: node_size as usize,
             mmap: Rc::new(mmap),
             roots: roots,
-            degree: m as usize,
+            size: m as usize,
         };
 
         return Ok(index);

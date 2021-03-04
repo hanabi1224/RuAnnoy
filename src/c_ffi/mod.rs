@@ -46,6 +46,13 @@ ffi_fn! {
 }
 
 ffi_fn! {
+    fn get_size(index_ptr: *const AnnoyIndex) -> u64{
+        let index = unsafe { &*index_ptr };
+        return index.size as u64;
+    }
+}
+
+ffi_fn! {
     fn get_item_vector(index_ptr: *const AnnoyIndex, item_index: i64, item_vector: *mut f32){
         let index = unsafe{&*index_ptr};
         let item_vec = index.get_item_vector(item_index);
