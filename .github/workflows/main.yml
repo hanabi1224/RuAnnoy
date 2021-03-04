@@ -84,7 +84,9 @@ jobs:
           path: java/target/release/*.dylib
           if-no-files-found: error
       - name: Deploy nugets
-        if: env.NUGET_API_KEY != ''
+        if: secrets.NUGET_API_KEY != ''
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
           pushd dotnet/artifacts
           dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY || echo 'done'
