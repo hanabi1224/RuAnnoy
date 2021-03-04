@@ -1,17 +1,9 @@
 use crate::internals::mmap_ext::*;
 use memmap2::Mmap;
+use std::mem;
 
-pub const INT32_SIZE: usize = 4;
-pub const FLOAT32_SIZE: usize = 4;
-
-// pub fn is_zero_vec(v: &Vec<f32>) -> bool {
-//     for item in v {
-//         if *item != 0.0 {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
+pub const INT32_SIZE: usize = mem::size_of::<i32>();
+pub const FLOAT32_SIZE: usize = mem::size_of::<f32>();
 
 pub fn minkowski_margin(u: &[f32], v: &[f32], bias: f32) -> f32 {
     return bias + dot_product(u, v);
@@ -42,15 +34,11 @@ pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
     let mut pp: f32 = 0.0;
     let mut qq: f32 = 0.0;
     let mut pq: f32 = 0.0;
-
-    for i in 0..u.len() {
-        let _u = u[i];
-        let _v = v[i];
+    for (_u, _v) in u.iter().zip(v.iter()) {
         pp += _u * _u;
         qq += _v * _v;
         pq += _u * _v;
     }
-
     let ppqq = pp * qq;
     return if ppqq > 0.0 {
         2.0 - 2.0 * pq / ppqq.sqrt()
@@ -60,19 +48,11 @@ pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
 }
 
 pub fn euclidean_distance(u: &[f32], v: &[f32]) -> f32 {
-    let mut sum: f32 = 0.0;
-    for i in 0..u.len() {
-        sum += (u[i] - v[i]).powi(2);
-    }
-    return sum;
+    u.iter().zip(v.iter()).map(|(x, y)| (x - y).powi(2)).sum()
 }
 
 pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
-    let mut sum: f32 = 0.0;
-    for i in 0..u.len() {
-        sum += (u[i] - v[i]).abs();
-    }
-    return sum;
+    u.iter().zip(v.iter()).map(|(x, y)| (x - y).abs()).sum()
 }
 
 pub fn get_nth_descendant_id(
