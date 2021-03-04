@@ -44,44 +44,45 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         let mut pq = PriorityQueue::with_capacity(result_capacity);
         for i in 0..self.roots.len() {
             let id = self.roots[i];
-            pq.push(id, f32::MAX);
+            pq.push(id as i32, f32::MAX);
         }
 
-        let mut nearest_neighbors = HashSet::<usize>::new();
+        let mut nearest_neighbors = HashSet::<i32>::new();
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
-            if let Some((top_node_id, top_node_margin)) = pq.pop() {
+            if let Some((top_node_id_i32, top_node_margin)) = pq.pop() {
+                let top_node_id = top_node_id_i32 as usize;
                 let top_node = self.get_node_from_id(top_node_id);
                 let top_node_header = top_node.header;
                 let top_node_offset = top_node.offset;
                 let n_descendants = top_node_header.get_n_descendant();
                 if n_descendants == 1 && top_node_id < self.size {
-                    nearest_neighbors.insert(top_node_id);
+                    nearest_neighbors.insert(top_node_id_i32);
                 } else if n_descendants <= self.max_descendants {
                     let children_id_slice =
                         self.get_descendant_id_slice(top_node_offset, n_descendants as usize);
                     for &child_id in children_id_slice {
-                        nearest_neighbors.insert(child_id as usize);
+                        nearest_neighbors.insert(child_id);
                     }
                 } else {
                     let v = self.get_node_slice_with_offset(top_node_offset);
                     let margin = self.get_margin(v, query_vector, top_node_offset);
                     let children_id = top_node_header.get_children_id_slice();
                     // NOTE: Hamming has different logic to calculate margin
-                    pq.push(children_id[1] as usize, top_node_margin.min(margin));
-                    pq.push(children_id[0] as usize, top_node_margin.min(-margin));
+                    pq.push(children_id[1], top_node_margin.min(margin));
+                    pq.push(children_id[0], top_node_margin.min(-margin));
                 }
             }
         }
 
         let mut sorted_nns = Vec::with_capacity(nearest_neighbors.len());
         for nn_id in nearest_neighbors {
-            let node = self.get_node_from_id(nn_id);
+            let node = self.get_node_from_id(nn_id as usize);
             let n_descendants = node.header.get_n_descendant();
             if n_descendants != 1 {
                 continue;
             }
 
-            let s = self.get_node_slice_with_offset(nn_id * self.node_size);
+            let s = self.get_node_slice_with_offset(nn_id as usize * self.node_size);
             sorted_nns.push((nn_id, self.get_distance_no_norm(s, query_vector)));
         }
 

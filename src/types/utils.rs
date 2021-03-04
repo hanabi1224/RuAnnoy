@@ -32,11 +32,7 @@ template<typename S, typename T, typename Distance, typename Random, class Threa
 // }
 
 pub fn dot_product(u: &[f32], v: &[f32]) -> f32 {
-    let mut d: f32 = 0.0;
-    for i in 0..u.len() {
-        d += u[i] * v[i];
-    }
-    return d;
+    u.iter().zip(v.iter()).map(|(x, y)| x * y).sum()
 }
 
 pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
@@ -50,8 +46,8 @@ pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
     for i in 0..u.len() {
         let _u = u[i];
         let _v = v[i];
-        pp += _u.powi(2);
-        qq += _v.powi(2);
+        pp += _u * _u;
+        qq += _v * _v;
         pq += _u * _v;
     }
 
