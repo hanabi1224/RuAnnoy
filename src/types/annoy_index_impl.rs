@@ -17,20 +17,18 @@ impl AnnoyIndex {
     ) -> Result<AnnoyIndex, Box<dyn Error>> {
         let (offset_before_children, k_node_header_style, max_descendants): (usize, usize, usize) =
             match index_type {
-                IndexType::Angular => (4, 12, 2),
-                IndexType::Euclidean => (8, 16, 2),
-                IndexType::Manhattan => (8, 16, 2),
+                IndexType::Angular => (4, 12, dimension + 2),
+                IndexType::Euclidean => (8, 16, dimension + 2),
+                IndexType::Manhattan => (8, 16, dimension + 2),
                 // IndexType::Hamming => (4, 12),
-                IndexType::Dot => (4, 16, 3),
+                IndexType::Dot => (4, 16, dimension + 3),
                 _ => unimplemented!("Index type not supported"),
             };
 
-        let min_leaf_size = dimension + max_descendants;
         let node_size = k_node_header_style as i64 + (FLOAT32_SIZE * dimension) as i64;
         let file = File::open(index_file_path)?; // .expect(format!("fail to open {}", index_file_path).as_str());
         let file_metadata = fs::metadata(index_file_path)?;
         let file_size = file_metadata.len() as i64;
-        let node_count = file_size / node_size;
         let mmap = unsafe { MmapOptions::new().map(&file)? };
 
         let mut roots = Vec::new();
@@ -69,10 +67,8 @@ impl AnnoyIndex {
             index_type: index_type,
             offset_before_children: offset_before_children,
             k_node_header_style: k_node_header_style,
-            min_leaf_size: min_leaf_size as i32,
-            node_size: node_size as usize,
-            node_count: node_count as usize,
             max_descendants: max_descendants as i32,
+            node_size: node_size as usize,
             mmap: Rc::new(mmap),
             roots: roots,
             degree: m as usize,

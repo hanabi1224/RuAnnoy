@@ -20,4 +20,4 @@ comment:
   require_changes: no
 
 ignore:
-  - "tests/**/*.rs" # ignore folders and all its contents
+  - "tests"
