@@ -9,13 +9,15 @@
 
 This library is a rust port of [spotify/annoy](https://github.com/spotify/annoy) , currently only index serving is supported.
 
-Metric | Serve | Build
-| :--- | :---: | ---: |
-Angular | ✅ | ❌
-Euclidean | ✅ | ❌
-Manhattan | ✅ | ❌
-Dot | ✅ | ❌
-Hamming | ❌ | ❌
+It also provides [FFI bindings](https://github.com/hanabi1224/RuAnnoy#ffi-support) for [jvm](https://github.com/hanabi1224/RuAnnoy#kotlinjava) and [dotnet](https://github.com/hanabi1224/RuAnnoy#dotnet)
+
+Metric | Serve | Build | jvm Binding | dotnet Binding
+| :--- | :---: | ---: | -- | -- |
+Angular | ✅ | ❌ | ✅ | ✅
+Euclidean | ✅ | ❌ | ✅ | ✅
+Manhattan | ✅ | ❌ | ✅ | ✅
+Dot | ✅ | ❌ | ✅ | ✅
+Hamming | ❌ | ❌ | ❌ | ❌ 
 
 ### Install via [crates.io](https://crates.io/crates/ru_annoy)
 [![Crates.io](https://img.shields.io/crates/v/ru_annoy.svg)](https://crates.io/crates/ru_annoy)
