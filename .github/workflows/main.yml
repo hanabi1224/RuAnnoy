@@ -84,7 +84,7 @@ jobs:
           path: java/target/release/*.dylib
           if-no-files-found: error
       - name: Deploy nugets
-        if: ${{ secrets.NUGET_API_KEY != '' }}
+        if: github.ref == 'refs/heads/master'
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
