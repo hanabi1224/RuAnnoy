@@ -3,7 +3,7 @@ use crate::internals::priority_queue::PriorityQueue;
 use hashbrown::HashSet;
 
 pub trait AnnoyIndexSearchApi {
-    fn get_item_vector(&self, item_index: i64) -> Vec<f32>;
+    fn get_item_vector(&self, item_index: u64) -> Vec<f32>;
     fn get_nearest(
         &self,
         query_vector: &[f32],
@@ -13,7 +13,7 @@ pub trait AnnoyIndexSearchApi {
     ) -> AnnoyIndexSearchResult;
     fn get_nearest_to_item(
         &self,
-        item_index: i64,
+        item_index: u64,
         n_results: usize,
         search_k: i32,
         should_include_distance: bool,
@@ -21,7 +21,7 @@ pub trait AnnoyIndexSearchApi {
 }
 
 impl AnnoyIndexSearchApi for AnnoyIndex {
-    fn get_item_vector(&self, item_index: i64) -> Vec<f32> {
+    fn get_item_vector(&self, item_index: u64) -> Vec<f32> {
         let node_offset = item_index as usize * self.node_size;
         let slice = self.get_node_slice_with_offset(node_offset);
         slice.iter().map(|&a| a).collect()
@@ -110,7 +110,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
 
     fn get_nearest_to_item(
         &self,
-        item_index: i64,
+        item_index: u64,
         n_results: usize,
         search_k: i32,
         should_include_distance: bool,

@@ -100,7 +100,7 @@ ffi_fn! {
         item_index: jlong,
     ) -> jfloatArray {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
-        let vector = index.get_item_vector(item_index);
+        let vector = index.get_item_vector(item_index as u64);
         let result = env.new_float_array(index.dimension as i32).unwrap();
         let _ = env.set_float_array_region(result, 0, &vector.as_slice());
         result
@@ -128,7 +128,7 @@ ffi_fn! {
     ) -> jint {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let r = index.get_nearest_to_item(
-            item_index,
+            item_index as u64,
             n_results as usize,
             search_k,
             should_include_distance != 0,

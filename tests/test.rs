@@ -160,7 +160,7 @@ mod tests {
             assert_eq!(TEST_NODE_COUNT, get_size(index) as usize);
             {
                 let nearest_raw = get_nearest(index, v0_raw, 5, -1, true);
-                let result_count = get_result_count(nearest_raw);
+                let result_count = get_result_count(nearest_raw) as usize;
                 let id_list_raw = get_id_list(nearest_raw);
                 let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
@@ -172,7 +172,7 @@ mod tests {
             }
             {
                 let nearest_raw = get_nearest_to_item(index, 0, 5, -1, true);
-                let result_count = get_result_count(nearest_raw);
+                let result_count = get_result_count(nearest_raw) as usize;
                 let id_list_raw = get_id_list(nearest_raw);
                 let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
@@ -184,7 +184,7 @@ mod tests {
             }
             {
                 let nearest_raw = get_nearest(index, v0_raw, 5, -1, false);
-                let result_count = get_result_count(nearest_raw);
+                let result_count = get_result_count(nearest_raw) as usize;
                 let id_list_raw = get_id_list(nearest_raw);
                 let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);
@@ -197,7 +197,7 @@ mod tests {
             }
             {
                 let nearest_raw = get_nearest_to_item(index, 0, 5, -1, false);
-                let result_count = get_result_count(nearest_raw);
+                let result_count = get_result_count(nearest_raw) as usize;
                 let id_list_raw = get_id_list(nearest_raw);
                 let id_list = slice::from_raw_parts(id_list_raw as *mut u64, result_count).to_vec();
                 assert_eq!(id_list, expected_id_list);

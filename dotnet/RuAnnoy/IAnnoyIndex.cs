@@ -9,17 +9,17 @@ namespace RuAnnoy
 
         ulong Size { get; }
 
-        IReadOnlyList<float> GetItemVector(long itemIndex);
+        IReadOnlyList<float> GetItemVector(ulong itemIndex);
 
         AnnoyIndexSearchResult GetNearest(
             IReadOnlyList<float> queryVector,
-            ulong nResult,
+            uint nResult,
             int searchK,
             bool shouldIncludeDistance);
 
         AnnoyIndexSearchResult GetNearestToItem(
-            long itemIndex,
-            ulong nResult,
+            ulong itemIndex,
+            uint nResult,
             int searchK,
             bool shouldIncludeDistance);
     }
