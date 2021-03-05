@@ -43,7 +43,7 @@ namespace RuAnnoy
             }
         }
 
-        public IReadOnlyList<float> GetItemVector(long itemIndex)
+        public IReadOnlyList<float> GetItemVector(ulong itemIndex)
         {
             if (_indexPtr == IntPtr.Zero)
             {
@@ -57,7 +57,7 @@ namespace RuAnnoy
 
         public AnnoyIndexSearchResult GetNearest(
             IReadOnlyList<float> queryVector,
-            ulong nResult,
+            uint nResult,
             int searchK,
             bool shouldIncludeDistance)
         {
@@ -69,7 +69,7 @@ namespace RuAnnoy
             var searchResultPtr = NativeMethods.GetNearest(
                   _indexPtr,
                   queryVector.ToArray(),
-                  new UIntPtr(nResult),
+                  nResult,
                   searchK,
                   shouldIncludeDistance);
             try
@@ -83,8 +83,8 @@ namespace RuAnnoy
         }
 
         public AnnoyIndexSearchResult GetNearestToItem(
-            long itemIndex,
-            ulong nResult,
+            ulong itemIndex,
+            uint nResult,
             int searchK,
             bool shouldIncludeDistance)
         {
@@ -96,7 +96,7 @@ namespace RuAnnoy
             var searchResultPtr = NativeMethods.GetNearestToItem(
                   _indexPtr,
                   itemIndex,
-                  new UIntPtr(nResult),
+                  nResult,
                   searchK,
                   shouldIncludeDistance);
             try

@@ -3,7 +3,7 @@ mod macros;
 
 use crate::types::*;
 
-use libc::{c_char, size_t};
+use libc::c_char;
 use std::error::Error;
 use std::ffi::CStr;
 use std::mem;
@@ -33,27 +33,27 @@ fn load_annoy_index_inner(
 }
 
 ffi_fn! {
-    fn free_annoy_index(index: *const AnnoyIndex){
+    fn free_annoy_index(index: *const AnnoyIndex) {
         unsafe { Box::from_raw(index as *mut AnnoyIndex); }
     }
 }
 
 ffi_fn! {
-    fn get_dimension(index_ptr: *const AnnoyIndex) -> i32{
+    fn get_dimension(index_ptr: *const AnnoyIndex) -> i32 {
         let index = unsafe { &*index_ptr };
         return index.dimension as i32;
     }
 }
 
 ffi_fn! {
-    fn get_size(index_ptr: *const AnnoyIndex) -> u64{
+    fn get_size(index_ptr: *const AnnoyIndex) -> u64 {
         let index = unsafe { &*index_ptr };
         return index.size as u64;
     }
 }
 
 ffi_fn! {
-    fn get_item_vector(index_ptr: *const AnnoyIndex, item_index: i64, item_vector: *mut f32){
+    fn get_item_vector(index_ptr: *const AnnoyIndex, item_index: u64, item_vector: *mut f32){
         let index = unsafe{&*index_ptr};
         let item_vec = index.get_item_vector(item_index);
         let ptr = item_vec.as_ptr();
@@ -65,13 +65,13 @@ ffi_fn! {
     fn get_nearest(
         index_ptr: *const AnnoyIndex,
         query_vector_ptr: *const f32,
-        n_results: size_t,
+        n_results: u32,
         search_k: i32,
         should_include_distance: bool) -> *const AnnoyIndexSearchResult
     {
         let index = unsafe{&*index_ptr};
         let query_vector = unsafe { slice::from_raw_parts(query_vector_ptr, index.dimension as usize) };
-        let result = index.get_nearest(query_vector, n_results, search_k, should_include_distance);
+        let result = index.get_nearest(query_vector, n_results as usize, search_k, should_include_distance);
         return Box::into_raw(Box::new(result));
     }
 }
@@ -79,14 +79,14 @@ ffi_fn! {
 ffi_fn! {
     fn get_nearest_to_item(
         index_ptr: *const AnnoyIndex,
-        item_index: i64,
-        n_results: size_t,
+        item_index: u64,
+        n_results: u32,
         search_k: i32,
         should_include_distance: bool,
     ) -> *const AnnoyIndexSearchResult {
         let index = unsafe { &*index_ptr };
         let result =
-            index.get_nearest_to_item(item_index, n_results, search_k, should_include_distance);
+            index.get_nearest_to_item(item_index, n_results as usize, search_k, should_include_distance);
         return Box::into_raw(Box::new(result));
     }
 }
@@ -98,9 +98,9 @@ ffi_fn! {
 }
 
 ffi_fn! {
-    fn get_result_count(search_result_ptr: *const AnnoyIndexSearchResult) -> usize{
+    fn get_result_count(search_result_ptr: *const AnnoyIndexSearchResult) -> u64{
         let search_result = unsafe{&*search_result_ptr};
-        return search_result.count;
+        return search_result.count as u64;
     }
 }
 
