@@ -6,7 +6,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     // println!("{:?}", args);
     let dim = args[1].parse().unwrap();
-    let size = args[2].parse::<i64>().unwrap();
+    let size = args[2].parse::<u64>().unwrap();
     let n_result = args[3].parse().unwrap();
     let n_loop = args[4].parse().unwrap();
 

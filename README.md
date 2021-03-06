@@ -11,13 +11,13 @@ This library is a rust port of [spotify/annoy](https://github.com/spotify/annoy)
 
 It also provides [FFI bindings](https://github.com/hanabi1224/RuAnnoy#ffi-support) for [jvm](https://github.com/hanabi1224/RuAnnoy#kotlinjava) and [dotnet](https://github.com/hanabi1224/RuAnnoy#dotnet)
 
-Metric | Serve | Build | jvm Binding | dotnet Binding
-| :--- | :---: | ---: | -- | -- |
-Angular | ✅ | ❌ | ✅ | ✅
-Euclidean | ✅ | ❌ | ✅ | ✅
-Manhattan | ✅ | ❌ | ✅ | ✅
-Dot | ✅ | ❌ | ✅ | ✅
-Hamming | ❌ | ❌ | ❌ | ❌ 
+Metric | Serve | Build | jvm Binding | dotnet Binding | dart Binding
+| :--- | :---: | ---: | -- | -- | -- |
+Angular | ✅ | ❌ | ✅ | ✅ | ✅
+Euclidean | ✅ | ❌ | ✅ | ✅ | ✅
+Manhattan | ✅ | ❌ | ✅ | ✅ | ✅
+Dot | ✅ | ❌ | ✅ | ✅ | ✅
+Hamming | ❌ | ❌ | ❌ | ❌  | ❌
 
 ### Install via [crates.io](https://crates.io/crates/ru_annoy)
 [![Crates.io](https://img.shields.io/crates/v/ru_annoy.svg)](https://crates.io/crates/ru_annoy)
@@ -79,6 +79,35 @@ val index = AnnoyIndex.tryLoad("index.5d.ann", 5, IndexType.Angular)
 ```csharp
 var index = AnnoyIndex.Load("index.5d.ann", 5, IndexType.Angular);
 ```
+
+### dart
+
+#### Install via [pub.dev](https://pub.dev/packages/dart_native_annoy)
+
+```yaml
+# pubspec.yaml
+dependencies:
+  dart_native_annoy: ^0.1.0
+```
+#### Usage
+```dart
+import 'dart:ffi';
+import 'package:dart_native_annoy/annoy.dart';
+
+/// Creat factory from DynamicLibrary
+final fac = AnnoyIndexFactory(lib: DynamicLibrary.open('libru_annoy.so'));
+
+/// Load index
+final index = indexFactory.loadIndex(
+      'index.euclidean.5d.ann', 5, IndexType.Euclidean)!;
+
+print('size: ${index.size}');
+
+final v3 = index.getItemVector(3);
+
+final nearest = index.getNearest(v0, 5, includeDistance: true);
+```
+
 
 ## TODO
 + Index building support

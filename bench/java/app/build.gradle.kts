@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.hanabi1224:RuAnnoy:-SNAPSHOT")
+    implementation("com.github.hanabi1224:RuAnnoy:0.1.3")
     implementation("com.spotify:annoy:0.2.6")
     
     // Align versions of all Kotlin components
