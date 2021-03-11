@@ -1,11 +1,10 @@
 # RuAnnoy
 
 [![main](https://github.com/hanabi1224/RuAnnoy/actions/workflows/main.yml/badge.svg)](https://github.com/hanabi1224/RuAnnoy/actions/workflows/main.yml)
-[![appveyor](https://ci.appveyor.com/api/projects/status/ux13ive7vhsg32el/branch/master?svg=true)](https://ci.appveyor.com/project/hanabi1224/ruannoy/branch/master)
 [![travis](https://travis-ci.com/hanabi1224/RuAnnoy.svg?branch=master)](https://travis-ci.com/github/hanabi1224/RuAnnoy)
 [![MIT License](https://img.shields.io/github/license/hanabi1224/RuAnnoy.svg)](https://github.com/hanabi1224/RuAnnoy/blob/master/LICENSE)
 ========
-<!-- [![Build Status](https://img.shields.io/travis/hanabi1224/RuAnnoy/master.svg)](https://travis-ci.org/hanabi1224/RuAnnoy) -->
+<!-- [![appveyor](https://ci.appveyor.com/api/projects/status/ux13ive7vhsg32el/branch/master?svg=true)](https://ci.appveyor.com/project/hanabi1224/ruannoy/branch/master) -->
 
 This library is a rust port of [spotify/annoy](https://github.com/spotify/annoy) , currently only index serving is supported.
 
