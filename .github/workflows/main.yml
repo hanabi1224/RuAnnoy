@@ -71,8 +71,8 @@ jobs:
           sudo apt-get install dart -y
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
           python3 -m pip install -U wheel annoy
-          cd bench
-          sudo ./bench.sh
+          pushd bench
+          ./bench.sh
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg
