@@ -66,12 +66,12 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           cd bench
-          ./bench.sh
+          sudo ./bench.sh
       - name: Benchmarks - OSX
         if: matrix.os == 'macos-latest'
         run: |
           cd bench
-          ./bench.sh
+          sudo ./bench.sh
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg
