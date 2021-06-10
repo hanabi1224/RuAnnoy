@@ -37,10 +37,11 @@ jobs:
       - name: java Test
         run: |
           pushd java
-          ./gradlew test
-          ./gradlew clean install -xtest
+          ./gradlew clean test
+          ./gradlew clean build publishToMavenLocal
           ./gradlew copy-artifacts
-          ./gradlew test
+          ./gradlew clean test
+          ./gradlew clean build publishToMavenLocal
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
