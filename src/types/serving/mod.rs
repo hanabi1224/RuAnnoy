@@ -1,5 +1,8 @@
 use super::*;
 use crate::internals::priority_queue::PriorityQueue;
+// use std::collections::HashSet;
+// Benchmark does not show visible perf difference, use hashbrown which is cryptographically secure instead
+// use ahash::AHashSet as HashSet;
 use hashbrown::HashSet;
 
 pub trait AnnoyIndexSearchApi {
@@ -47,7 +50,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             pq.push(id as i32, f32::MAX);
         }
 
-        let mut nearest_neighbors = HashSet::new();
+        // let mut nearest_neighbors = HashSet::new();
+        let mut nearest_neighbors = HashSet::with_capacity(search_k_fixed);
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
             if let Some((top_node_id_i32, top_node_margin)) = pq.pop() {
                 let top_node_id = top_node_id_i32 as usize;
