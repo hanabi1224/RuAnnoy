@@ -1,4 +1,7 @@
 python3 -m pip install -U wheel annoy
+
+python3 builder.py
+
 python3 bencher.py 50 10000 200 1000
 
 pushd rust

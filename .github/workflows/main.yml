@@ -62,6 +62,16 @@ jobs:
           dotnet build -c Release dotnet/RuAnnoy
           dotnet pack -c Release dotnet/RuAnnoy -o dotnet/artifacts
           dotnet pack -c Release dotnet/RuAnnoy-Batteries-Windows-x64 -o dotnet/artifacts
+      - name: Benchmarks - Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd bench
+          ./bench.sh
+      - name: Benchmarks - OSX
+        if: matrix.os == 'macos-latest'
+        run: |
+          cd bench
+          ./bench.sh
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg
