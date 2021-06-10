@@ -7,4 +7,5 @@ before_install:
   # - source $HOME/.cargo/env
 install:
   - pushd java
-  - ./gradlew clean install -xtest
+  - ./gradlew clean test
+  - ./gradlew clean build publishToMavenLocal

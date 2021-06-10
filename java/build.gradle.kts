@@ -6,13 +6,15 @@
  * User Manual available at https://docs.gradle.org/6.8.3/userguide/building_java_projects.html
  */
 
+import org.gradle.api.tasks.testing.logging.*
+
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.4.31"
+    kotlin("jvm") version "1.5.10"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
-    `maven`
+    `maven-publish`
 }
 
 repositories {
@@ -21,28 +23,51 @@ repositories {
 }
 
 group = "com.github.hanabi1224"
-version = "0.1.3"
+version = "0.1.4"
 
 java {                                      
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        showStandardStreams = true
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+        events = setOf(TestLogEvent.FAILED,
+               TestLogEvent.PASSED,
+               TestLogEvent.SKIPPED,
+               TestLogEvent.STANDARD_OUT)
+    }
+}
+
 dependencies {
     // Align versions of all Kotlin components.
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    // implementation(platform(kotlin("bom")))
 
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    // implementation(kotlin("stdlib-jdk8"))
 
     // Use Guava in your implementation only.
-    implementation("com.google.guava:guava:30.1-jre")
+    // implementation("com.google.guava:guava:30.1.1-jre")
 
     // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation(kotlin("test"))
+}
 
-    // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+publishing {
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            from(components["java"])
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
 
 tasks.register<Exec>("cargo-build") {

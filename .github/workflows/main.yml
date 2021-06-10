@@ -23,6 +23,16 @@ jobs:
           override: true
           components: rustfmt, clippy
       - uses: actions/checkout@v2
+      - name: Benchmarks0 - Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+          sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+          sudo apt-get update -y
+          sudo apt-get install dart -y
+          sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
+          pushd bench
+          cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
       - name: Cargo Build
         run: |
           cargo build --release
@@ -37,10 +47,11 @@ jobs:
       - name: java Test
         run: |
           pushd java
-          ./gradlew test
-          ./gradlew clean install -xtest
+          ./gradlew clean test
+          ./gradlew clean build publishToMavenLocal
           ./gradlew copy-artifacts
-          ./gradlew test
+          ./gradlew clean test
+          ./gradlew clean build publishToMavenLocal
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
@@ -61,6 +72,16 @@ jobs:
           dotnet build -c Release dotnet/RuAnnoy
           dotnet pack -c Release dotnet/RuAnnoy -o dotnet/artifacts
           dotnet pack -c Release dotnet/RuAnnoy-Batteries-Windows-x64 -o dotnet/artifacts
+      - name: Benchmarks - Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+          sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+          sudo apt-get update -y
+          sudo apt-get install dart -y
+          sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
+          pushd bench
+          cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg

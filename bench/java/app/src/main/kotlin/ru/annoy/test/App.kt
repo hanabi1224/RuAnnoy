@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
             testSpeed1(index1, metric, nLoop, nResult, size)
         }
         println()
-        val index2 = ANNIndex(dim, path, com.spotify.annoy.IndexType.valueOf(metric.toUpperCase()))
+        val index2 = ANNIndex(dim, path, com.spotify.annoy.IndexType.valueOf(metric.uppercase()))
         testSpeed2(index2, metric, nLoop.toInt(), nResult, size)
         println()
     }
