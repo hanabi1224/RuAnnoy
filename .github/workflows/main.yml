@@ -31,9 +31,8 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install dart -y
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
-          python3 -m pip install -U wheel annoy
           pushd bench
-          sudo cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
+          cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
       - name: Cargo Build
         run: |
           cargo build --release
@@ -81,9 +80,8 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install dart -y
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
-          python3 -m pip install -U wheel annoy
           pushd bench
-          sudo cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
+          cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg
