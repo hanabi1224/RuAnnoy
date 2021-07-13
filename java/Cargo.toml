@@ -12,7 +12,7 @@ version = "0.1.0"
 [dependencies]
 jni = "0"
 libc = "0"
-ru_annoy = {path = "../", version = "0"}
+ru_annoy = {path = "../"}
 
 [lib]
 crate-type = ["cdylib"]

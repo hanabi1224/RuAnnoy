@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.logging.*
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.20"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -23,9 +23,10 @@ repositories {
 }
 
 group = "com.github.hanabi1224"
+
 version = "0.1.4"
 
-java {                                      
+java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
@@ -38,10 +39,13 @@ tasks.test {
         showExceptions = true
         showCauses = true
         showStackTraces = true
-        events = setOf(TestLogEvent.FAILED,
-               TestLogEvent.PASSED,
-               TestLogEvent.SKIPPED,
-               TestLogEvent.STANDARD_OUT)
+        events =
+                setOf(
+                        TestLogEvent.FAILED,
+                        TestLogEvent.PASSED,
+                        TestLogEvent.SKIPPED,
+                        TestLogEvent.STANDARD_OUT
+                )
     }
 }
 
@@ -60,14 +64,8 @@ dependencies {
 }
 
 publishing {
-    publications {
-        register("mavenJava", MavenPublication::class) {
-            from(components["java"])
-        }
-    }
-    repositories {
-        mavenLocal()
-    }
+    publications { register("mavenJava", MavenPublication::class) { from(components["java"]) } }
+    repositories { mavenLocal() }
 }
 
 tasks.register<Exec>("cargo-build") {
@@ -83,6 +81,11 @@ tasks.register<Copy>("copy-artifacts") {
     into("src/main/resources")
 }
 
+tasks.register("full-build-test") { 
+    dependsOn("copy-artifacts")
+    dependsOn("test")
+ }
+
 // tasks.processResources { dependsOn("copy-artifacts") }
 // tasks.test { dependsOn("copy-artifacts") }
 
@@ -94,14 +97,19 @@ tasks.register<Jar>("sourcesJar") {
 
 tasks.jar {
     manifest {
-        attributes(mapOf("Implementation-Title" to project.name,
-                         "Implementation-Version" to project.version))
+        attributes(
+                mapOf(
+                        "Implementation-Title" to project.name,
+                        "Implementation-Version" to project.version
+                )
+        )
     }
     // archiveAppendix.set(getJarAppendix())
 }
 
 // fun getJarAppendix(): String {
-//     val nativePlatform = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform("current")
+//     val nativePlatform =
+// org.gradle.nativeplatform.platform.internal.DefaultNativePlatform("current")
 //     val arch = "x64"
 //     val os = nativePlatform.operatingSystem
 //     if (os.isMacOsX()) {

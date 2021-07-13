@@ -7,7 +7,7 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ru_annoy = {path = "../../", version = "0.1.2"}
+ru_annoy = {path = "../../"}
 
 [profile.release]
 debug = true
