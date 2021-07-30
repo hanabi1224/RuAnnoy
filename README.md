@@ -8,7 +8,7 @@
 
 This library is a rust port of [spotify/annoy](https://github.com/spotify/annoy) , currently only index serving is supported.
 
-It also provides [FFI bindings](https://github.com/hanabi1224/RuAnnoy#ffi-support) for [jvm](https://github.com/hanabi1224/RuAnnoy#kotlinjava) and [dotnet](https://github.com/hanabi1224/RuAnnoy#dotnet)
+It also provides [FFI bindings](https://github.com/hanabi1224/RuAnnoy#ffi-support) for [jvm](https://github.com/hanabi1224/RuAnnoy#kotlinjava), [dotnet](https://github.com/hanabi1224/RuAnnoy#dotnet) and [dart](https://github.com/hanabi1224/RuAnnoy#dart)
 
 Metric | Serve | Build | jvm Binding | dotnet Binding | dart Binding
 | :--- | :---: | ---: | -- | -- | -- |
