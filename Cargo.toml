@@ -12,12 +12,18 @@ version = "0.1.4"
 
 [features]
 cffi = ["libc"]
+simd = ["core_simd"]
 
 [dependencies]
 # ahash = "0"
+cfg-if = "1"
+# core_simd = { git = "https://github.com/rust-lang/stdsimd" }
+core_simd = { git = "https://github.com/rust-lang/stdsimd", optional = true }
 hashbrown = "0"
 libc = {version = "0", optional = true}
 memmap2 = "0"
+# packed_simd_2 = "0"
+lazy_static = "1"
 
 [lib]
-crate-type = ["lib", "cdylib"]
+crate-type = ["lib", "cdylib", "staticlib"]

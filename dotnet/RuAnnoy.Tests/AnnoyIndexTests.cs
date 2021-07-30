@@ -16,9 +16,6 @@ namespace RuAnnoy.Tests
         static AnnoyIndexTests()
         {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            Console.WriteLine(Environment.CurrentDirectory);
-            var dllPath = Path.Combine(Environment.CurrentDirectory, "ru_annoy.dll");
-            Console.WriteLine(File.Exists(dllPath));
         }
 
         const int TEST_INDEX_DIM = 5;

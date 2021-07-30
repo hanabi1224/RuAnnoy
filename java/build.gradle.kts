@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.logging.*
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.5.21"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -24,7 +24,7 @@ repositories {
 
 group = "com.github.hanabi1224"
 
-version = "0.1.4"
+version = "0.1.5"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -71,7 +71,7 @@ publishing {
 tasks.register<Exec>("cargo-build") {
     workingDir(".")
     executable("cargo")
-    args("build", "--release", "--all-features")
+    args("+nightly", "build", "--release", "--all-features")
 }
 
 tasks.register<Copy>("copy-artifacts") {
