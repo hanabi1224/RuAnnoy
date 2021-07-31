@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.21216.1" />
+    <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.*" />
     <PackageReference Include="RuAnnoy" Version="*" />
     <PackageReference Include="RuAnnoy-Batteries-Windows-x64" Version="*" />
     <PackageReference Include="RuAnnoy-Batteries-Linux-x64" Version="*" />

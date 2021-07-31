@@ -33,14 +33,15 @@ jobs:
       #     sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
       #     pushd bench
       #     cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
+      - run: rustup update nightly
       - name: Cargo Build
         run: |
           cargo build --release
-          cargo build --release --all-features
+          cargo +nightly build --release --all-features
       - name: Cargo Test
         run: |
           cargo test --release
-          cargo test --release --all-features
+          cargo +nightly test --release --all-features
       - uses: actions/setup-java@v1
         with:
           java-version: 11
