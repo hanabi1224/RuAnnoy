@@ -6,14 +6,14 @@ namespace Bench
 {
     class Program
     {
-        static void Main(int dim, int size, ulong nResult, int nLoop)
+        static void Main(int dim, ulong size, uint nResult, ulong nLoop)
         {
             foreach (var metric in new[] { "angular", "euclidean" })
             {
                 var path = $"index.{metric}.{dim}d.ann";
                 var index = AnnoyIndex.Load(path, dim, Enum.Parse<IndexType>(metric, ignoreCase: true));                
                 var sw = Stopwatch.StartNew();
-                for (var i = 0; i < nLoop; i++)
+                for (ulong i = 0; i < nLoop; i++)
                 {
                     var id = i % size;
                     var vector = index.GetItemVector(id);
