@@ -1,4 +1,4 @@
-use ru_annoy::*;
+use annoy_rs::*;
 use std::env;
 use std::time;
 
@@ -22,7 +22,7 @@ fn main() {
         }
         let t_end = time::Instant::now();
         let diff = t_end - t_start;
-        println!("[Rust] ru_annoy");
+        println!("[Rust] annoy-rs");
         println!("[{}] Total time elapsed: {}s", metric, diff.as_secs_f32());
         println!(
             "[{}] Avg time elapsed: {}ms",

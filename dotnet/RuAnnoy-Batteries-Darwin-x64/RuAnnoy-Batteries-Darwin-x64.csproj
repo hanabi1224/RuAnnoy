@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\target\release\libru_annoy.dylib">
-      <PackagePath>runtimes\osx-x64\native\libru_annoy.dylib</PackagePath>
+    <Content Include="..\..\target\release\libannoy_rs.dylib">
+      <PackagePath>runtimes\osx-x64\native\libannoy_rs.dylib</PackagePath>
       <Pack>true</Pack>
     </Content>
   </ItemGroup>
