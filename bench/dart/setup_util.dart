@@ -4,7 +4,7 @@ import 'dart:io';
 final _dylibPrefix = Platform.isWindows ? '' : 'lib';
 final _dylibExtension =
     Platform.isWindows ? '.dll' : (Platform.isMacOS ? '.dylib' : '.so');
-final _dylibName = '${_dylibPrefix}ru_annoy$_dylibExtension';
+final _dylibName = '${_dylibPrefix}annoy_rs$_dylibExtension';
 DynamicLibrary? _dylib;
 
 class SetupUtil {

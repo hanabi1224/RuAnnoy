@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
+    use annoy_rs::*;
     #[cfg(feature = "cffi")]
     use libc::c_char;
-    use ru_annoy::*;
     #[cfg(feature = "cffi")]
     use std::alloc::{alloc, Layout};
     #[cfg(feature = "cffi")]

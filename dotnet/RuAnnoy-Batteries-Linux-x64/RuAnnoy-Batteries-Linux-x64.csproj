@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\target\release\libru_annoy.so">
-      <PackagePath>runtimes\linux-x64\native\libru_annoy.so</PackagePath>
+    <Content Include="..\..\target\release\libannoy_rs.so">
+      <PackagePath>runtimes\linux-x64\native\libannoy_rs.so</PackagePath>
       <Pack>true</Pack>
     </Content>
   </ItemGroup>

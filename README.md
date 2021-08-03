@@ -18,18 +18,18 @@ Manhattan | ✅ | ❌ | ✅ | ✅ | ✅
 Dot | ✅ | ❌ | ✅ | ✅ | ✅
 Hamming | ❌ | ❌ | ❌ | ❌  | ❌
 
-### Install via [crates.io](https://crates.io/crates/ru_annoy)
-[![Crates.io](https://img.shields.io/crates/v/ru_annoy.svg)](https://crates.io/crates/ru_annoy)
+### Install via [crates.io](https://crates.io/crates/annoy-rs)
+[![Crates.io](https://img.shields.io/crates/v/annoy-rs.svg)](https://crates.io/crates/annoy-rs)
 [![codecov](https://codecov.io/gh/hanabi1224/RuAnnoy/branch/master/graph/badge.svg?token=jVO7N0AVTH)](https://codecov.io/gh/hanabi1224/RuAnnoy)
 ```toml
 # Cargo.toml
 [dependencies]
-ru_annoy = "0"
+annoy-rs = "0"
 ```
 
 ### Usage
 ```rust
-use ru_annoy::*;
+use annoy_rs::*;
 
 let index = AnnoyIndex::load(10, "index.ann", IndexType::Angular).unwrap();
 let v0 = index.get_item_vector(0);
@@ -94,7 +94,7 @@ import 'dart:ffi';
 import 'package:dart_native_annoy/annoy.dart';
 
 /// Creat factory from DynamicLibrary
-final fac = AnnoyIndexFactory(lib: DynamicLibrary.open('libru_annoy.so'));
+final fac = AnnoyIndexFactory(lib: DynamicLibrary.open('libannoy_rs.so'));
 
 /// Load index
 final index = indexFactory.loadIndex(

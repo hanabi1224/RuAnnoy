@@ -25,11 +25,11 @@ angular Avg time elapsed: 0.356ms
 euclidean Total time elapsed: 0.365s
 euclidean Avg time elapsed: 0.365ms
 
-[Rust] ru_annoy
+[Rust] annoy-rs
 [angular] Total time elapsed: 0.7767228s
 [angular] Avg time elapsed: 0.7767228ms
 
-[Rust] ru_annoy
+[Rust] annoy-rs
 [euclidean] Total time elapsed: 0.7305872s
 [euclidean] Avg time elapsed: 0.7305872ms
 

@@ -5,7 +5,7 @@ namespace RuAnnoy
 {
     internal static class NativeMethods
     {
-        const string DLLPATH = @"ru_annoy";
+        const string DLLPATH = @"annoy_rs";
 
         [DllImport(DLLPATH, EntryPoint = "load_annoy_index", CharSet = CharSet.Ansi)]
         internal static extern IntPtr LoadAnnoyIndex(
