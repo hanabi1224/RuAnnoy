@@ -4,20 +4,21 @@ description = """
 A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). Providing C api as well
 """
 edition = "2018"
-exclude = ["dotnet", "java", "test_gen", ".idea", ".vscode", ".github", "*.yml", "*.iml", ".gitignore"]
+exclude = ["dotnet", "java", "bench", "test_gen", ".idea", ".vscode", ".github", "*.yml", "*.iml", ".gitignore"]
 license = "MIT"
 name = "annoy-rs"
 repository = "https://github.com/hanabi1224/RuAnnoy"
 version = "0.1.0"
 
 [features]
-cffi = ["libc"]
 default = ["cffi"]
+
+cffi = ["libc"]
 simd = ["core_simd"]
 
 [dependencies]
 cfg-if = "1"
-core_simd = {git = "https://github.com/rust-lang/stdsimd", optional = true}
+core_simd = {git = "https://github.com/rust-lang/stdsimd", version = "0", optional = true}
 hashbrown = "0"
 lazy_static = "1"
 libc = {version = "0", optional = true}
