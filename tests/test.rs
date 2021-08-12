@@ -12,6 +12,7 @@ mod tests {
     #[cfg(feature = "cffi")]
     use std::slice;
 
+    const F32_PRECISION: usize = 2;
     const TEST_INDEX_DIM: usize = 5;
     const TEST_NODE_COUNT: usize = 100;
 
@@ -27,7 +28,13 @@ mod tests {
                 0.40251824259757996,
             ],
             &[0, 4, 37, 61, 29],
-            &[0.0, 0.41608825, 0.5517523, 0.7342095, 0.7592962],
+            &[
+                0.0,
+                0.4160882234573364,
+                0.5517523288726807,
+                0.7342095375061035,
+                0.7592961192131042,
+            ],
         );
     }
 
@@ -42,13 +49,13 @@ mod tests {
                 0.40814927220344543,
                 0.6402528285980225,
             ],
-            &[0, 84, 16, 20, 49],
+            &[0, 84, 20, 49, 94],
             &[
                 0.0,
                 0.9348742961883545,
-                1.047611,
                 1.1051676273345947,
                 1.1057792901992798,
+                1.1299806833267212,
             ],
         );
     }
@@ -86,13 +93,13 @@ mod tests {
                 0.47918426990509033,
                 0.5626800656318665,
             ],
-            &[42, 89, 0, 40, 67],
+            &[42, 89, 0, 40, 61],
             &[
                 3.553952693939209,
                 3.5382423400878906,
                 3.151576042175293,
                 3.045288324356079,
-                2.7035549,
+                2.615417003631592,
             ],
         );
     }
@@ -113,7 +120,10 @@ mod tests {
         let distance_list = nearest.distance_list;
         assert_eq!(index.size, TEST_NODE_COUNT);
         assert_eq!(id_list, expected_id_list);
-        assert_eq!(distance_list, expected_distance_list);
+        assert_eq!(
+            distance_list.round_to(F32_PRECISION),
+            expected_distance_list.round_to(F32_PRECISION)
+        );
         assert_eq!(distance_list.len(), expected_distance_list.len());
         for i in 0..distance_list.len() {
             let a = distance_list[i];
@@ -167,7 +177,10 @@ mod tests {
                 let distance_list_raw = get_distance_list(nearest_raw);
                 let distance_list =
                     slice::from_raw_parts(distance_list_raw as *mut f32, result_count).to_vec();
-                assert_eq!(distance_list, expected_distance_list);
+                assert_eq!(
+                    distance_list.round_to(F32_PRECISION),
+                    expected_distance_list.round_to(F32_PRECISION)
+                );
                 free_search_result(nearest_raw);
             }
             {
@@ -179,7 +192,10 @@ mod tests {
                 let distance_list_raw = get_distance_list(nearest_raw);
                 let distance_list =
                     slice::from_raw_parts(distance_list_raw as *mut f32, result_count).to_vec();
-                assert_eq!(distance_list, expected_distance_list);
+                assert_eq!(
+                    distance_list.round_to(F32_PRECISION),
+                    expected_distance_list.round_to(F32_PRECISION)
+                );
                 free_search_result(nearest_raw);
             }
             {
@@ -242,5 +258,20 @@ mod tests {
         let nearest = index.get_nearest(v1.as_ref(), 100, -1, true);
         assert_eq!(nearest.count, 1);
         assert_eq!(nearest.id_list[0], 1000);
+    }
+
+    pub trait RoundToVec<T> {
+        fn round_to(&self, n: usize) -> Vec<T>;
+    }
+
+    impl RoundToVec<f32> for [f32] {
+        fn round_to(&self, n: usize) -> Vec<f32> {
+            self.iter()
+                .map(|v| {
+                    let factor = 10.0_f32.powi(n as i32);
+                    (v * factor).round() / factor
+                })
+                .collect()
+        }
     }
 }

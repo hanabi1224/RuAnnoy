@@ -10,7 +10,12 @@ fn main() {
     let n_result = args[3].parse().unwrap();
     let n_loop = args[4].parse().unwrap();
 
-    let metrics = vec![IndexType::Angular, IndexType::Euclidean];
+    let metrics = vec![
+        IndexType::Angular,
+        IndexType::Euclidean,
+        IndexType::Manhattan,
+        IndexType::Dot,
+    ];
     for &metric in metrics.iter() {
         let path = format!("../index.{}.{}d.ann", metric, dim);
         let index = AnnoyIndex::load(dim, path.as_str(), metric).unwrap();

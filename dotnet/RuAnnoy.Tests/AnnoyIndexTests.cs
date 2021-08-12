@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace RuAnnoy.Tests
@@ -13,18 +9,20 @@ namespace RuAnnoy.Tests
     [TestFixture]
     public class AnnoyIndexTests
     {
+        private const int PRECISION = 5;
+
         static AnnoyIndexTests()
         {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
         }
 
-        const int TEST_INDEX_DIM = 5;
-        const ulong TEST_NODE_COUNT = 100;
+        private const int TEST_INDEX_DIM = 5;
+        private const ulong TEST_NODE_COUNT = 100;
 
         [Test]
         public void TestInvalidIndex()
         {
-            var index = AnnoyIndex.Load("invalid.ann", 5, IndexType.Euclidean);
+            IAnnoyIndex? index = AnnoyIndex.Load("invalid.ann", 5, IndexType.Euclidean);
             index.Should().BeNull();
         }
 
@@ -42,7 +40,11 @@ namespace RuAnnoy.Tests
                 },
                 new int[] { 0, 4, 37, 61, 29 },
                 new double[] {
-                    0.0, 0.41608825, 0.5517523, 0.7342095, 0.7592962
+                    0.0,
+                    0.4160882234573364,
+                    0.5517523288726807,
+                    0.7342095375061035,
+                    0.7592961192131042,
                 });
         }
 
@@ -58,13 +60,13 @@ namespace RuAnnoy.Tests
                     0.40814927220344543,
                     0.6402528285980225,
                 },
-                new int[] { 0, 84, 16, 20, 49 },
+                new int[] { 0, 84, 20, 49, 94 },
                 new double[] {
                     0.0,
                     0.9348742961883545,
-                    1.047611,
                     1.1051676273345947,
                     1.1057792901992798,
+                    1.1299806833267212,
                 });
         }
 
@@ -102,45 +104,57 @@ namespace RuAnnoy.Tests
                     0.47918426990509033,
                     0.5626800656318665,
                 },
-                new int[] { 42, 89, 0, 40, 67 },
+                new int[] { 42, 89, 0, 40, 61 },
                 new double[] {
                     3.553952693939209,
                     3.5382423400878906,
                     3.151576042175293,
                     3.045288324356079,
-                    2.7035549,
+                    2.615417003631592,
                 });
         }
 
         private void TestInner(IndexType indexType, double[] expectedVector3, int[] expectedIdList, double[] expectedDistanceList)
         {
-            var path = $"index.{indexType.ToString().ToLowerInvariant()}.{TEST_INDEX_DIM}d.ann";
-            var index = AnnoyIndex.Load(path, TEST_INDEX_DIM, indexType);
+            Func<double, double> roundTo = (double v) => Math.Round(v, PRECISION);
+
+            string? path = $"index.{indexType.ToString().ToLowerInvariant()}.{TEST_INDEX_DIM}d.ann";
+            IAnnoyIndex? index = AnnoyIndex.Load(path, TEST_INDEX_DIM, indexType);
             index.Should().NotBeNull();
             index.Dimension.Should().Be(TEST_INDEX_DIM);
             index.Size.Should().Be(TEST_NODE_COUNT);
 
             {
-                var nearest = index.GetNearestToItem(0, 5, -1, true);
+                AnnoyIndexSearchResult? nearest = index.GetNearestToItem(0, 5, -1, true);
                 nearest.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
-                nearest.DistanceList.ToArray().Should().BeEquivalentTo(expectedDistanceList.Select(_ => (float)_));
+                nearest.DistanceList.ToArray().Select(RoundTo).Should().BeEquivalentTo(expectedDistanceList.Select(RoundTo));
             }
 
-            var vector3 = index.GetItemVector(3);
-            vector3.Should().BeEquivalentTo(expectedVector3.Select(_ => (float)_));
+            IReadOnlyList<float>? vector3 = index.GetItemVector(3);
+            vector3.Select(RoundTo).Should().BeEquivalentTo(expectedVector3.Select(RoundTo));
 
-            var v0 = index.GetItemVector(0);
+            IReadOnlyList<float>? v0 = index.GetItemVector(0);
             {
-                var nearest = index.GetNearest(v0, 5, -1, true);
+                AnnoyIndexSearchResult? nearest = index.GetNearest(v0, 5, -1, true);
                 nearest.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
-                nearest.DistanceList.ToArray().Should().BeEquivalentTo(expectedDistanceList.Select(_ => (float)_));
+                nearest.DistanceList.ToArray().Select(RoundTo).Should().BeEquivalentTo(expectedDistanceList.Select(RoundTo));
             }
 
-            { 
-                var neareast = index.GetNearest(v0, 5, -1, false);
+            {
+                AnnoyIndexSearchResult? neareast = index.GetNearest(v0, 5, -1, false);
                 neareast.IdList.ToArray().Should().BeEquivalentTo(expectedIdList);
                 neareast.DistanceList.Length.Should().Be(0);
             }
+        }
+
+        private static double RoundTo(double v)
+        {
+            return Math.Round(v, PRECISION);
+        }
+
+        private static double RoundTo(float v)
+        {
+            return Math.Round(v, PRECISION);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Bench
     {
         static void Main(int dim, ulong size, uint nResult, ulong nLoop)
         {
-            foreach (var metric in new[] { "angular", "euclidean" })
+            foreach (var metric in new[] { "angular", "euclidean", "manhattan", "dot" })
             {
                 var path = $"index.{metric}.{dim}d.ann";
                 var index = AnnoyIndex.Load(path, dim, Enum.Parse<IndexType>(metric, ignoreCase: true));                
