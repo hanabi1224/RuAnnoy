@@ -50,8 +50,8 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             pq.push(id as i32, f32::MAX);
         }
 
-        // let mut nearest_neighbors = HashSet::new();
-        let mut nearest_neighbors = HashSet::with_capacity(search_k_fixed);
+        let mut nearest_neighbors = Vec::with_capacity(search_k_fixed);
+        // let mut nearest_neighbors = HashSet::with_capacity(search_k_fixed);
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
             if let Some((top_node_id_i32, top_node_margin)) = pq.pop() {
                 let top_node_id = top_node_id_i32 as usize;
@@ -60,12 +60,14 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 let top_node_offset = top_node.offset;
                 let n_descendants = top_node_header.get_n_descendant();
                 if n_descendants == 1 && top_node_id < self.size {
-                    nearest_neighbors.insert(top_node_id_i32);
+                    nearest_neighbors.push(top_node_id_i32);
+                    // nearest_neighbors.insert(top_node_id_i32);
                 } else if n_descendants <= self.max_descendants {
                     let children_id_slice =
                         self.get_descendant_id_slice(top_node_offset, n_descendants as usize);
                     for &child_id in children_id_slice {
-                        nearest_neighbors.insert(child_id);
+                        nearest_neighbors.push(child_id);
+                        // nearest_neighbors.insert(child_id);
                     }
                 } else {
                     let v = self.get_node_slice_with_offset(top_node_offset);
@@ -77,9 +79,15 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 }
             }
         }
-
+        // let mut nearest_neighbors: Vec<i32> = nearest_neighbors.into_iter().collect();
+        nearest_neighbors.sort();
         let mut sorted_nns = PriorityQueue::with_capacity(nearest_neighbors.len(), true);
+        let mut nn_id_last = -1;
         for nn_id in nearest_neighbors {
+            if nn_id == nn_id_last {
+                continue;
+            }
+            nn_id_last = nn_id;
             let node = self.get_node_from_id(nn_id as usize);
             let n_descendants = node.header.get_n_descendant();
             if n_descendants != 1 {

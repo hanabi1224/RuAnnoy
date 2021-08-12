@@ -20,7 +20,7 @@ void main(List<String> arguments) async {
   final lib = await SetupUtil.getDylibAsync();
   final fac = AnnoyIndexFactory(lib);
 
-  for (final metric in ['angular', 'euclidean']) {
+  for (final metric in ['angular', 'euclidean', 'manhattan', 'dot']) {
     final path = '../index.${metric}.${dim}d.ann';
     final index =
         fac.loadIndex(path, dim, metric.toEnum<IndexType>(IndexType.values))!;
