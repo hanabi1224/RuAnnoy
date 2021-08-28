@@ -16,7 +16,7 @@ use std::mem;
 #[cfg(feature = "simd")]
 const SIMD_LANES: usize = 16;
 #[cfg(feature = "simd")]
-type SimdType = SimdF32<SIMD_LANES>;
+type SimdType = Simd<f32, SIMD_LANES>;
 pub const INT32_SIZE: usize = mem::size_of::<i32>();
 pub const FLOAT32_SIZE: usize = mem::size_of::<f32>();
 

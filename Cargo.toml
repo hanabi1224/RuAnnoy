@@ -10,6 +10,8 @@ name = "annoy-rs"
 repository = "https://github.com/hanabi1224/RuAnnoy"
 version = "0.1.0"
 
+resolver = "2"
+
 [features]
 default = ["cffi"]
 
@@ -30,3 +32,13 @@ rand = "0"
 
 [lib]
 crate-type = ["lib", "cdylib", "staticlib"]
+
+[profile.release]
+lto = true
+opt-level = 3
+overflow-checks = false
+
+[profile.bench]
+lto = true
+opt-level = 3
+overflow-checks = false
