@@ -92,6 +92,10 @@ jobs:
         with:
           path: java/target/release/*.dylib
           if-no-files-found: error
+      - name: Cargo deny
+        run: |
+          cargo install cargo-deny
+          cargo deny check
       - name: Deploy nugets
         if: github.ref == 'refs/heads/master'
         env:
