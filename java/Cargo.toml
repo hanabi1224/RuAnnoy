@@ -1,9 +1,8 @@
 [package]
-authors = ["hanabi1224"]
 description = """
 Java bindings to annoy-rs.
 """
-edition = "2018"
+edition = "2021"
 license = "MIT"
 name = "annoy-rs-jni"
 repository = "https://github.com/hanabi1224/RuAnnoy"

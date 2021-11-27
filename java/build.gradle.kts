@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.logging.*
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.6.0"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -81,10 +81,10 @@ tasks.register<Copy>("copy-artifacts") {
     into("src/main/resources")
 }
 
-tasks.register("full-build-test") { 
+tasks.register("full-build-test") {
     dependsOn("copy-artifacts")
     dependsOn("test")
- }
+}
 
 // tasks.processResources { dependsOn("copy-artifacts") }
 // tasks.test { dependsOn("copy-artifacts") }

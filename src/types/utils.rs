@@ -1,10 +1,10 @@
 use crate::internals::mmap_ext::*;
 // #[cfg(feature = "simd")]
 // use core::intrinsics::{fadd_fast, fdiv_fast, fmul_fast, fsub_fast, sqrtf32};
-#[cfg(feature = "simd")]
-use core_simd::*;
 use memmap2::Mmap;
 use std::mem;
+#[cfg(feature = "simd")]
+use std::simd::*;
 
 // cfg_if! {
 //     if #[cfg(feature = "simd")] {
@@ -233,7 +233,7 @@ mod tests {
     #[cfg(feature = "simd")]
     const SIMD_PARITY_PRECISION: usize = 2;
 
-    lazy_static! {
+    lazy_static::lazy_static! {
         static ref BENCH_ARRAY_1: Vec<f32> = gen_range_array(0..255);
         static ref BENCH_ARRAY_2: Vec<f32> = gen_range_array(0..255);
     }

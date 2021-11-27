@@ -5,8 +5,6 @@
 
 #[macro_use]
 extern crate cfg_if;
-#[macro_use]
-extern crate lazy_static;
 
 pub(crate) mod internals;
 
