@@ -10,7 +10,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm").version("1.5.30")
+    id("org.jetbrains.kotlin.jvm").version("1.6.0")
     id("com.github.ben-manes.versions").version("0.39.0")
     // Apply the application plugin to add support for building a CLI application in Java.
     application

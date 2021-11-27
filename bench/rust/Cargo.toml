@@ -1,6 +1,5 @@
 [package]
-authors = ["hanabi1224 <harlowmoo@gmail.com>"]
-edition = "2018"
+edition = "2021"
 name = "bencher"
 version = "0.1.0"
 
