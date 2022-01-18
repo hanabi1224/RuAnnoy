@@ -14,8 +14,8 @@ simd = ["annoy-rs/simd"]
 
 [dependencies]
 annoy-rs = {path = "../"}
-jni = "0"
-libc = "0"
+jni = "0.19"
+libc = "0.2"
 
 [lib]
 crate-type = ["cdylib"]
