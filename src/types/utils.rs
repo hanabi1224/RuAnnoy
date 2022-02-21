@@ -21,7 +21,7 @@ pub const INT32_SIZE: usize = mem::size_of::<i32>();
 pub const FLOAT32_SIZE: usize = mem::size_of::<f32>();
 
 pub fn minkowski_margin(u: &[f32], v: &[f32], bias: f32) -> f32 {
-    return bias + dot_product(u, v);
+    bias + dot_product(u, v)
 }
 
 /*
@@ -89,11 +89,11 @@ pub fn cosine_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
         pq += _u * _v;
     }
     let ppqq = pp * qq;
-    return if ppqq > 0.0 {
+    if ppqq > 0.0 {
         2.0 - 2.0 * pq / ppqq.sqrt()
     } else {
         2.0
-    };
+    }
 }
 
 #[cfg(feature = "simd")]

@@ -15,10 +15,10 @@ impl Node {
         let offset = id * node_size;
         let header = NodeHeader::new(offset, &index_type, &mmap);
         Node {
-            mmap: mmap,
-            id: id,
-            offset: offset,
-            header: header,
+            mmap,
+            id,
+            offset,
+            header,
         }
     }
 }

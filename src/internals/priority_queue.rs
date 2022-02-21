@@ -36,11 +36,9 @@ where
         self.keys.push(key);
         self.priorities.push(priority);
         let pos = self.priorities.len() - 1;
-        if pos > 0 {
-            if !self.max_heap_up_adjust(pos) {
-                self.keys.pop();
-                self.priorities.pop();
-            }
+        if pos > 0 && !self.max_heap_up_adjust(pos) {
+            self.keys.pop();
+            self.priorities.pop();
         }
     }
 

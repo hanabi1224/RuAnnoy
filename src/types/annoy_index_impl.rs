@@ -64,18 +64,18 @@ impl AnnoyIndex {
         }
 
         let index = AnnoyIndex {
-            dimension: dimension,
-            index_type: index_type,
-            offset_before_children: offset_before_children,
-            node_header_size: node_header_size,
+            dimension,
+            index_type,
+            offset_before_children,
+            node_header_size,
             max_descendants: max_descendants as i32,
             node_size: node_size as usize,
             mmap: Rc::new(mmap),
-            roots: roots,
+            roots,
             size: m as usize,
         };
 
-        return Ok(index);
+        Ok(index)
     }
 
     pub(crate) fn get_node_from_id(&self, id: usize) -> Node {

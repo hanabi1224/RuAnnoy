@@ -27,7 +27,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
     fn get_item_vector(&self, item_index: u64) -> Vec<f32> {
         let node_offset = item_index as usize * self.node_size;
         let slice = self.get_node_slice_with_offset(node_offset);
-        slice.iter().map(|&a| a).collect()
+        slice.iter().copied().collect()
     }
 
     fn get_nearest(
@@ -80,7 +80,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             }
         }
         // let mut nearest_neighbors: Vec<i32> = nearest_neighbors.into_iter().collect();
-        nearest_neighbors.sort();
+        nearest_neighbors.sort_unstable();
         let mut sorted_nns = PriorityQueue::with_capacity(nearest_neighbors.len(), true);
         let mut nn_id_last = -1;
         for nn_id in nearest_neighbors {
@@ -112,12 +112,12 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 distance_list.push(self.normalized_distance(nn.1));
             }
         }
-        return AnnoyIndexSearchResult {
+        AnnoyIndexSearchResult {
             count: final_result_capcity,
             is_distance_included: should_include_distance,
-            id_list: id_list,
-            distance_list: distance_list,
-        };
+            id_list,
+            distance_list,
+        }
     }
 
     fn get_nearest_to_item(
