@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Ctarget-feature=+avx
 
 jobs:
   build:
@@ -16,6 +17,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
+      - run: lscpu
+        if: matrix.os == 'ubuntu-latest'
       - name: Install latest stable
         uses: actions-rs/toolchain@v1
         with:
@@ -111,7 +114,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly-2022-01-14
+          toolchain: nightly
           override: true
           components: llvm-tools-preview
       - uses: taiki-e/install-action@cargo-llvm-cov
