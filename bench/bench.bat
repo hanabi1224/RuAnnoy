@@ -13,7 +13,7 @@ pushd dart
 dart pub get && dart run main.dart 256 10000 200 1000
 popd
 
-dotnet run -p dotnet -c Release -- --dim 256 --size 10000 --n-result 200 --n-loop 1000
+dotnet run --project dotnet -c Release -- --dim 256 --size 10000 --n-result 200 --n-loop 1000
 
 pushd java
 gradlew run --args="256 10000 200 1000"

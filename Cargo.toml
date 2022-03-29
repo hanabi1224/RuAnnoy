@@ -9,6 +9,9 @@ name = "annoy-rs"
 repository = "https://github.com/hanabi1224/RuAnnoy"
 version = "0.1.0"
 
+[workspace]
+members = ["java"]
+
 [features]
 default = ["cffi"]
 
@@ -18,12 +21,12 @@ simd = []
 
 [dependencies]
 cfg-if = "1"
-hashbrown = "0.12"
-lazy_static = "1"
-libc = {version = "0.2", optional = true}
 memmap2 = "0.5"
 
+libc = {version = "0.2", optional = true}
+
 [dev-dependencies]
+lazy_static = "1"
 rand = "0.8"
 
 [lib]

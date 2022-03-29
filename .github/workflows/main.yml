@@ -7,7 +7,6 @@ on:
     branches: [master]
 
 env:
-  CARGO_TERM_COLOR: always
   RUSTFLAGS: -Ctarget-feature=+avx
 
 jobs:
@@ -27,6 +26,8 @@ jobs:
           components: rustfmt, clippy
       - uses: actions/checkout@v2
       - run: rustup update nightly
+      - run: cargo fmt -- --check
+      - run: cargo clippy -- --deny warnings
       - run: cargo build --release
       - run: cargo test --release
       - run: cargo +nightly build --release --all-features
@@ -83,17 +84,17 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: matrix.os == 'windows-latest'
         with:
-          path: java/target/release/*.dll
+          path: target/release/*.dll
           if-no-files-found: error
       - uses: actions/upload-artifact@v2
         if: matrix.os == 'ubuntu-latest'
         with:
-          path: java/target/release/*.so
+          path: target/release/*.so
           if-no-files-found: error
       - uses: actions/upload-artifact@v2
         if: matrix.os == 'macos-latest'
         with:
-          path: java/target/release/*.dylib
+          path: target/release/*.dylib
           if-no-files-found: error
       - uses: EmbarkStudios/cargo-deny-action@v1
         if: matrix.os == 'ubuntu-latest'

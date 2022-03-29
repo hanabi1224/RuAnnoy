@@ -72,12 +72,13 @@ tasks.register<Exec>("cargo-build") {
     workingDir(".")
     executable("cargo")
     args("+nightly", "build", "--release", "--all-features")
+    // args("build", "--release")
 }
 
 tasks.register<Copy>("copy-artifacts") {
     dependsOn("cargo-build")
-    from("target/release/")
-    include("*.so", "*.dll", "*.dylib")
+    from("../target/release/")
+    include("libannoy_rs_jni.so", "annoy_rs_jni.dll", "libannoy_rs_jni.dylib")
     into("src/main/resources")
 }
 

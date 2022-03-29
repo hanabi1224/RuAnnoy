@@ -1,9 +1,5 @@
 use super::*;
 use crate::internals::priority_queue::PriorityQueue;
-// use std::collections::HashSet;
-// Benchmark does not show visible perf difference, use hashbrown which is cryptographically secure instead
-// use ahash::AHashSet as HashSet;
-use hashbrown::HashSet;
 
 pub trait AnnoyIndexSearchApi {
     fn get_item_vector(&self, item_index: u64) -> Vec<f32>;
@@ -27,7 +23,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
     fn get_item_vector(&self, item_index: u64) -> Vec<f32> {
         let node_offset = item_index as usize * self.node_size;
         let slice = self.get_node_slice_with_offset(node_offset);
-        slice.iter().copied().collect()
+        slice.to_vec()
     }
 
     fn get_nearest(
@@ -51,7 +47,6 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         }
 
         let mut nearest_neighbors = Vec::with_capacity(search_k_fixed);
-        // let mut nearest_neighbors = HashSet::with_capacity(search_k_fixed);
         while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
             if let Some((top_node_id_i32, top_node_margin)) = pq.pop() {
                 let top_node_id = top_node_id_i32 as usize;
@@ -61,13 +56,11 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 let n_descendants = top_node_header.get_n_descendant();
                 if n_descendants == 1 && top_node_id < self.size {
                     nearest_neighbors.push(top_node_id_i32);
-                    // nearest_neighbors.insert(top_node_id_i32);
                 } else if n_descendants <= self.max_descendants {
                     let children_id_slice =
                         self.get_descendant_id_slice(top_node_offset, n_descendants as usize);
                     for &child_id in children_id_slice {
                         nearest_neighbors.push(child_id);
-                        // nearest_neighbors.insert(child_id);
                     }
                 } else {
                     let v = self.get_node_slice_with_offset(top_node_offset);
@@ -79,7 +72,6 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 }
             }
         }
-        // let mut nearest_neighbors: Vec<i32> = nearest_neighbors.into_iter().collect();
         nearest_neighbors.sort_unstable();
         let mut sorted_nns = PriorityQueue::with_capacity(nearest_neighbors.len(), true);
         let mut nn_id_last = -1;

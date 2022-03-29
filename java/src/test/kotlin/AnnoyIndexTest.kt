@@ -9,6 +9,10 @@ import kotlin.test.*
 class AnnoyIndexTest {
         @Test
         fun testAnnoyIndex() {
+                if (!System.getenv("JITPACK").isNullOrBlank()) {
+                        return
+                }
+
                 val indexPath = "$pwd/src/test/resources/index.angular.5d.ann"
                 val index = AnnoyIndex.tryLoad(indexPath, 5, IndexType.Angular)
                 assertTrue(index != null, "indexPath: $indexPath")
@@ -26,8 +30,10 @@ class AnnoyIndexTest {
                                                                                                         0.8664266467094421f,
                                                                                                         0.40251824259757996f,
                                                                                         )
-                                                                                        .toTypedArray()),
-                                        Arrays.toString(v3))
+                                                                                        .toTypedArray()
+                                                        ),
+                                        Arrays.toString(v3)
+                        )
                         val v0 = index.getItemVector(0)
                         var nearest = index.getNearest(v0, 5, -1, true)
                         assertTrue(
@@ -39,9 +45,12 @@ class AnnoyIndexTest {
                                                                                                         4,
                                                                                                         37,
                                                                                                         61,
-                                                                                                        29)
-                                                                                        .toTypedArray()),
-                                        Arrays.toString(nearest.idList))
+                                                                                                        29
+                                                                                        )
+                                                                                        .toTypedArray()
+                                                        ),
+                                        Arrays.toString(nearest.idList)
+                        )
                         assertEquals(true, nearest.distanceIncluded)
                         assertTrue(
                                         nearest.distanceList
@@ -52,9 +61,12 @@ class AnnoyIndexTest {
                                                                                                         0.41608825f,
                                                                                                         0.5517523f,
                                                                                                         0.7342095f,
-                                                                                                        0.7592962f)
-                                                                                        .toTypedArray()),
-                                        Arrays.toString(nearest.distanceList))
+                                                                                                        0.7592962f
+                                                                                        )
+                                                                                        .toTypedArray()
+                                                        ),
+                                        Arrays.toString(nearest.distanceList)
+                        )
                         nearest = index.getNearestToItem(0, 5, -1, false)
                         assertTrue(
                                         nearest.idList
@@ -65,9 +77,12 @@ class AnnoyIndexTest {
                                                                                                         4,
                                                                                                         37,
                                                                                                         61,
-                                                                                                        29)
-                                                                                        .toTypedArray()),
-                                        Arrays.toString(nearest.idList))
+                                                                                                        29
+                                                                                        )
+                                                                                        .toTypedArray()
+                                                        ),
+                                        Arrays.toString(nearest.idList)
+                        )
                         assertEquals(false, nearest.distanceIncluded)
                         assertEquals(0, nearest.distanceList.size)
                 }

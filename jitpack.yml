@@ -1,7 +1,11 @@
 jdk:
-  - openjdk11
+  - openjdk17
 before_install:
   - uname -a
+  - cat /etc/*-release
+  - strings /lib/x86_64-linux-gnu/libc.so.6 | grep GLIBC
+  - apt update -y
+  - apt upgrade -y libc6
   # - sudo apt-get install build-essential -y
   # - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
   # - source $HOME/.cargo/env

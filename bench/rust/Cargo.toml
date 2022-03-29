@@ -3,6 +3,8 @@ edition = "2021"
 name = "bencher"
 version = "0.1.0"
 
+[workspace]
+
 [features]
 simd = ["annoy-rs/simd"]
 

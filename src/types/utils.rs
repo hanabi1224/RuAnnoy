@@ -14,7 +14,7 @@ use std::simd::*;
 //     }
 // }
 #[cfg(feature = "simd")]
-const SIMD_LANES: usize = 16;
+const SIMD_LANES: usize = 8;
 #[cfg(feature = "simd")]
 type SimdType = Simd<f32, SIMD_LANES>;
 pub const INT32_SIZE: usize = mem::size_of::<i32>();
@@ -62,7 +62,7 @@ pub fn dot_product_simd(u: &[f32], v: &[f32]) -> f32 {
         let v_chunk = extract_simd_type_from_slice(v, i, length);
         dp += u_chunk * v_chunk;
     }
-    dp.horizontal_sum()
+    dp.reduce_sum()
 }
 
 // #[inline(never)]
@@ -89,7 +89,7 @@ pub fn cosine_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
         pq += _u * _v;
     }
     let ppqq = pp * qq;
-    if ppqq > 0.0 {
+    if ppqq.is_sign_positive() {
         2.0 - 2.0 * pq / ppqq.sqrt()
     } else {
         2.0
@@ -99,9 +99,9 @@ pub fn cosine_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
 #[cfg(feature = "simd")]
 pub fn cosine_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
-    let mut ppm = SimdType::splat(0.0);
-    let mut qqm = SimdType::splat(0.0);
-    let mut pqm = SimdType::splat(0.0);
+    let mut ppm = SimdType::default();
+    let mut qqm = SimdType::default();
+    let mut pqm = SimdType::default();
     for i in (0..length).step_by(SIMD_LANES) {
         let u_chunk = extract_simd_type_from_slice(u, i, length);
         let v_chunk = extract_simd_type_from_slice(v, i, length);
@@ -109,21 +109,21 @@ pub fn cosine_distance_simd(u: &[f32], v: &[f32]) -> f32 {
         qqm += v_chunk * v_chunk;
         pqm += u_chunk * v_chunk;
     }
-    let pp = ppm.horizontal_sum();
-    let qq = qqm.horizontal_sum();
-    let pq = pqm.horizontal_sum();
+    let pp = ppm.reduce_sum();
+    let qq = qqm.reduce_sum();
+    let pq = pqm.reduce_sum();
     let ppqq = pp * qq;
-    return if ppqq > 0.0 {
+    if ppqq.is_sign_positive() {
         2.0 - 2.0 * pq / ppqq.sqrt()
     } else {
         2.0
-    };
+    }
     // let ppqq = unsafe { fmul_fast(pp, qq) };
-    // return if ppqq > 0.0 {
+    // if ppqq.is_sign_positive() {
     //     unsafe { fsub_fast(2.0, fmul_fast(2.0, fdiv_fast(pq, sqrtf32(ppqq)))) }
     // } else {
     //     2.0
-    // };
+    // }
 }
 
 // #[inline(never)]
@@ -144,13 +144,13 @@ pub fn euclidean_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
 #[cfg(feature = "simd")]
 pub fn euclidean_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
-    let mut sum = SimdType::splat(0.0);
+    let mut sum = SimdType::default();
     for i in (0..length).step_by(SIMD_LANES) {
         let u_chunk = extract_simd_type_from_slice(u, i, length);
         let v_chunk = extract_simd_type_from_slice(v, i, length);
         sum += power_simd_type(u_chunk - v_chunk);
     }
-    sum.horizontal_sum()
+    sum.reduce_sum()
 }
 
 // #[inline(never)]
@@ -171,14 +171,14 @@ pub fn manhattan_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
 #[cfg(feature = "simd")]
 pub fn manhattan_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
-    let mut sum = SimdType::splat(0.0);
+    let mut sum = SimdType::default();
     for i in (0..length).step_by(SIMD_LANES) {
         let u_chunk = extract_simd_type_from_slice(u, i, length);
         let v_chunk = extract_simd_type_from_slice(v, i, length);
         let diff = u_chunk - v_chunk;
         sum += diff.abs();
     }
-    sum.horizontal_sum()
+    sum.reduce_sum()
 }
 
 pub fn get_nth_descendant_id(
@@ -195,7 +195,7 @@ pub fn get_nth_descendant_id(
 fn extract_simd_type_from_slice(array: &[f32], start: usize, length: usize) -> SimdType {
     let end = start + SIMD_LANES;
     if end > length {
-        let mut simd_array = SimdType::splat(0.0);
+        let mut simd_array = SimdType::default();
         // let part = &array[start..length];
         // for i in 0..part.len() {
         //     simd_array[i] = part[i];
