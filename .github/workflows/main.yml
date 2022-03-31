@@ -28,8 +28,8 @@ jobs:
       - run: rustup update nightly
       - run: cargo fmt -- --check
       - run: cargo clippy -- --deny warnings
-      - run: cargo build --release
-      - run: cargo test --release
+      - run: cargo build --release --all-features
+      - run: cargo test --release --all-features
       - run: cargo +nightly build --release --all-features
       - run: cargo +nightly test --release --all-features
       - run: cargo +nightly bench --all-features

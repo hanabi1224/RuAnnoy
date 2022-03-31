@@ -429,7 +429,7 @@ mod tests {
         );
     }
 
-    #[cfg(feature = "bench")]
+    #[cfg(nightly)]
     mod bench {
         use super::*;
         extern crate test;
