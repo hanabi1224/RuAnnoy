@@ -17,7 +17,6 @@ default = ["cffi"]
 
 bench = []
 cffi = ["libc"]
-simd = []
 
 [dependencies]
 cfg-if = "1"
@@ -28,6 +27,9 @@ libc = {version = "0.2", optional = true}
 [dev-dependencies]
 lazy_static = "1"
 rand = "0.8"
+
+[build-dependencies]
+rustc_version = "0.4"
 
 [lib]
 crate-type = ["lib", "cdylib", "staticlib"]

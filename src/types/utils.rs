@@ -1,21 +1,12 @@
 use crate::internals::mmap_ext::*;
-// #[cfg(feature = "simd")]
-// use core::intrinsics::{fadd_fast, fdiv_fast, fmul_fast, fsub_fast, sqrtf32};
 use memmap2::Mmap;
 use std::mem;
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 use std::simd::*;
 
-// cfg_if! {
-//     if #[cfg(feature = "simd")] {
-//         lazy_static! {
-//             static ref SIMD_INDICES:SimdUsize<SIMD_LANES> = SimdUsize::<SIMD_LANES>::from_array([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
-//         }
-//     }
-// }
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 const SIMD_LANES: usize = 8;
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 type SimdType = Simd<f32, SIMD_LANES>;
 pub const INT32_SIZE: usize = mem::size_of::<i32>();
 pub const FLOAT32_SIZE: usize = mem::size_of::<f32>();
@@ -41,7 +32,7 @@ template<typename S, typename T, typename Distance, typename Random, class Threa
 // #[inline(never)]
 pub fn dot_product(u: &[f32], v: &[f32]) -> f32 {
     cfg_if! {
-        if #[cfg(feature = "simd")] {
+        if #[cfg(nightly)] {
             dot_product_simd(u, v)
         } else {
             dot_product_no_simd(u, v)
@@ -49,11 +40,12 @@ pub fn dot_product(u: &[f32], v: &[f32]) -> f32 {
     }
 }
 
+#[cfg(any(test, not(nightly)))]
 pub fn dot_product_no_simd(u: &[f32], v: &[f32]) -> f32 {
     u.iter().zip(v.iter()).map(|(x, y)| x * y).sum()
 }
 
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 pub fn dot_product_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
     let mut dp = SimdType::splat(0.0);
@@ -65,10 +57,9 @@ pub fn dot_product_simd(u: &[f32], v: &[f32]) -> f32 {
     dp.reduce_sum()
 }
 
-// #[inline(never)]
 pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
     cfg_if! {
-        if #[cfg(feature = "simd")] {
+        if #[cfg(nightly)] {
             cosine_distance_simd(u, v)
         } else {
             cosine_distance_no_simd(u, v)
@@ -76,6 +67,7 @@ pub fn cosine_distance(u: &[f32], v: &[f32]) -> f32 {
     }
 }
 
+#[cfg(any(test, not(nightly)))]
 pub fn cosine_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
     // want to calculate (a/|a| - b/|b|)^2
     // = a^2 / a^2 + b^2 / b^2 - 2ab/|a||b|
@@ -96,7 +88,7 @@ pub fn cosine_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
     }
 }
 
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 pub fn cosine_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
     let mut ppm = SimdType::default();
@@ -126,10 +118,9 @@ pub fn cosine_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     // }
 }
 
-// #[inline(never)]
 pub fn euclidean_distance(u: &[f32], v: &[f32]) -> f32 {
     cfg_if! {
-        if #[cfg(feature = "simd")] {
+        if #[cfg(nightly)] {
             euclidean_distance_simd(u, v)
         } else {
             euclidean_distance_no_simd(u, v)
@@ -137,11 +128,12 @@ pub fn euclidean_distance(u: &[f32], v: &[f32]) -> f32 {
     }
 }
 
+#[cfg(any(test, not(nightly)))]
 pub fn euclidean_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
-    u.iter().zip(v.iter()).map(|(x, y)| power(x - y)).sum()
+    u.iter().zip(v.iter()).map(|(x, y)| (x - y).powi(2)).sum()
 }
 
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 pub fn euclidean_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
     let mut sum = SimdType::default();
@@ -153,10 +145,9 @@ pub fn euclidean_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     sum.reduce_sum()
 }
 
-// #[inline(never)]
 pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
     cfg_if! {
-        if #[cfg(feature = "simd")] {
+        if #[cfg(nightly)] {
             manhattan_distance_simd(u, v)
         } else {
             manhattan_distance_no_simd(u, v)
@@ -164,11 +155,12 @@ pub fn manhattan_distance(u: &[f32], v: &[f32]) -> f32 {
     }
 }
 
+#[cfg(any(test, not(nightly)))]
 pub fn manhattan_distance_no_simd(u: &[f32], v: &[f32]) -> f32 {
     u.iter().zip(v.iter()).map(|(x, y)| (x - y).abs()).sum()
 }
 
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 pub fn manhattan_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     let length = u.len();
     let mut sum = SimdType::default();
@@ -191,7 +183,7 @@ pub fn get_nth_descendant_id(
     mmap.read_i32(child_offset) as usize
 }
 
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 fn extract_simd_type_from_slice(array: &[f32], start: usize, length: usize) -> SimdType {
     let end = start + SIMD_LANES;
     if end > length {
@@ -212,12 +204,7 @@ fn extract_simd_type_from_slice(array: &[f32], start: usize, length: usize) -> S
     }
 }
 
-#[inline(always)]
-fn power(f: f32) -> f32 {
-    f * f
-}
-
-#[cfg(feature = "simd")]
+#[cfg(nightly)]
 #[inline(always)]
 fn power_simd_type(f: SimdType) -> SimdType {
     f * f
@@ -225,12 +212,13 @@ fn power_simd_type(f: SimdType) -> SimdType {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(nightly)]
     use crate::tests::*;
     use crate::types::utils::*;
     use rand::prelude::*;
     use std::ops::Range;
 
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     const SIMD_PARITY_PRECISION: usize = 2;
 
     lazy_static::lazy_static! {
@@ -269,7 +257,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_cosine_distance_simd() {
         let r = cosine_distance_simd(
             &[
@@ -333,7 +321,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_euclidean_distance_simd() {
         let r = euclidean_distance_simd(
             &[
@@ -376,7 +364,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_dot_product_simd() {
         let r = dot_product_simd(
             &[
@@ -398,7 +386,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_cosine_distance_simd_parity() {
         let a = &BENCH_ARRAY_1;
         let b = &BENCH_ARRAY_2;
@@ -409,7 +397,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_euclidean_distance_simd_parity() {
         let a = &BENCH_ARRAY_1;
         let b = &BENCH_ARRAY_2;
@@ -420,7 +408,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_dot_product_simd_parity() {
         let a = &BENCH_ARRAY_1;
         let b = &BENCH_ARRAY_2;
@@ -431,7 +419,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "simd")]
+    #[cfg(nightly)]
     fn test_manhattan_distance_simd_parity() {
         let a = &BENCH_ARRAY_1;
         let b = &BENCH_ARRAY_2;
@@ -455,7 +443,7 @@ mod tests {
         }
 
         #[bench]
-        #[cfg(feature = "simd")]
+        #[cfg(nightly)]
         fn bench_euclidean_distance_simd(bencher: &mut Bencher) {
             let a = &BENCH_ARRAY_1;
             let b = &BENCH_ARRAY_2;
@@ -470,7 +458,7 @@ mod tests {
         }
 
         #[bench]
-        #[cfg(feature = "simd")]
+        #[cfg(nightly)]
         fn bench_dot_product_simd(bencher: &mut Bencher) {
             let a = &BENCH_ARRAY_1;
             let b = &BENCH_ARRAY_2;
@@ -485,7 +473,7 @@ mod tests {
         }
 
         #[bench]
-        #[cfg(feature = "simd")]
+        #[cfg(nightly)]
         fn bench_cosine_distance_simd(bencher: &mut Bencher) {
             let a = &BENCH_ARRAY_1;
             let b = &BENCH_ARRAY_2;
@@ -500,7 +488,7 @@ mod tests {
         }
 
         #[bench]
-        #[cfg(feature = "simd")]
+        #[cfg(nightly)]
         fn bench_manhattan_distance_simd(bencher: &mut Bencher) {
             let a = &BENCH_ARRAY_1;
             let b = &BENCH_ARRAY_2;

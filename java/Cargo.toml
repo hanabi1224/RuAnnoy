@@ -9,8 +9,7 @@ repository = "https://github.com/hanabi1224/RuAnnoy"
 version = "0.1.0"
 
 [features]
-default = ["simd"]
-simd = ["annoy-rs/simd"]
+default = []
 
 [dependencies]
 annoy-rs = {path = "../"}

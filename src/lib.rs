@@ -1,7 +1,7 @@
-// #![deny(warnings)]
-#![cfg_attr(feature = "simd", feature(portable_simd))]
-#![cfg_attr(feature = "simd", feature(core_intrinsics))]
-#![cfg_attr(feature = "bench", feature(test))]
+#![deny(warnings)]
+#![cfg_attr(nightly, feature(portable_simd))]
+#![cfg_attr(nightly, feature(core_intrinsics))]
+#![cfg_attr(nightly, feature(test))]
 
 #[macro_use]
 extern crate cfg_if;
