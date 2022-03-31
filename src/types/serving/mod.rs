@@ -41,8 +41,7 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
         };
 
         let mut pq = PriorityQueue::with_capacity(result_capacity, false);
-        for i in 0..self.roots.len() {
-            let id = self.roots[i];
+        for &id in self.roots.iter() {
             pq.push(id as i32, f32::MAX);
         }
 
@@ -59,16 +58,14 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                 } else if n_descendants <= self.max_descendants {
                     let children_id_slice =
                         self.get_descendant_id_slice(top_node_offset, n_descendants as usize);
-                    for &child_id in children_id_slice {
-                        nearest_neighbors.push(child_id);
-                    }
+                    nearest_neighbors.extend_from_slice(children_id_slice);
                 } else {
                     let v = self.get_node_slice_with_offset(top_node_offset);
                     let margin = self.get_margin(v, query_vector, top_node_offset);
-                    let children_id = top_node_header.get_children_id_slice();
+                    let [child_0, child_1] = top_node_header.get_children_id_slice();
                     // NOTE: Hamming has different logic to calculate margin
-                    pq.push(children_id[1], top_node_margin.min(margin));
-                    pq.push(children_id[0], top_node_margin.min(-margin));
+                    pq.push(child_1, top_node_margin.min(margin));
+                    pq.push(child_0, top_node_margin.min(-margin));
                 }
             }
         }

@@ -52,11 +52,11 @@ impl NodeHeader {
         }
     }
 
-    pub fn get_children_id_slice(&self) -> &[i32] {
+    pub fn get_children_id_slice(&self) -> [i32; 2] {
         match self {
-            NodeHeader::Angular(h) => &h.children,
-            NodeHeader::Minkowski(h) => &h.children,
-            NodeHeader::Dot(h) => &h.children,
+            NodeHeader::Angular(h) => h.children,
+            NodeHeader::Minkowski(h) => h.children,
+            NodeHeader::Dot(h) => h.children,
         }
     }
 }
