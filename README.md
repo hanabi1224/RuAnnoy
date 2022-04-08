@@ -1,7 +1,6 @@
 # RuAnnoy
 
 [![main](https://github.com/hanabi1224/RuAnnoy/actions/workflows/main.yml/badge.svg)](https://github.com/hanabi1224/RuAnnoy/actions/workflows/main.yml)
-[![travis](https://travis-ci.com/hanabi1224/RuAnnoy.svg?branch=master)](https://travis-ci.com/github/hanabi1224/RuAnnoy)
 [![MIT License](https://img.shields.io/github/license/hanabi1224/RuAnnoy.svg)](https://github.com/hanabi1224/RuAnnoy/blob/master/LICENSE)
 ========
 
