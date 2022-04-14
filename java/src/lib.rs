@@ -45,7 +45,7 @@ fn Java_com_github_hanabi1224_RuAnnoy_NativeMethods_loadIndex_inner(
     let ru_index_type: IndexType = unsafe { mem::transmute(index_type) };
     let index = AnnoyIndex::load(dimension as usize, ru_path.as_str(), ru_index_type)?;
     let ptr = Box::into_raw(Box::new(index));
-    return Ok(ptr as jlong);
+    Ok(ptr as jlong)
 }
 
 /*
@@ -102,7 +102,7 @@ ffi_fn! {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let vector = index.get_item_vector(item_index as u64);
         let result = env.new_float_array(index.dimension as i32).unwrap();
-        let _ = env.set_float_array_region(result, 0, &vector.as_slice());
+        let _ = env.set_float_array_region(result, 0, vector.as_slice());
         result
     }
 }
@@ -134,9 +134,9 @@ ffi_fn! {
             should_include_distance != 0,
         );
         let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
-        let _ = env.set_long_array_region(id_list, 0, &r_id_list.as_slice());
+        let _ = env.set_long_array_region(id_list, 0, r_id_list.as_slice());
         if should_include_distance != 0 {
-            let _ = env.set_float_array_region(distance_list, 0, &r.distance_list.as_slice());
+            let _ = env.set_float_array_region(distance_list, 0, r.distance_list.as_slice());
         }
         r.count as jint
     }
@@ -163,12 +163,10 @@ ffi_fn! {
     ) -> jint {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let dim = index.dimension as usize;
-        let mut query_vector: Vec<f32> = Vec::with_capacity(dim);
-        unsafe {
-            query_vector.set_len(dim);
-        }
+
+        let mut query_vector = vec![0_f32; dim];
         match env.get_float_array_region(query_vector_j, 0, query_vector.as_mut_slice()) {
-            Err(_) => return 0,
+            Err(_) => 0,
             Ok(_) => {
                 let r = index.get_nearest(
                     query_vector.as_slice(),
@@ -177,9 +175,9 @@ ffi_fn! {
                     should_include_distance != 0,
                 );
                 let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
-                let _ = env.set_long_array_region(id_list, 0, &r_id_list.as_slice());
+                let _ = env.set_long_array_region(id_list, 0, r_id_list.as_slice());
                 if should_include_distance != 0 {
-                    let _ = env.set_float_array_region(distance_list, 0, &r.distance_list.as_slice());
+                    let _ = env.set_float_array_region(distance_list, 0, r.distance_list.as_slice());
                 }
                 r.count as jint
             }

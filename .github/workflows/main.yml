@@ -27,12 +27,12 @@ jobs:
       - uses: actions/checkout@v2
       - run: rustup update nightly
       - run: cargo fmt -- --check
-      - run: cargo clippy -- --deny warnings
-      - run: cargo build --release --all-features
-      - run: cargo test --release --all-features
-      - run: cargo +nightly build --release --all-features
-      - run: cargo +nightly test --release --all-features
-      - run: cargo +nightly bench --all-features
+      - run: cargo clippy --workspace -- --deny warnings
+      - run: cargo build --workspace --release --all-features
+      - run: cargo test --workspace --release --all-features
+      - run: cargo +nightly build --workspace --release --all-features
+      - run: cargo +nightly test --workspace --release --all-features
+      - run: cargo +nightly bench --workspace --all-features
       - uses: actions/setup-java@v1
         with:
           java-version: 17
@@ -73,7 +73,7 @@ jobs:
           sudo apt-get install dart -y
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
           pushd bench
-          cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | /usr/bin/bash
+          ./bench.sh
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg
