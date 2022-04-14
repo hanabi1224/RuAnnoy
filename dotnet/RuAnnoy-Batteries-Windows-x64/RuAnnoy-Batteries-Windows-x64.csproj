@@ -16,8 +16,8 @@
       <PackagePath>build\net45\$(PackageId).props</PackagePath>
       <Pack>true</Pack>
     </Content>
-    <Content Include="..\..\target\release\annoy_rs.dll">
-      <PackagePath>runtimes\win-x64\native\annoy_rs.dll</PackagePath>
+    <Content Include="..\..\target\release\annoy_rs_ffi.dll">
+      <PackagePath>runtimes\win-x64\native\annoy_rs_ffi.dll</PackagePath>
       <Pack>true</Pack>
     </Content>
   </ItemGroup>

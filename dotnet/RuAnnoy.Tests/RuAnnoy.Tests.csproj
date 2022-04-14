@@ -15,17 +15,17 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>true</Visible>
     </Content>
-    <Content Include="../../target/release/annoy_rs.dll" Condition="Exists('../../target/release/annoy_rs.dll')">
+    <Content Include="../../target/release/*.dll">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>true</Visible>
     </Content>
-    <Content Include="../../target/release/libannoy_rs.dylib" Condition="Exists('../../target/release/libannoy_rs.dylib')">
+    <Content Include="../../target/release/*.dylib">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>true</Visible>
     </Content>
-    <Content Include="../../target/release/libannoy_rs.so" Condition="Exists('../../target/release/libannoy_rs.so')">
+    <Content Include="../../target/release/*.so">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>true</Visible>

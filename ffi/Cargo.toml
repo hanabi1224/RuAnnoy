@@ -3,28 +3,19 @@ description = """
 A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). C ABI is also provided.
 """
 edition = "2021"
-exclude = ["dotnet", "java", "ffi", "bench", "test_gen", ".idea", ".vscode", ".github", "*.yml", "*.iml", ".gitignore"]
+exclude = ["dotnet", "java", "bench", "test_gen", ".idea", ".vscode", ".github", "*.yml", "*.iml", ".gitignore"]
 license = "MIT"
-name = "annoy-rs"
+name = "annoy-rs-ffi"
 repository = "https://github.com/hanabi1224/RuAnnoy"
 version = "0.1.0"
 
-[workspace]
-members = ["java", "ffi"]
+publish = false
 
 [features]
-default = []
-
 [dependencies]
-cfg-if = "1"
-memmap2 = "0.5"
+annoy-rs = {path = "../"}
 
-[dev-dependencies]
-lazy_static = "1"
-rand = "0.8"
-
-[build-dependencies]
-rustc_version = "0.4"
+libc = "0.2"
 
 [lib]
 crate-type = ["lib", "cdylib", "staticlib"]

@@ -1,7 +1,8 @@
 #[macro_use]
 mod macros;
 
-use crate::types::*;
+pub use annoy_rs;
+use annoy_rs::*;
 
 use libc::c_char;
 use std::error::Error;

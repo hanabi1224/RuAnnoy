@@ -4,7 +4,7 @@ import 'dart:io';
 final _dylibPrefix = Platform.isWindows ? '' : 'lib';
 final _dylibExtension =
     Platform.isWindows ? '.dll' : (Platform.isMacOS ? '.dylib' : '.so');
-final _dylibName = '${_dylibPrefix}annoy_rs$_dylibExtension';
+final _dylibName = '${_dylibPrefix}annoy_rs_ffi$_dylibExtension';
 DynamicLibrary? _dylib;
 
 class SetupUtil {
@@ -19,8 +19,8 @@ class SetupUtil {
     }
 
     final nativeDir = '../../';
-    await Process.run(
-        'cargo', ['build', '--release', '--verbose', '--all-features'],
+    await Process.run('cargo',
+        ['build', '--release', '--verbose', '--all-features', '--workspace'],
         workingDirectory: nativeDir);
     final dylibPath =
         '${Directory.current.absolute.path}/$nativeDir/target/release/$_dylibName';
