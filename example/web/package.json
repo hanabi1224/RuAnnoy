@@ -1,0 +1,35 @@
+{
+  "name": "web-example",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel serve index.html --open",
+    "build:wasm": "wasm-pack build -t web --out-name annoy -d example/web/pkg/ ./../../",
+    "build:web": "parcel build *.html --no-source-maps",
+    "build": "yarn clean && yarn build:wasm && yarn build:web",
+    "clean": "rimraf dist",
+    "lint:js": "eslint --ext \".js,.ts,.vue\" --fix --ignore-path .gitignore .",
+    "lint:style": "stylelint \"**/*.{vue,css}\" --fix --ignore-path .gitignore",
+    "lint": "yarn lint:js && yarn lint:style"
+  },
+  "dependencies": {
+    "vue": "^3.2.33"
+  },
+  "devDependencies": {
+    "@parcel/transformer-raw": "^2.4.1",
+    "@parcel/transformer-sass": "^2.4.1",
+    "@parcel/transformer-vue": "^2.4.1",
+    "buffer": "^6.0.3",
+    "eslint": "^8.13.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.6.0",
+    "parcel": "^2.4.1",
+    "postcss": "^8.4.12",
+    "postcss-html": "^1.4.1",
+    "rimraf": "^3.0.2",
+    "sass": "^1.50.0",
+    "stylelint": "^14.6.1",
+    "stylelint-config-recommended-vue": "^1.4.0",
+    "typescript": "^4.6.3"
+  }
+}

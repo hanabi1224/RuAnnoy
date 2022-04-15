@@ -18,14 +18,18 @@ jobs:
     steps:
       - run: lscpu
         if: matrix.os == 'ubuntu-latest'
-      - name: Install latest stable
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
+          target: wasm32-unknown-unknown
           components: rustfmt, clippy
-      - uses: actions/checkout@v2
-      - run: rustup update nightly
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: false
+          target: wasm32-unknown-unknown
       - run: cargo fmt -- --check
       - run: cargo clippy --workspace -- --deny warnings
       - run: cargo build --workspace --release --all-features
@@ -118,6 +122,27 @@ jobs:
         run: |
           pushd dotnet/artifacts
           dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json -k $env:NUGET_API_KEY ; exit 0
+  web:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -Ctarget-feature=-simd128
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          override: true
+      - run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - run: lerna bootstrap
+      - run: lerna run build
+      - run: lerna run lint
+      - uses: actions/upload-artifact@v2
+        with:
+          name: example-web
+          path: example/web/dist/**/*
+          if-no-files-found: error
   codedov:
     runs-on: ubuntu-latest
     steps:

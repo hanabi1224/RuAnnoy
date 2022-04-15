@@ -32,7 +32,7 @@ impl AnnoyIndex {
         Self::load_inner(dimension, size, index_type, storage)
     }
 
-    pub fn load_with_buffer(
+    pub fn load_from_buffer(
         buffer: Vec<u8>,
         dimension: usize,
         index_type: IndexType,

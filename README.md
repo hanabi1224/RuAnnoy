@@ -4,19 +4,19 @@
 [![MIT License](https://img.shields.io/github/license/hanabi1224/RuAnnoy.svg)](https://github.com/hanabi1224/RuAnnoy/blob/master/LICENSE)
 ========
 
-<!-- [![appveyor](https://ci.appveyor.com/api/projects/status/ux13ive7vhsg32el/branch/master?svg=true)](https://ci.appveyor.com/project/hanabi1224/ruannoy/branch/master) -->
-
 This library is a rust port of [spotify/annoy](https://github.com/spotify/annoy) , currently only index serving is supported.
+
+A live demo using web assembly is available at https://annoy-web-demo.vercel.app/
 
 It also provides [FFI bindings](https://github.com/hanabi1224/RuAnnoy#ffi-support) for [jvm](https://github.com/hanabi1224/RuAnnoy#kotlinjava), [dotnet](https://github.com/hanabi1224/RuAnnoy#dotnet) and [dart](https://github.com/hanabi1224/RuAnnoy#dart)
 
-| Metric    | Serve | Build | jvm Binding | dotnet Binding | dart Binding |
-| :-------- | :---: | ----: | ----------- | -------------- | ------------ |
-| Angular   |  ✅   |    ❌ | ✅          | ✅             | ✅           |
-| Euclidean |  ✅   |    ❌ | ✅          | ✅             | ✅           |
-| Manhattan |  ✅   |    ❌ | ✅          | ✅             | ✅           |
-| Dot       |  ✅   |    ❌ | ✅          | ✅             | ✅           |
-| Hamming   |  ❌   |    ❌ | ❌          | ❌             | ❌           |
+| Metric    | Serve | Build | jvm binding | dotnet binding | dart binding | WASM support |
+| :-------- | :---: | ----: | ----------- | -------------- | ------------ | ------------ |
+| Angular   |  ✅   |    ❌ | ✅          | ✅             | ✅           | ✅           |
+| Euclidean |  ✅   |    ❌ | ✅          | ✅             | ✅           | ✅           |
+| Manhattan |  ✅   |    ❌ | ✅          | ✅             | ✅           | ✅           |
+| Dot       |  ✅   |    ❌ | ✅          | ✅             | ✅           | ✅           |
+| Hamming   |  ❌   |    ❌ | ❌          | ❌             | ❌           | ❌           |
 
 ### Install via [crates.io](https://crates.io/crates/annoy-rs)
 
@@ -67,11 +67,17 @@ To enable simd128, build with below command
 RUSTFLAGS="-Ctarget-feature=+simd128" cargo +nightly build --release --target wasm32-unknown-unknown
 ```
 
+An example site is deployed at https://annoy-web-demo.vercel.app/
+
+Source code is under [example/web](https://github.com/hanabi1224/RuAnnoy/tree/master/example/web)
+
 ## FFI support
 
 ### kotlin/java
 
 It uses JNI bindings to rust crate and is ~5-10x faster than [pure java implementation](https://github.com/spotify/annoy-java) in [benchmark scenario](https://github.com/hanabi1224/RuAnnoy/tree/master/bench)
+
+Note that the prebuilt dynamically linked libraries are built with simd support, avx cpu feature is required.
 
 #### Install via [jitpack.io](https://jitpack.io/#hanabi1224/RuAnnoy)
 
@@ -135,7 +141,7 @@ import 'dart:ffi';
 import 'package:dart_native_annoy/annoy.dart';
 
 /// Creat factory from DynamicLibrary
-final fac = AnnoyIndexFactory(lib: DynamicLibrary.open('libannoy_rs_ffi.so'));
+final indexFactory = AnnoyIndexFactory(lib: DynamicLibrary.open('libannoy_rs_ffi.so'));
 
 /// Load index
 final index = indexFactory.loadIndex(

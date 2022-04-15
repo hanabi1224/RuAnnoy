@@ -27,14 +27,17 @@ impl AnnoyIndexJs {
         }
     }
 
-    pub fn get_item_vector(&self, item_index: u64) -> Array {
+    pub fn get_item_vector(&self, item_index: u32) -> Result<Array, Error> {
         let index = unsafe { &*self.index_ptr };
-        let item_vec = index.get_item_vector(item_index);
+        if (item_index as usize) >= index.size {
+            return Err(Error::new("item_index out of range"));
+        }
+        let item_vec = index.get_item_vector(item_index as u64);
         let array = Array::new();
         for v in item_vec {
             array.push(&JsValue::from_f64(v as f64));
         }
-        array
+        Ok(array)
     }
 
     pub fn get_nearest(
@@ -74,14 +77,17 @@ impl AnnoyIndexJs {
 
     pub fn get_nearest_to_item(
         &self,
-        item_index: u64,
+        item_index: u32,
         n_results: u32,
         search_k: i32,
         should_include_distance: bool,
     ) -> Result<Array, Error> {
         let index = unsafe { &*self.index_ptr };
+        if (item_index as usize) >= index.size {
+            return Err(Error::new("item_index out of range"));
+        }
         let result = index.get_nearest_to_item(
-            item_index,
+            item_index as u64,
             n_results as usize,
             search_k,
             should_include_distance,
@@ -98,7 +104,7 @@ pub fn load_index(
 ) -> Result<AnnoyIndexJs, Error> {
     let mut buffer = vec![0_u8; u8a.length() as usize];
     u8a.copy_to(&mut buffer);
-    let index = AnnoyIndex::load_with_buffer(buffer, dimension, index_type)
+    let index = AnnoyIndex::load_from_buffer(buffer, dimension, index_type)
         .map_err(|err| Error::new(&format!("{err}")))?;
     Ok(AnnoyIndexJs {
         dimension: index.dimension,

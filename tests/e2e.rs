@@ -110,6 +110,8 @@ mod tests {
 
             let v0 = index.get_item_vector(0);
             let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
+            let nearest2 = index.get_nearest_to_item(0, 5, -1, true);
+            assert_eq!(format!("{:?}", nearest), format!("{:?}", nearest2));
             let id_list = nearest.id_list;
             let distance_list = nearest.distance_list;
             assert_eq!(index.size, TEST_NODE_COUNT);
@@ -129,8 +131,9 @@ mod tests {
 
     #[test]
     fn hole_tests() {
-        let filepath = "tests/hole.10d.ann";
-        let index = AnnoyIndex::load(10, filepath, IndexType::Angular).unwrap();
+        static HOLE_INDEX_BYTES: &[u8] = include_bytes!("hole.10d.ann");
+        let index =
+            AnnoyIndex::load_from_buffer(HOLE_INDEX_BYTES.into(), 10, IndexType::Angular).unwrap();
         assert_eq!(index.dimension, 10);
         assert_eq!(index.size, 1001);
         let v1 = vec![

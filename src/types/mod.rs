@@ -11,6 +11,7 @@ use std::{
 
 use crate::internals::storage_ext::StorageExtensions;
 
+#[derive(Debug, Clone)]
 pub struct AnnoyIndexSearchResult {
     pub count: usize,
     pub is_distance_included: bool,
