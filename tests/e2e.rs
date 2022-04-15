@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[cfg(not(target_arch = "wasm32"))]
 mod tests {
     use annoy_rs::*;
 
@@ -101,24 +102,28 @@ mod tests {
         expected_distance_list: &[f32],
     ) {
         let filepath = format!("tests/index.{}.{}d.ann", index_type, TEST_INDEX_DIM);
-        let index = AnnoyIndex::load(TEST_INDEX_DIM, &filepath, index_type).unwrap();
-        assert_eq!(index.get_item_vector(3), expected_item3_vec);
+        for index in [
+            AnnoyIndex::load(TEST_INDEX_DIM, &filepath, index_type.clone()).unwrap(),
+            AnnoyIndex::load_into_mem(TEST_INDEX_DIM, &filepath, index_type).unwrap(),
+        ] {
+            assert_eq!(index.get_item_vector(3), expected_item3_vec);
 
-        let v0 = index.get_item_vector(0);
-        let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
-        let id_list = nearest.id_list;
-        let distance_list = nearest.distance_list;
-        assert_eq!(index.size, TEST_NODE_COUNT);
-        assert_eq!(id_list, expected_id_list);
-        assert_eq!(
-            distance_list.round_to(F32_PRECISION),
-            expected_distance_list.round_to(F32_PRECISION)
-        );
-        assert_eq!(distance_list.len(), expected_distance_list.len());
-        for i in 0..distance_list.len() {
-            let a = distance_list[i];
-            let b = expected_distance_list[i];
-            assert!((a - b).abs() < 1e-5);
+            let v0 = index.get_item_vector(0);
+            let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
+            let id_list = nearest.id_list;
+            let distance_list = nearest.distance_list;
+            assert_eq!(index.size, TEST_NODE_COUNT);
+            assert_eq!(id_list, expected_id_list);
+            assert_eq!(
+                distance_list.round_to(F32_PRECISION),
+                expected_distance_list.round_to(F32_PRECISION)
+            );
+            assert_eq!(distance_list.len(), expected_distance_list.len());
+            for i in 0..distance_list.len() {
+                let a = distance_list[i];
+                let b = expected_distance_list[i];
+                assert!((a - b).abs() < 1e-5);
+            }
         }
     }
 
@@ -126,6 +131,8 @@ mod tests {
     fn hole_tests() {
         let filepath = "tests/hole.10d.ann";
         let index = AnnoyIndex::load(10, filepath, IndexType::Angular).unwrap();
+        assert_eq!(index.dimension, 10);
+        assert_eq!(index.size, 1001);
         let v1 = vec![
             0.10471842,
             0.55223828,
@@ -141,6 +148,7 @@ mod tests {
         let nearest = index.get_nearest(v1.as_ref(), 100, -1, true);
         assert_eq!(nearest.count, 1);
         assert_eq!(nearest.id_list[0], 1000);
+        assert_eq!(nearest.distance_list[0], 1.212572);
     }
 
     pub trait RoundToVec<T> {

@@ -22,11 +22,12 @@ It also provides [FFI bindings](https://github.com/hanabi1224/RuAnnoy#ffi-suppor
 
 [![Crates.io](https://img.shields.io/crates/v/annoy-rs.svg)](https://crates.io/crates/annoy-rs)
 [![codecov](https://codecov.io/gh/hanabi1224/RuAnnoy/branch/master/graph/badge.svg?token=jVO7N0AVTH)](https://codecov.io/gh/hanabi1224/RuAnnoy)
+[![dependency status](https://deps.rs/repo/github/hanabi1224/RuAnnoy/status.svg?style=flat-square)](https://deps.rs/repo/github/hanabi1224/RuAnnoy)
 
 ```toml
 # Cargo.toml
 [dependencies]
-annoy-rs = "0"
+annoy-rs = "0.1"
 ```
 
 ### Usage
@@ -37,6 +38,33 @@ use annoy_rs::*;
 let index = AnnoyIndex::load(10, "index.ann", IndexType::Angular).unwrap();
 let v0 = index.get_item_vector(0);
 let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
+```
+
+## SIMD support
+
+SIMD is supported via [`std::simd`](https://doc.rust-lang.org/nightly/std/simd/index.html) on nightly rust. Note that avx intrinsics need to be enabled explicitly by setting your cpu features in `RUSTFLAGS` environment variable.
+
+```
+RUSTFLAGS="-Ctarget-feature=+avx" cargo +nightly build --release
+# or
+RUSTFLAGS="-Ctarget-cpu=native" cargo +nightly build --release
+```
+
+## WASM support
+
+Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
+
+```
+wasm-pack build
+wasm-pack test --node
+```
+
+simd128 is supported in chrome by default.
+
+To enable simd128, build with below command
+
+```
+RUSTFLAGS="-Ctarget-feature=+simd128" cargo +nightly build --release --target wasm32-unknown-unknown
 ```
 
 ## FFI support

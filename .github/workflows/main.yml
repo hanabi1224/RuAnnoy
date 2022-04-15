@@ -33,6 +33,14 @@ jobs:
       - run: cargo +nightly build --workspace --release --all-features
       - run: cargo +nightly test --workspace --release --all-features
       - run: cargo +nightly bench --workspace --all-features
+      - name: wasm build and tests
+        if: matrix.os != 'windows-latest'
+        env:
+          RUSTFLAGS: -Ctarget-feature=-simd128
+        run: |
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          wasm-pack build
+          wasm-pack test --node --release
       - uses: actions/setup-java@v1
         with:
           java-version: 17

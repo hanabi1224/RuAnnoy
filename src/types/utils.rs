@@ -1,11 +1,15 @@
-use crate::internals::mmap_ext::*;
-use memmap2::Mmap;
+use crate::internals::storage_ext::*;
 use std::mem;
 #[cfg(nightly)]
 use std::simd::*;
 
 #[cfg(nightly)]
+#[cfg(not(target_arch = "wasm32"))]
 const SIMD_LANES: usize = 8;
+#[cfg(nightly)]
+#[cfg(target_arch = "wasm32")]
+const SIMD_LANES: usize = 4;
+
 #[cfg(nightly)]
 type SimdType = Simd<f32, SIMD_LANES>;
 pub const INT32_SIZE: usize = mem::size_of::<i32>();
@@ -173,14 +177,14 @@ pub fn manhattan_distance_simd(u: &[f32], v: &[f32]) -> f32 {
     sum.reduce_sum()
 }
 
-pub fn get_nth_descendant_id(
-    mmap: &Mmap,
+pub(crate) fn get_nth_descendant_id(
+    storage: &impl StorageExtensions,
     node_offset: usize,
     offset_before_children: usize,
     n: usize,
 ) -> usize {
     let child_offset = node_offset + offset_before_children + n * INT32_SIZE;
-    mmap.read_i32(child_offset) as usize
+    storage.read_i32(child_offset) as usize
 }
 
 #[cfg(nightly)]

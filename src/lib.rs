@@ -11,6 +11,9 @@ pub(crate) mod internals;
 mod types;
 pub use types::*;
 
+#[cfg(target_arch = "wasm32")]
+pub mod wasm_exports;
+
 #[cfg(test)]
 mod tests {
     pub trait RoundTo<T> {

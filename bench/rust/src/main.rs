@@ -16,9 +16,9 @@ fn main() {
         IndexType::Manhattan,
         IndexType::Dot,
     ];
-    for &metric in metrics.iter() {
+    for metric in metrics.iter() {
         let path = format!("../index.{}.{}d.ann", metric, dim);
-        let index = AnnoyIndex::load(dim, path.as_str(), metric).unwrap();
+        let index = AnnoyIndex::load(dim, path.as_str(), metric.clone()).unwrap();
         let t_start = time::Instant::now();
         for i in 0..n_loop {
             let id = i % size;
