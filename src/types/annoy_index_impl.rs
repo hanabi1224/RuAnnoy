@@ -6,7 +6,6 @@ use memmap2::MmapOptions;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
-use std::rc::Rc;
 use std::vec::Vec;
 
 impl AnnoyIndex {
@@ -70,7 +69,7 @@ impl AnnoyIndex {
             node_header_size,
             max_descendants: max_descendants as i32,
             node_size: node_size as usize,
-            mmap: Rc::new(mmap),
+            mmap: Box::new(mmap),
             roots,
             size: m as usize,
         };
@@ -79,7 +78,7 @@ impl AnnoyIndex {
     }
 
     pub(crate) fn get_node_from_id(&self, id: usize) -> Node {
-        Node::new_with_id(id, self.node_size, self.index_type, self.mmap.clone())
+        Node::new_with_id(id, self.node_size, self.index_type, &self.mmap)
     }
 
     pub(crate) fn get_descendant_id_slice(&self, node_offset: usize, n: usize) -> &[i32] {

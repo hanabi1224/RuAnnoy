@@ -5,7 +5,6 @@ pub(crate) mod utils;
 pub mod serving;
 pub use serving::*;
 use std::fmt::{Display, Formatter, Result};
-use std::rc::Rc;
 
 use memmap2::Mmap;
 
@@ -41,6 +40,6 @@ pub struct AnnoyIndex {
     pub(crate) max_descendants: i32,
     pub(crate) offset_before_children: usize,
     pub(crate) node_header_size: usize,
-    pub(crate) mmap: Rc<Mmap>,
+    pub(crate) mmap: Box<Mmap>,
     pub(crate) roots: Vec<usize>,
 }
