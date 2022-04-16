@@ -44,7 +44,7 @@ let nearest = index.get_nearest(v0.as_ref(), 5, -1, true);
 
 SIMD is supported via [`std::simd`](https://doc.rust-lang.org/nightly/std/simd/index.html) on nightly rust. Note that avx intrinsics need to be enabled explicitly by setting your cpu features in `RUSTFLAGS` environment variable.
 
-```
+```bash
 RUSTFLAGS="-Ctarget-feature=+avx" cargo +nightly build --release
 # or
 RUSTFLAGS="-Ctarget-cpu=native" cargo +nightly build --release
@@ -54,7 +54,7 @@ RUSTFLAGS="-Ctarget-cpu=native" cargo +nightly build --release
 
 Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
 
-```
+```bash
 wasm-pack build
 wasm-pack test --node
 ```
@@ -63,7 +63,7 @@ simd128 is supported in chrome by default.
 
 To enable simd128, build with below command
 
-```
+```bash
 RUSTFLAGS="-Ctarget-feature=+simd128" cargo +nightly build --release --target wasm32-unknown-unknown
 ```
 

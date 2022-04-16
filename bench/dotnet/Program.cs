@@ -4,7 +4,7 @@ using RuAnnoy;
 
 namespace Bench
 {
-    class Program
+    static class Program
     {
         static void Main(int dim, ulong size, uint nResult, ulong nLoop)
         {

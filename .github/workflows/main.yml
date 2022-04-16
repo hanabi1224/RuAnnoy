@@ -43,7 +43,7 @@ jobs:
           RUSTFLAGS: -Ctarget-feature=-simd128
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-          wasm-pack build
+          wasm-pack build -t web -s hanabi1224 --out-name annoy
           wasm-pack test --node --release
       - uses: actions/setup-java@v1
         with:
@@ -86,6 +86,12 @@ jobs:
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
           pushd bench
           ./bench.sh
+      - uses: actions/upload-artifact@v2
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: npm
+          path: pkg/**/*
+          if-no-files-found: error
       - uses: actions/upload-artifact@v2
         with:
           path: dotnet/artifacts/*.nupkg
