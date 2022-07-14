@@ -1,4 +1,4 @@
-python3 -m pip install -U wheel annoy
+python3 -m pip install -U pip wheel annoy
 
 python3 builder.py 256 10000
 

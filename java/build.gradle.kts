@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.logging.*
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -71,7 +71,7 @@ publishing {
 tasks.register<Exec>("cargo-build") {
     workingDir(".")
     executable("cargo")
-    args("+nightly", "build", "--release", "--all-features")
+    args("+nightly", "build", "--release", "--all-features", "-p", "annoy-rs-jni")
     // args("build", "--release")
 }
 

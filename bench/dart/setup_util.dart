@@ -19,8 +19,16 @@ class SetupUtil {
     }
 
     final nativeDir = '../../';
-    await Process.run('cargo',
-        ['build', '--release', '--verbose', '--all-features', '--workspace'],
+    await Process.run(
+        'cargo',
+        [
+          '+nightly',
+          'build',
+          '--release',
+          '--all-features',
+          '-p',
+          'annoy-rs-ffi'
+        ],
         workingDirectory: nativeDir);
     final dylibPath =
         '${Directory.current.absolute.path}/$nativeDir/target/release/$_dylibName';

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export RUSTFLAGS="-Ctarget-feature=+avx"
+export RUSTFLAGS="-Ctarget-cpu=native"
 cat ./bench.bat | sed 's/gradlew/.\/gradlew/' | bash

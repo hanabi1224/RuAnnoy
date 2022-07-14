@@ -219,18 +219,20 @@ mod tests {
     #[cfg(nightly)]
     use crate::tests::*;
     use crate::types::utils::*;
-    use rand::prelude::*;
-    use std::ops::Range;
 
     #[cfg(nightly)]
     const SIMD_PARITY_PRECISION: usize = 2;
 
+    #[cfg(nightly)]
     lazy_static::lazy_static! {
         static ref BENCH_ARRAY_1: Vec<f32> = gen_range_array(0..255);
         static ref BENCH_ARRAY_2: Vec<f32> = gen_range_array(0..255);
     }
 
-    fn gen_range_array(range: Range<usize>) -> Vec<f32> {
+    #[cfg(nightly)]
+    fn gen_range_array(range: std::ops::Range<usize>) -> Vec<f32> {
+        use rand::prelude::*;
+
         let mut v = Vec::with_capacity(range.end - range.start);
         let mut rng = rand::thread_rng();
         for _i in range {

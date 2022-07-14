@@ -5,6 +5,7 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 env:
   RUSTFLAGS: -Ctarget-feature=+avx
@@ -18,7 +19,7 @@ jobs:
     steps:
       - run: lscpu
         if: matrix.os == 'ubuntu-latest'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -45,8 +46,9 @@ jobs:
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           wasm-pack build -t web -s hanabi1224 --out-name annoy
           wasm-pack test --node --release
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v3
         with:
+          distribution: temurin
           java-version: 17
       - name: java Test
         run: |
@@ -56,6 +58,9 @@ jobs:
           ./gradlew copy-artifacts
           ./gradlew clean test
           ./gradlew clean build publishToMavenLocal
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "6.x"
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
@@ -86,30 +91,30 @@ jobs:
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
           pushd bench
           ./bench.sh
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: matrix.os == 'ubuntu-latest'
         with:
           name: npm
           path: pkg/**/*
           if-no-files-found: error
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: dotnet/artifacts/*.nupkg
           if-no-files-found: error
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: dotnet/artifacts/*.snupkg
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: matrix.os == 'windows-latest'
         with:
           path: target/release/*.dll
           if-no-files-found: error
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: matrix.os == 'ubuntu-latest'
         with:
           path: target/release/*.so
           if-no-files-found: error
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: matrix.os == 'macos-latest'
         with:
           path: target/release/*.dylib
@@ -133,7 +138,7 @@ jobs:
     env:
       RUSTFLAGS: -Ctarget-feature=-simd128
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -144,7 +149,7 @@ jobs:
       - run: lerna bootstrap
       - run: lerna run build
       - run: lerna run lint
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: example-web
           path: example/web/dist/**/*
@@ -152,7 +157,7 @@ jobs:
   codedov:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -161,7 +166,7 @@ jobs:
           components: llvm-tools-preview
       - uses: taiki-e/install-action@cargo-llvm-cov
       - run: cargo llvm-cov --all-features --lcov --output-path lcov.info
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lcov.info
           path: lcov.info
