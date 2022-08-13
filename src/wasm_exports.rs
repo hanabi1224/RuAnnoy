@@ -10,6 +10,10 @@ pub struct SearchResultJs {
     pub distance: Option<f32>,
 }
 
+impl Drop for SearchResultJs {
+    fn drop(&mut self) {}
+}
+
 #[wasm_bindgen]
 #[derive(Debug)]
 pub struct AnnoyIndexJs {
@@ -17,6 +21,12 @@ pub struct AnnoyIndexJs {
     pub size: usize,
 
     index_ptr: *const AnnoyIndex,
+}
+
+impl Drop for AnnoyIndexJs {
+    fn drop(&mut self) {
+        self.free()
+    }
 }
 
 #[wasm_bindgen]
@@ -61,9 +71,7 @@ impl AnnoyIndexJs {
             if let Some(v) = v.as_f64() {
                 vec.push(v as f32);
             } else {
-                return Err(Error::new(&format!(
-                    "Input array should be of number type.",
-                )));
+                return Err(Error::new("Input array should be of number type."));
             }
         }
         let result = index.get_nearest(

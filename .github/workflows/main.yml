@@ -31,8 +31,10 @@ jobs:
           toolchain: nightly
           override: false
           target: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v1
       - run: cargo fmt -- --check
-      - run: cargo clippy --workspace -- --deny warnings
+      - run: cargo clippy --workspace --all-features -- --deny warnings
+      - run: cargo clippy --all-features --target wasm32-unknown-unknown -- --deny warnings
       - run: cargo build --workspace --release --all-features
       - run: cargo test --workspace --release --all-features
       - run: cargo +nightly build --workspace --release --all-features

@@ -89,7 +89,7 @@ pub struct NodeHeaderDot {
 
 impl NodeHeaderAngular {
     fn read(storage: &Storage, offset: usize) -> *const NodeHeaderAngular {
-        unsafe { mem::transmute(&storage[offset]) }
+        &storage[offset] as *const u8 as *const NodeHeaderAngular
     }
 
     pub const fn header_size() -> usize {
@@ -99,7 +99,7 @@ impl NodeHeaderAngular {
 
 impl NodeHeaderMinkowski {
     fn read(storage: &Storage, offset: usize) -> *const NodeHeaderMinkowski {
-        unsafe { mem::transmute(&storage[offset]) }
+        &storage[offset] as *const u8 as *const NodeHeaderMinkowski
     }
 
     pub const fn header_size() -> usize {
@@ -109,7 +109,7 @@ impl NodeHeaderMinkowski {
 
 impl NodeHeaderDot {
     fn read(storage: &Storage, offset: usize) -> *const NodeHeaderDot {
-        unsafe { mem::transmute(&storage[offset]) }
+        &storage[offset] as *const u8 as *const NodeHeaderDot
     }
 
     pub const fn header_size() -> usize {
