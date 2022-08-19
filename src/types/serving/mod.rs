@@ -1,5 +1,7 @@
 use super::*;
-use crate::internals::priority_queue::PriorityQueue;
+use crate::internals::priority_queue::*;
+use ordered_float::OrderedFloat;
+use std::{cmp::Reverse, collections::BinaryHeap};
 
 pub trait AnnoyIndexSearchApi {
     fn get_item_vector(&self, item_index: u64) -> Vec<f32>;
@@ -40,14 +42,21 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             result_capacity * self.roots.len()
         };
 
-        let mut pq = PriorityQueue::with_capacity(result_capacity, false);
+        let mut pq = BinaryHeap::with_capacity(result_capacity);
         for &id in self.roots.iter() {
-            pq.push(id as i32, f32::MAX);
+            pq.push(BinaryHeapItem {
+                item: id as i32,
+                ord: OrderedFloat(f32::MAX),
+            });
         }
 
         let mut nearest_neighbors = Vec::with_capacity(search_k_fixed);
-        while pq.len() > 0 && nearest_neighbors.len() < search_k_fixed {
-            if let Some((top_node_id_i32, top_node_margin)) = pq.pop() {
+        while !pq.is_empty() && nearest_neighbors.len() < search_k_fixed {
+            if let Some(BinaryHeapItem {
+                item: top_node_id_i32,
+                ord: top_node_margin,
+            }) = pq.pop()
+            {
                 let top_node_id = top_node_id_i32 as usize;
                 let top_node = self.get_node_from_id(top_node_id);
                 let top_node_header = top_node.header;
@@ -64,13 +73,19 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
                     let margin = self.get_margin(v, query_vector, top_node_offset);
                     let [child_0, child_1] = top_node_header.get_children_id_slice();
                     // NOTE: Hamming has different logic to calculate margin
-                    pq.push(child_1, top_node_margin.min(margin));
-                    pq.push(child_0, top_node_margin.min(-margin));
+                    pq.push(BinaryHeapItem {
+                        item: child_1,
+                        ord: OrderedFloat(top_node_margin.0.min(margin)),
+                    });
+                    pq.push(BinaryHeapItem {
+                        item: child_0,
+                        ord: OrderedFloat(top_node_margin.0.min(-margin)),
+                    });
                 }
             }
         }
         nearest_neighbors.sort_unstable();
-        let mut sorted_nns = PriorityQueue::with_capacity(nearest_neighbors.len(), true);
+        let mut sorted_nns = BinaryHeap::with_capacity(nearest_neighbors.len());
         let mut nn_id_last = -1;
         for nn_id in nearest_neighbors {
             if nn_id == nn_id_last {
@@ -84,7 +99,10 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             }
 
             let s = self.get_node_slice_with_offset(nn_id as usize * self.node_size);
-            sorted_nns.push(nn_id, self.get_distance_no_norm(s, query_vector));
+            sorted_nns.push(Reverse(BinaryHeapItem {
+                item: nn_id,
+                ord: OrderedFloat(self.get_distance_no_norm(s, query_vector)),
+            }));
         }
 
         let final_result_capcity = n_results.min(sorted_nns.len());
@@ -95,10 +113,15 @@ impl AnnoyIndexSearchApi for AnnoyIndex {
             0
         });
         for _i in 0..final_result_capcity {
-            let nn = &sorted_nns.pop().unwrap();
-            id_list.push(nn.0 as u64);
-            if should_include_distance {
-                distance_list.push(self.normalized_distance(nn.1));
+            if let Some(Reverse(BinaryHeapItem {
+                item,
+                ord: OrderedFloat(ord),
+            })) = &sorted_nns.pop()
+            {
+                id_list.push(*item as u64);
+                if should_include_distance {
+                    distance_list.push(self.normalized_distance(*ord));
+                }
             }
         }
         AnnoyIndexSearchResult {

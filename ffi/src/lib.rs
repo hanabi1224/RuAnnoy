@@ -35,7 +35,7 @@ fn load_annoy_index_inner(
 
 ffi_fn! {
     fn free_annoy_index(index: *const AnnoyIndex) {
-        unsafe { Box::from_raw(index as *mut AnnoyIndex); }
+        unsafe { drop(Box::from_raw(index as *mut AnnoyIndex)); }
     }
 }
 
@@ -94,7 +94,7 @@ ffi_fn! {
 
 ffi_fn! {
     fn free_search_result(search_result_ptr: *const AnnoyIndexSearchResult){
-        unsafe { Box::from_raw(search_result_ptr as *mut AnnoyIndexSearchResult); }
+        unsafe { drop(Box::from_raw(search_result_ptr as *mut AnnoyIndexSearchResult)); }
     }
 }
 

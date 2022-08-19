@@ -62,7 +62,7 @@ ffi_fn! {
         pointer: jlong,
     ) {
         unsafe {
-            Box::from_raw(pointer as *mut AnnoyIndex);
+            drop(Box::from_raw(pointer as *mut AnnoyIndex));
         }
     }
 }
