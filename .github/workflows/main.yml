@@ -60,7 +60,7 @@ jobs:
           ./gradlew copy-artifacts
           ./gradlew clean test
           ./gradlew clean build publishToMavenLocal
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "6.x"
       - name: dotnet Test
