@@ -33,7 +33,7 @@ impl Drop for AnnoyIndexJs {
 impl AnnoyIndexJs {
     pub fn free(&self) {
         unsafe {
-            Box::from_raw(self.index_ptr as *mut AnnoyIndex);
+            drop(Box::from_raw(self.index_ptr as *mut AnnoyIndex));
         }
     }
 
