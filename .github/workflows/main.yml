@@ -31,7 +31,7 @@ jobs:
           toolchain: nightly
           override: false
           target: wasm32-unknown-unknown
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo fmt -- --check
       - run: cargo clippy --workspace --all-features -- --deny warnings
       - run: cargo clippy --all-features --target wasm32-unknown-unknown -- --deny warnings
@@ -62,7 +62,7 @@ jobs:
           ./gradlew clean build publishToMavenLocal
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.x"
+          dotnet-version: "7.x"
       - name: dotnet Test
         run: |
           dotnet test -c Release dotnet/RuAnnoy.Tests
