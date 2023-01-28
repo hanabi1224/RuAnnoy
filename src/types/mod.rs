@@ -33,7 +33,7 @@ pub enum IndexType {
 
 impl Display for IndexType {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        let r = format!("{:?}", self).to_lowercase();
+        let r = format!("{self:?}").to_lowercase();
         f.write_str(&r)
     }
 }

@@ -1,3 +1,5 @@
+#![allow(clippy::missing_safety_doc)]
+
 #[macro_use]
 mod macros;
 
@@ -58,7 +60,7 @@ ffi_fn! {
         let index = unsafe{&*index_ptr};
         let item_vec = index.get_item_vector(item_index);
         let ptr = item_vec.as_ptr();
-        unsafe { ptr.copy_to(item_vector, index.dimension as usize) };
+        unsafe { ptr.copy_to(item_vector, index.dimension) };
     }
 }
 
@@ -71,7 +73,7 @@ ffi_fn! {
         should_include_distance: bool) -> *const AnnoyIndexSearchResult
     {
         let index = unsafe{&*index_ptr};
-        let query_vector = unsafe { slice::from_raw_parts(query_vector_ptr, index.dimension as usize) };
+        let query_vector = unsafe { slice::from_raw_parts(query_vector_ptr, index.dimension) };
         let result = index.get_nearest(query_vector, n_results as usize, search_k, should_include_distance);
         Box::into_raw(Box::new(result))
     }

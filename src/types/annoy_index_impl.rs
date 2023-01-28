@@ -146,8 +146,8 @@ impl AnnoyIndex {
     }
 
     pub(crate) fn get_node_slice_with_offset(&self, node_offset: usize) -> &[f32] {
-        let dimension = self.dimension as usize;
-        let offset = node_offset + self.node_header_size as usize;
+        let dimension = self.dimension;
+        let offset = node_offset + self.node_header_size;
         self.storage.read_slice::<f32>(offset, dimension)
     }
 }

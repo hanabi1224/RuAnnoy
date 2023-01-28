@@ -162,7 +162,7 @@ ffi_fn! {
         distance_list: jfloatArray,
     ) -> jint {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
-        let dim = index.dimension as usize;
+        let dim = index.dimension;
 
         let mut query_vector = vec![0_f32; dim];
         match env.get_float_array_region(query_vector_j, 0, query_vector.as_mut_slice()) {
