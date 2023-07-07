@@ -28,7 +28,7 @@
     "postcss-html": "^1.5.0",
     "rimraf": "^5.0.0",
     "sass": "^1.62.1",
-    "stylelint": "^15.6.1",
+    "stylelint": "^15.10.1",
     "stylelint-config-recommended-vue": "^1.4.0",
     "typescript": "^5.0.4"
   }
