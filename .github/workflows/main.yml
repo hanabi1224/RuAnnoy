@@ -19,7 +19,7 @@ jobs:
     steps:
       - run: lscpu
         if: matrix.os == 'ubuntu-latest'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -140,7 +140,7 @@ jobs:
     env:
       RUSTFLAGS: -Ctarget-feature=-simd128
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -159,7 +159,7 @@ jobs:
   codedov:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
