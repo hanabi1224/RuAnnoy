@@ -10,8 +10,8 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm").version("1.8.0")
-    id("com.github.ben-manes.versions").version("0.44.0")
+    id("org.jetbrains.kotlin.jvm").version("1.9.22")
+    id("com.github.ben-manes.versions").version("0.50.0")
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
@@ -32,7 +32,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "ru.annoy.test.AppKt"
+    mainClass = "ru.annoy.test.AppKt"
 }
 
 tasks.register("du") { dependsOn("dependencyUpdates") }
@@ -47,7 +47,7 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
 }
 
 fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
