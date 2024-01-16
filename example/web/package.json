@@ -6,28 +6,29 @@
     "start": "parcel serve index.html --open",
     "build:wasm": "wasm-pack build -t web --out-name annoy -d example/web/pkg/ ./../../",
     "build:web": "parcel build *.html --no-source-maps",
-    "build": "yarn clean && yarn build:wasm && yarn build:web",
+    "build": "pnpm run clean && pnpm run build:wasm && pnpm run build:web",
     "clean": "rimraf dist",
     "lint:js": "eslint --ext \".js,.ts,.vue\" --fix --ignore-path .gitignore .",
     "lint:style": "stylelint \"**/*.{vue,css}\" --fix --ignore-path .gitignore",
-    "lint": "yarn lint:js && yarn lint:style"
+    "lint": "pnpm run lint:js && pnpm run lint:style"
   },
   "dependencies": {
     "buffer": "^6.0.3",
-    "vue": "^3.4.3"
+    "vue": "^3.4.14"
   },
   "devDependencies": {
-    "@parcel/transformer-raw": "^2.10.3",
-    "@parcel/transformer-sass": "^2.10.3",
-    "@parcel/transformer-vue": "^2.10.3",
+    "@parcel/config-default": "^2.11.0",
+    "@parcel/transformer-raw": "^2.11.0",
+    "@parcel/transformer-sass": "^2.11.0",
+    "@parcel/transformer-vue": "^2.11.0",
     "eslint": "^8.56.0",
-    "eslint-plugin-prettier": "^5.1.2",
-    "eslint-plugin-vue": "^9.19.2",
-    "parcel": "^2.10.3",
-    "postcss": "^8.4.32",
-    "postcss-html": "^1.5.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-vue": "^9.20.1",
+    "parcel": "^2.11.0",
+    "postcss": "^8.4.33",
+    "postcss-html": "^1.6.0",
     "rimraf": "^5.0.5",
-    "sass": "^1.69.6",
+    "sass": "^1.69.7",
     "stylelint": "^16.1.0",
     "stylelint-config-recommended-vue": "^1.5.0",
     "typescript": "^5.3.3"
