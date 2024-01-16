@@ -23,7 +23,7 @@ jobs:
     steps:
       - run: lscpu
         if: matrix.os == 'ubuntu-latest'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -52,7 +52,7 @@ jobs:
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           wasm-pack build -t web -s hanabi1224 --out-name annoy
           wasm-pack test --node --release
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
@@ -64,7 +64,7 @@ jobs:
           ./gradlew copy-artifacts
           ./gradlew clean test
           ./gradlew clean build publishToMavenLocal
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.x"
       - name: dotnet Test
@@ -144,7 +144,7 @@ jobs:
     env:
       RUSTFLAGS: -Ctarget-feature=-simd128
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -166,7 +166,7 @@ jobs:
   codedov:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
