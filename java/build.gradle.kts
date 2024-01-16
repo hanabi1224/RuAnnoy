@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.logging.*
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.9.22"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
@@ -25,11 +25,6 @@ repositories {
 group = "com.github.hanabi1224"
 
 version = "0.1.5"
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
 
 tasks.test {
     useJUnitPlatform()

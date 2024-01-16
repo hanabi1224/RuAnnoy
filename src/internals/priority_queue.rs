@@ -36,7 +36,7 @@ where
     O: PartialEq + Eq + PartialOrd,
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.ord.partial_cmp(&other.ord)
+        Some(self.cmp(other))
     }
 }
 

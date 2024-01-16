@@ -13,23 +13,23 @@
     "lint": "yarn lint:js && yarn lint:style"
   },
   "dependencies": {
-    "buffer": "^5.7.1",
-    "vue": "^3.2.47"
+    "buffer": "^6.0.3",
+    "vue": "^3.4.3"
   },
   "devDependencies": {
-    "@parcel/transformer-raw": "^2.8.3",
-    "@parcel/transformer-sass": "^2.8.3",
-    "@parcel/transformer-vue": "^2.8.3",
-    "eslint": "^8.39.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-vue": "^9.11.0",
-    "parcel": "^2.8.3",
-    "postcss": "^8.4.23",
+    "@parcel/transformer-raw": "^2.10.3",
+    "@parcel/transformer-sass": "^2.10.3",
+    "@parcel/transformer-vue": "^2.10.3",
+    "eslint": "^8.56.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-vue": "^9.19.2",
+    "parcel": "^2.10.3",
+    "postcss": "^8.4.32",
     "postcss-html": "^1.5.0",
-    "rimraf": "^5.0.0",
-    "sass": "^1.62.1",
-    "stylelint": "^15.6.1",
-    "stylelint-config-recommended-vue": "^1.4.0",
-    "typescript": "^5.0.4"
+    "rimraf": "^5.0.5",
+    "sass": "^1.69.6",
+    "stylelint": "^16.1.0",
+    "stylelint-config-recommended-vue": "^1.5.0",
+    "typescript": "^5.3.3"
   }
 }

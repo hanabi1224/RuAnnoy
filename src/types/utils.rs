@@ -1,7 +1,7 @@
 use crate::internals::storage_ext::*;
 use std::mem;
 #[cfg(nightly)]
-use std::simd::*;
+use std::simd::prelude::*;
 
 #[cfg(nightly)]
 #[cfg(not(target_arch = "wasm32"))]
