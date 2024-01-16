@@ -2,8 +2,8 @@
 mod macros;
 
 use annoy_rs::*;
-use jni::objects::{JClass, JString};
-use jni::sys::{jboolean, jbyte, jclass, jfloatArray, jint, jlong, jlongArray};
+use jni::objects::{JClass, JFloatArray, JLongArray, JString};
+use jni::sys::{jboolean, jbyte, jclass, jint, jlong};
 use jni::JNIEnv;
 use std::error::Error;
 use std::mem;
@@ -35,13 +35,13 @@ ffi_fn! {
 
 #[allow(non_snake_case)]
 fn Java_com_github_hanabi1224_RuAnnoy_NativeMethods_loadIndex_inner(
-    env: JNIEnv,
+    mut env: JNIEnv,
     _class: JClass,
     path: JString,
     dimension: jint,
     index_type: jbyte,
 ) -> Result<jlong, Box<dyn Error>> {
-    let ru_path: String = env.get_string(path)?.into();
+    let ru_path: String = env.get_string(&path)?.into();
     let ru_index_type: IndexType = unsafe { mem::transmute(index_type) };
     let index = AnnoyIndex::load(dimension as usize, ru_path.as_str(), ru_index_type)?;
     let ptr = Box::into_raw(Box::new(index));
@@ -98,11 +98,11 @@ ffi_fn! {
         _class: jclass,
         pointer: jlong,
         item_index: jlong,
-    ) -> jfloatArray {
+    ) -> JFloatArray {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let vector = index.get_item_vector(item_index as u64);
         let result = env.new_float_array(index.dimension as i32).unwrap();
-        let _ = env.set_float_array_region(result, 0, vector.as_slice());
+        env.set_float_array_region(&result, 0, vector.as_slice()).unwrap();
         result
     }
 }
@@ -123,8 +123,8 @@ ffi_fn! {
         n_results: jint,
         search_k: jint,
         should_include_distance: jboolean,
-        id_list: jlongArray,
-        distance_list: jfloatArray,
+        id_list: JLongArray,
+        distance_list: JFloatArray,
     ) -> jint {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let r = index.get_nearest_to_item(
@@ -133,7 +133,7 @@ ffi_fn! {
             search_k,
             should_include_distance != 0,
         );
-        let r_id_list: Vec<i64> = r.id_list.iter().map(|&i| i as i64).collect();
+        let r_id_list: Vec<jlong> = r.id_list.iter().map(|&i| i as i64).collect();
         let _ = env.set_long_array_region(id_list, 0, r_id_list.as_slice());
         if should_include_distance != 0 {
             let _ = env.set_float_array_region(distance_list, 0, r.distance_list.as_slice());
@@ -154,12 +154,12 @@ ffi_fn! {
         env: JNIEnv,
         _class: jclass,
         pointer: jlong,
-        query_vector_j: jfloatArray,
+        query_vector_j: JFloatArray,
         n_results: jint,
         search_k: jint,
         should_include_distance: jboolean,
-        id_list: jlongArray,
-        distance_list: jfloatArray,
+        id_list: JLongArray,
+        distance_list: JFloatArray,
     ) -> jint {
         let index = unsafe { &*(pointer as *const AnnoyIndex) };
         let dim = index.dimension;

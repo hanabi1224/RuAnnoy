@@ -15,7 +15,7 @@ default = []
 
 [dependencies]
 annoy-rs = {path = "../"}
-jni = "0.20"
+jni = "0.21"
 libc = "0.2"
 
 [lib]
