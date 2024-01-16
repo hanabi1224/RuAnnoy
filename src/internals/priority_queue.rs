@@ -26,7 +26,7 @@ where
     O: PartialEq + Eq + PartialOrd,
 {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap_or(Ordering::Equal)
+        self.ord.partial_cmp(&other.ord).unwrap_or(Ordering::Equal)
     }
 }
 

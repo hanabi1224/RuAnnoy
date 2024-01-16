@@ -152,9 +152,12 @@ jobs:
           target: wasm32-unknown-unknown
           override: true
       - run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - run: lerna bootstrap
-      - run: lerna run build
-      - run: lerna run lint
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - run: pnpm -r i
+      - run: pnpm -r run build
+      - run: pnpm -r run lint
       - uses: actions/upload-artifact@v3
         with:
           name: example-web
