@@ -97,30 +97,30 @@ jobs:
           sudo ln -sf /usr/lib/dart/bin/dart /usr/bin/dart
           pushd bench
           ./bench.sh
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'ubuntu-latest'
         with:
           name: npm
           path: pkg/**/*
           if-no-files-found: error
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: dotnet/artifacts/*.nupkg
           if-no-files-found: error
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: dotnet/artifacts/*.snupkg
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest'
         with:
           path: target/release/*.dll
           if-no-files-found: error
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'ubuntu-latest'
         with:
           path: target/release/*.so
           if-no-files-found: error
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'macos-latest'
         with:
           path: target/release/*.dylib
@@ -158,7 +158,7 @@ jobs:
       - run: pnpm -r i
       - run: pnpm -r run build
       - run: pnpm -r run lint
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: example-web
           path: example/web/dist/**/*
@@ -175,7 +175,7 @@ jobs:
           components: llvm-tools-preview
       - uses: taiki-e/install-action@cargo-llvm-cov
       - run: cargo llvm-cov --all-features --lcov --output-path lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: lcov.info
           path: lcov.info
