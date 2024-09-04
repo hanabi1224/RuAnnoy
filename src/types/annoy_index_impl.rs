@@ -4,7 +4,6 @@ use crate::internals::storage_ext::*;
 use crate::types::node::*;
 use crate::Storage;
 use std::error::Error;
-use std::vec::Vec;
 
 impl AnnoyIndex {
     #[cfg(not(target_arch = "wasm32"))]

@@ -14,6 +14,7 @@ pub use types::*;
 pub mod wasm_exports;
 
 #[cfg(test)]
+#[cfg(nightly)]
 mod tests {
     pub trait RoundTo<T> {
         fn round_to(&self, n: usize) -> T;
