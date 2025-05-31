@@ -234,9 +234,9 @@ mod tests {
         use rand::prelude::*;
 
         let mut v = Vec::with_capacity(range.end - range.start);
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         for _i in range {
-            v.push(rng.gen());
+            v.push(rng.random());
         }
         v
     }

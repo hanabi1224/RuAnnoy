@@ -11,16 +11,17 @@ version = "0.1.1"
 
 [workspace]
 members = ["java", "ffi"]
+resolver = "3"
 
 [features]
 default = []
 
 [dependencies]
 cfg-if = "1"
-ordered-float = "4"
+ordered-float = "5"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = {version = "0.2", features = ["js"]}
+getrandom = {version = "0.3", features = ["wasm_js"]}
 js-sys = "0.3"
 serde = {version = "1", features = ["derive"]}
 serde-wasm-bindgen = "0.6"
@@ -31,7 +32,7 @@ memmap2 = "0.9"
 
 [dev-dependencies]
 lazy_static = "1"
-rand = "0.8"
+rand = "0.9"
 wasm-bindgen-test = "0.3"
 
 [build-dependencies]
