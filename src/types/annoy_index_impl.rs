@@ -1,8 +1,8 @@
 use super::utils::*;
 use super::{AnnoyIndex, IndexType};
+use crate::Storage;
 use crate::internals::storage_ext::*;
 use crate::types::node::*;
-use crate::Storage;
 use std::error::Error;
 
 impl AnnoyIndex {

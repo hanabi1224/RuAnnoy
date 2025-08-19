@@ -2,7 +2,7 @@
 description = """
 C FFI bindings to annoy-rs.
 """
-edition = "2021"
+edition = "2024"
 license = "MIT"
 name = "annoy-rs-ffi"
 repository = "https://github.com/hanabi1224/RuAnnoy"

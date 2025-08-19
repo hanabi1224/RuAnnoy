@@ -2,7 +2,7 @@
 description = """
 A rust implementation of annoy(https://github.com/spotify/annoy) (Index serving only). C ABI is also provided.
 """
-edition = "2021"
+edition = "2024"
 exclude = ["dotnet", "java", "ffi", "bench", "test_gen", ".idea", ".vscode", ".github", "*.yml", "*.iml", ".gitignore"]
 license = "MIT"
 name = "annoy-rs"

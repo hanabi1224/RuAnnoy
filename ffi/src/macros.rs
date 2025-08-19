@@ -3,8 +3,8 @@ macro_rules! ffi_fn {
         ffi_fn!(fn $name($($arg: $arg_ty),*) -> $ret $body);
     };
     (fn $name:ident($($arg:ident: $arg_ty:ty),*) -> $ret:ty $body:block) => {
-        #[no_mangle]
-        pub unsafe extern fn $name($($arg: $arg_ty),*) -> $ret {
+        #[unsafe(no_mangle)]
+        pub unsafe extern "C" fn $name($($arg: $arg_ty),*) -> $ret {
             use ::std::io::{self, Write};
             use ::std::panic::{self, AssertUnwindSafe};
             use ::libc::abort;
